@@ -1,0 +1,44 @@
+name: nexus-vision-ai
+
+x-vision-base: &vision-base
+  build: .
+  restart: unless-stopped
+  env_file: .env
+  volumes:
+    - ./config/sites.yaml:/app/config/sites.yaml:ro
+    - ./data:/app/data
+    - ./models:/app/models:ro
+  ports:
+    - "8090:8090"
+  healthcheck:
+    test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8090/health',timeout=5)"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 60s
+
+services:
+  # Production: NVIDIA GPU (requires nvidia-container-toolkit on the host)
+  vision-gpu:
+    <<: *vision-base
+    container_name: nexus-vision-ai
+    profiles: ["gpu"]
+    environment:
+      - VISION_DEVICE=cuda
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  # Development: CPU only (1-2 streams max)
+  vision-cpu:
+    <<: *vision-base
+    container_name: nexus-vision-ai-cpu
+    profiles: ["cpu"]
+    ports:
+      - "8090:8090"
+    environment:
+      - VISION_DEVICE=cpu

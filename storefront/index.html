@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nexus Vision Marketplace — UniFi Protect AI Functions</title>
+<meta name="description" content="Plug AI functions into your UniFi Protect NVR. 37 GPU-accelerated video analytics functions for retail, warehouse, healthcare, property, and parking — running on your cameras, on your premises." />
+<style>
+  :root {
+    --graphite: #0a0e14;
+    --panel: #111722;
+    --panel-2: #161f2d;
+    --vellum: #e8e4d8;
+    --marking: #e8b93c;
+    --slate-400: #94a3b8;
+    --slate-500: #64748b;
+    --line: rgba(232, 228, 216, 0.08);
+    --green: #34d399;
+    --amber: #fbbf24;
+    --red: #f87171;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--graphite); color: var(--vellum); font-family: "Inter", -apple-system, "Segoe UI", sans-serif; line-height: 1.6; }
+  h1, h2, h3, .brand { font-family: "Archivo", "Inter", sans-serif; }
+
+  .shell { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+
+  header.hero { padding: 72px 0 40px; border-bottom: 1px solid var(--line);
+    background: radial-gradient(ellipse 60% 50% at 50% -10%, rgba(232,185,60,0.10), transparent); }
+  .kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 800;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--marking);
+    border: 1px solid rgba(232,185,60,0.35); background: rgba(232,185,60,0.08);
+    padding: 6px 14px; border-radius: 999px; margin-bottom: 20px; }
+  h1 { font-size: clamp(30px, 5vw, 52px); font-weight: 900; letter-spacing: -0.02em; line-height: 1.08; }
+  h1 span { color: var(--marking); }
+  .hero p { color: var(--slate-400); font-size: 18px; max-width: 680px; margin-top: 16px; }
+  .hero-stats { display: flex; gap: 32px; margin-top: 28px; flex-wrap: wrap; }
+  .hero-stats div { font-size: 13px; color: var(--slate-500); }
+  .hero-stats b { display: block; font-size: 26px; color: var(--vellum); font-family: "Archivo"; }
+
+  .controls { position: sticky; top: 0; z-index: 20; background: rgba(10,14,20,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line); padding: 14px 0; }
+  .controls-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .search { flex: 1 1 240px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+    padding: 10px 14px; color: var(--vellum); font-size: 14px; outline: none; }
+  .search:focus { border-color: rgba(232,185,60,0.5); }
+  .chip { background: var(--panel); border: 1px solid var(--line); color: var(--slate-400);
+    padding: 8px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .chip:hover { border-color: rgba(232,185,60,0.4); color: var(--vellum); }
+  .chip.active { background: var(--marking); border-color: var(--marking); color: var(--graphite); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; padding: 28px 0 60px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 20px;
+    cursor: pointer; transition: all 0.18s; display: flex; flex-direction: column; gap: 10px; position: relative; }
+  .card:hover { border-color: rgba(232,185,60,0.4); transform: translateY(-2px); }
+  .card.selected { border-color: var(--marking); background: var(--panel-2); }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .card h3 { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
+  .card .tagline { color: var(--slate-400); font-size: 13.5px; flex: 1; }
+  .badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .badge { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 3px 8px; border-radius: 6px; }
+  .badge.tier-starter { background: rgba(52,211,153,0.12); color: var(--green); }
+  .badge.tier-pro { background: rgba(251,191,36,0.12); color: var(--amber); }
+  .badge.tier-enterprise { background: rgba(248,113,113,0.12); color: var(--red); }
+  .badge.cat { background: rgba(148,163,184,0.10); color: var(--slate-400); }
+  .card .add { font-size: 12px; font-weight: 700; color: var(--marking); margin-top: 2px; }
+  .card.selected .add { color: var(--green); }
+
+  .tray { position: fixed; bottom: 0; left: 0; right: 0; z-index: 30; background: rgba(17,23,34,0.97);
+    border-top: 1px solid rgba(232,185,60,0.3); backdrop-filter: blur(12px);
+    transform: translateY(100%); transition: transform 0.25s; }
+  .tray.open { transform: translateY(0); }
+  .tray-inner { max-width: 1180px; margin: 0 auto; padding: 16px 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .tray-count { font-family: "Archivo"; font-size: 20px; font-weight: 900; }
+  .tray-list { flex: 1; color: var(--slate-400); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .btn { background: var(--marking); color: var(--graphite); border: none; font-weight: 800; font-size: 13.5px;
+    padding: 12px 22px; border-radius: 12px; cursor: pointer; transition: opacity 0.15s; }
+  .btn:hover { opacity: 0.88; }
+  .btn.ghost { background: transparent; color: var(--slate-400); border: 1px solid var(--line); }
+
+  .modal-backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,0.72); backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal-backdrop.open { display: flex; }
+  .modal { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; max-width: 640px; width: 100%;
+    max-height: 85vh; overflow-y: auto; padding: 28px; }
+  .modal h2 { font-size: 22px; font-weight: 900; margin-bottom: 6px; }
+  .modal .tag { color: var(--slate-400); margin-bottom: 16px; }
+  .config-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
+  .config-table td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .config-table td:first-child { font-family: ui-monospace, monospace; color: var(--marking); white-space: nowrap; }
+  .modal pre { background: var(--graphite); border: 1px solid var(--line); border-radius: 12px; padding: 14px;
+    font-size: 12px; overflow-x: auto; color: var(--slate-400); margin-top: 14px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .close-x { position: absolute; top: 14px; right: 18px; background: none; border: none; color: var(--slate-500);
+    font-size: 22px; cursor: pointer; }
+  .modal-wrap { position: relative; width: 100%; max-width: 640px; }
+
+  footer { border-top: 1px solid var(--line); padding: 30px 0 46px; color: var(--slate-500); font-size: 13px; }
+  @media (max-width: 640px) { .tray-list { display: none; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="shell">
+    <span class="kicker">◈ Nexus Vision Marketplace</span>
+    <h1>AI functions that plug into your <span>UniFi Protect</span> NVR.</h1>
+    <p>Point an API key at your existing cameras. Pick the functions your business needs. They run on your premises, on an NVIDIA GPU appliance we size for you. No cloud subscription to a third party. No new cameras.</p>
+    <div class="hero-stats">
+      <div><b id="stat-count">—</b>GPU functions</div>
+      <div><b id="stat-cats">—</b>business categories</div>
+      <div><b>100%</b>on-prem video</div>
+      <div><b>0</b>faces identified (BIPA-safe)</div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="shell controls-row">
+    <input class="search" id="search" placeholder="Search functions… (e.g. fall, dock, queue, parking)" />
+    <div id="cat-chips"></div>
+    <div id="tier-chips"></div>
+  </div>
+</div>
+
+<main class="shell">
+  <div class="grid" id="grid"></div>
+</main>
+
+<div class="tray" id="tray">
+  <div class="tray-inner">
+    <span class="tray-count" id="tray-count">0</span>
+    <span class="tray-list" id="tray-list"></span>
+    <button class="btn ghost" id="clear-btn">Clear</button>
+    <button class="btn" id="generate-btn">Generate subscription config →</button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="backdrop">
+  <div class="modal-wrap">
+    <button class="close-x" id="close-x">×</button>
+    <div class="modal" id="modal"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="shell">
+    Nexus Communications Technology · Schaumburg, IL · All inference on-prem, skeletons/objects/plates only — no biometric identification. · <span style="color:var(--marking)">nexusct.com</span>
+  </div>
+</footer>
+
+<script>
+let CATALOG = [];
+const selected = new Set();
+let activeCat = "All", activeTier = "All", query = "";
+
+const grid = document.getElementById("grid");
+const tray = document.getElementById("tray");
+const backdrop = document.getElementById("backdrop");
+const modal = document.getElementById("modal");
+
+// SECURITY NOTE: innerHTML is used with catalog.json, which is generated by
+// our own marketplace loader and shipped in this repo — no untrusted input
+// reaches these templates. Do not point this page at a third-party catalog.
+fetch("catalog.json")
+  .then(r => r.json())
+  .then(data => { CATALOG = data; init(); })
+  .catch(() => { grid.innerHTML = "<p style='color:var(--slate-400)'>catalog.json not found — serve this folder over HTTP.</p>"; });
+
+function init() {
+  document.getElementById("stat-count").textContent = CATALOG.length;
+  const cats = [...new Set(CATALOG.map(f => f.category))];
+  document.getElementById("stat-cats").textContent = cats.length;
+  buildChips("cat-chips", ["All", ...cats], c => { activeCat = c; render(); });
+  buildChips("tier-chips", ["All", "starter", "pro", "enterprise"], t => { activeTier = t; render(); });
+  document.getElementById("search").addEventListener("input", e => { query = e.target.value.toLowerCase(); render(); });
+  render();
+}
+
+function buildChips(elId, items, onPick) {
+  const el = document.getElementById(elId);
+  el.innerHTML = "";
+  items.forEach((item, i) => {
+    const b = document.createElement("button");
+    b.className = "chip" + (i === 0 ? " active" : "");
+    b.textContent = item;
+    b.onclick = () => { el.querySelectorAll(".chip").forEach(c => c.classList.remove("active")); b.classList.add("active"); onPick(item); };
+    el.appendChild(b);
+  });
+}
+
+function matches(f) {
+  if (activeCat !== "All" && f.category !== activeCat) return false;
+  if (activeTier !== "All" && f.tier !== activeTier) return false;
+  if (query && !(f.name + " " + f.tagline + " " + f.id).toLowerCase().includes(query)) return false;
+  return true;
+}
+
+function render() {
+  const items = CATALOG.filter(matches);
+  grid.innerHTML = items.map(f => `
+    <div class="card ${selected.has(f.id) ? "selected" : ""}" data-id="${f.id}">
+      <div class="card-top">
+        <h3>${f.name}</h3>
+        <div class="badges">
+          <span class="badge tier-${f.tier}">${f.tier}</span>
+          <span class="badge cat">${f.category}</span>
+        </div>
+      </div>
+      <p class="tagline">${f.tagline}</p>
+      <span class="add">${selected.has(f.id) ? "✓ In your stack" : "+ Details & add"}</span>
+    </div>`).join("");
+  grid.querySelectorAll(".card").forEach(c => c.addEventListener("click", () => openModal(c.dataset.id)));
+  renderTray();
+}
+
+function openModal(id) {
+  const f = CATALOG.find(x => x.id === id);
+  if (!f) return;
+  const rows = Object.entries(f.config_schema || {})
+    .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("");
+  modal.innerHTML = `
+    <div class="badges" style="margin-bottom:10px">
+      <span class="badge tier-${f.tier}">${f.tier}</span>
+      <span class="badge cat">${f.category}</span>
+      ${f.requires_gpu ? '<span class="badge cat">GPU</span>' : ""}
+    </div>
+    <h2>${f.name}</h2>
+    <p class="tag">${f.tagline}</p>
+    <h3 style="font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--slate-500);margin-top:14px">Configuration</h3>
+    <table class="config-table">${rows || "<tr><td>none — works out of the box</td></tr>"}</table>
+    <pre>cameras:
+  - id: "your-camera"
+    functions: ["${f.id}"]
+    ${f.id}:
+      # config keys shown above</pre>
+    <div class="modal-actions">
+      <button class="btn" id="toggle-sel">${selected.has(f.id) ? "Remove from stack" : "Add to my stack"}</button>
+      <button class="btn ghost" id="close-btn">Close</button>
+    </div>`;
+  backdrop.classList.add("open");
+  document.getElementById("toggle-sel").onclick = () => { toggleSelect(f.id); openModal(id); };
+  document.getElementById("close-btn").onclick = closeModal;
+}
+
+function closeModal() { backdrop.classList.remove("open"); }
+backdrop.addEventListener("click", e => { if (e.target === backdrop) closeModal(); });
+document.getElementById("close-x").onclick = closeModal;
+
+function toggleSelect(id) {
+  selected.has(id) ? selected.delete(id) : selected.add(id);
+  render();
+}
+
+function renderTray() {
+  tray.classList.toggle("open", selected.size > 0);
+  document.getElementById("tray-count").textContent = selected.size;
+  document.getElementById("tray-list").textContent =
+    [...selected].map(id => (CATALOG.find(f => f.id === id) || {}).name).join(" · ");
+}
+
+document.getElementById("clear-btn").onclick = () => { selected.clear(); render(); };
+
+document.getElementById("generate-btn").onclick = () => {
+  const fns = CATALOG.filter(f => selected.has(f.id));
+  const yaml = [
+    "# Nexus Vision subscription — generated from the marketplace",
+    "# Paste your UniFi Protect credentials in .env, map cameras below.",
+    "",
+    "site:",
+    '  name: "My Site"',
+    '  client: "My Company"',
+    "",
+    "cameras:",
+    '  - id: "cam-1"',
+    '    name: "Camera 1"',
+    '    rtsp: "rtsps://YOUR-NVR:7441/YOUR-STREAM-ALIAS"',
+    "    functions: [" + fns.map(f => '"' + f.id + '"').join(", ") + "]",
+    "",
+    "function_settings:",
+    ...fns.map(f => `  ${f.id}: {}   # ${f.name} — config keys: ${Object.keys(f.config_schema || {}).join(", ") || "none"}`),
+  ].join("\n");
+
+  const blob = new Blob([yaml], { type: "text/yaml" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "nexus-vision-subscription.yaml";
+  a.click();
+
+  modal.innerHTML = `
+    <h2>Your subscription config</h2>
+    <p class="tag">${fns.length} function${fns.length === 1 ? "" : "s"} selected. Download started — drop this file into your deployment as <b>sites.yaml</b>, fill in camera RTSP URLs, and <code>docker compose --profile gpu up -d</code>.</p>
+    <pre>${yaml.replace(/</g, "&lt;")}</pre>
+    <div class="modal-actions">
+      <button class="btn ghost" id="close-btn">Close</button>
+    </div>`;
+  backdrop.classList.add("open");
+  document.getElementById("close-btn").onclick = closeModal;
+};
+</script>
+</body>
+</html>

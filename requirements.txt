@@ -1,0 +1,15 @@
+torch>=2.1.0
+torchvision>=0.16.0
+ultralytics>=8.2.0
+opencv-python-headless>=4.9.0
+numpy>=1.24.0
+open-clip-torch>=2.24.0
+easyocr>=1.7.0
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.6.0
+PyYAML>=6.0.1
+requests>=2.31.0
+python-dotenv>=1.0.0
+pillow>=10.0.0
+scipy>=1.11.0

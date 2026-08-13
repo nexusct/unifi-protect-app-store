@@ -1,0 +1,96 @@
+# Site configuration: cameras, zones, and which detectors run where.
+# Copy to sites.yaml and edit. Detectors not listed for a camera don't run on it.
+
+site:
+  name: "Demo Senior Living Campus"
+  client: "Demo Client Co"
+
+cameras:
+  - id: "cam-hallway-a"                 # UniFi Protect camera id or friendly name
+    name: "Hallway A"
+    rtsp: "rtsps://192.168.1.10:7441/REPLACE_ME"   # from Protect console; auto-discovered if omitted
+    detectors: ["fall", "elopement"]
+    privacy_mode: "skeleton"            # frames discarded after keypoint extraction
+    zones:
+      exit_doors: [[0.85, 0.4], [1.0, 0.4], [1.0, 1.0], [0.85, 1.0]]   # normalized polygon
+
+  - id: "cam-room-214"
+    name: "Resident Room 214"
+    rtsp: "rtsps://192.168.1.10:7441/REPLACE_ME"
+    detectors: ["bed_exit"]
+    privacy_mode: "skeleton"
+    zones:
+      bed: [[0.2, 0.3], [0.8, 0.3], [0.8, 0.8], [0.2, 0.8]]
+
+  - id: "cam-entry-main"
+    name: "Main Entry"
+    rtsp: "rtsps://192.168.1.10:7441/REPLACE_ME"
+    detectors: ["weapon", "tailgating", "alpr"]
+    tailgating:
+      door_id: "door-main-entry"        # UniFi Access door id to correlate badges with
+      window_seconds: 6
+
+  - id: "cam-dock-1"
+    name: "Loading Dock 1"
+    rtsp: "rtsps://192.168.1.10:7441/REPLACE_ME"
+    detectors: ["ppe", "near_miss", "smoke_flame", "alpr"]
+    zones:
+      forklift_lanes: [[0.0, 0.5], [1.0, 0.5], [1.0, 1.0], [0.0, 1.0]]
+
+  - id: "cam-warehouse-north"
+    name: "Warehouse North"
+    rtsp: "rtsps://192.168.1.10:7441/REPLACE_ME"
+    detectors: ["smoke_flame", "ppe"]
+
+  # video_search indexes every camera unless disabled here:
+  - id: "cam-parking"
+    name: "Parking Lot"
+    rtsp: "rtsps://192.168.1.10:7441/REPLACE_ME"
+    detectors: ["alpr"]
+
+detector_settings:
+  fall:
+    confidence: 0.55
+    floor_angle_seconds: 2.0            # torso near-horizontal this long = fall event
+  bed_exit:
+    stages: ["lying", "sitting", "edge"] # sequence within window_seconds
+    window_seconds: 20
+  weapon:
+    weights: "/app/models/weapon.pt"     # domain weights REQUIRED for production
+    confidence: 0.60
+  ppe:
+    weights: "/app/models/ppe.pt"        # domain weights REQUIRED for production
+    required: ["hardhat", "hi-vis"]
+    confidence: 0.50
+  near_miss:
+    person_class: "person"
+    vehicle_classes: ["truck", "car", "forklift"]
+    distance_pixels: 120                 # proxy distance; calibrate per camera
+    cooldown_seconds: 30
+  elopement:
+    approaches: 3                        # approaches to exit zone within window
+    window_seconds: 300
+  alpr:
+    plate_weights: "/app/models/plate.pt"
+    min_confidence: 0.45
+  video_search:
+    embed_every_seconds: 5               # embedding cadence per stream
+  tailgating:
+    max_persons_per_badge: 1
+  smoke_flame:
+    weights: "/app/models/smoke.pt"      # domain weights REQUIRED for production
+    confidence: 0.50
+
+alerts:
+  # severity routing: critical → NocAlert high + manager message; warning → NocAlert medium
+  severities:
+    fall: critical
+    bed_exit: critical
+    weapon: critical
+    smoke_flame: critical
+    elopement: warning
+    near_miss: warning
+    tailgating: warning
+    ppe: warning
+    alpr: info
+  dedup_seconds: 120                     # per (camera, detector) alert suppression

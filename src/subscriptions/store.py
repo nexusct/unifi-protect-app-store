@@ -111,7 +111,7 @@ def forward_to_base44(row: dict) -> bool:
     The existing scoreAndRouteLead workflow scores and routes it as a hot lead."""
     url = os.environ.get("BASE44_ALERT_URL", "")
     token = os.environ.get("BASE44_INTERNAL_TOKEN", "")
-    if not url or "change-me" in token:
+    if not url or not token or "change-me" in token.lower():
         return False
     try:
         import requests

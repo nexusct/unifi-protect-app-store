@@ -17,6 +17,9 @@ def load_all():
     for path in sorted(FUNCTIONS_DIR.glob("*.py")):
         if path.name.startswith("_"):
             continue
+        # Security: only load files directly in FUNCTIONS_DIR (no subdirs)
+        if path.parent != FUNCTIONS_DIR:
+            continue
         try:
             spec = importlib.util.spec_from_file_location(f"marketplace.functions.{path.stem}", path)
             mod = importlib.util.module_from_spec(spec)

@@ -33,7 +33,10 @@ class AlertEngine:
         if frame is None:
             return None
         try:
-            name = f"{detector}_{camera}_{int(time.time())}.jpg".replace(" ", "_")
+            # Sanitize filename components to prevent path traversal
+            safe_detector = detector.replace(" ", "_").replace("/", "_").replace("\\", "_").replace("..", "_")
+            safe_camera = camera.replace(" ", "_").replace("/", "_").replace("\\", "_").replace("..", "_")
+            name = f"{safe_detector}_{safe_camera}_{int(time.time())}.jpg"
             path = self.data_dir / "snapshots" / name
             cv2.imwrite(str(path), frame)
             return str(path)
@@ -70,7 +73,7 @@ class AlertEngine:
         }
 
         delivered = []
-        if self.url and self.token and "change-me" not in self.token:
+        if self.url and self.token and "change-me" not in self.token.lower():
             try:
                 r = requests.post(self.url, json=payload, timeout=15)
                 delivered.append(f"base44:{r.status_code}")

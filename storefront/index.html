@@ -4,109 +4,130 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Nexus Vision Marketplace — UniFi Protect AI Functions</title>
-<meta name="description" content="Plug AI functions into your UniFi Protect NVR. 37 GPU-accelerated video analytics functions for retail, warehouse, healthcare, property, and parking — running on your cameras, on your premises." />
+<meta name="description" content="Plug AI functions into your UniFi Protect NVR. 67 GPU-accelerated video analytics functions for retail, warehouse, healthcare, property, and parking — running on your cameras, on your premises." />
 <style>
+  /* ui.com-style light theme: white canvas, gray cards, Ubiquiti blue */
   :root {
-    --graphite: #0a0e14;
-    --panel: #111722;
-    --panel-2: #161f2d;
-    --vellum: #e8e4d8;
-    --marking: #e8b93c;
-    --slate-400: #94a3b8;
-    --slate-500: #64748b;
-    --line: rgba(232, 228, 216, 0.08);
-    --green: #34d399;
-    --amber: #fbbf24;
-    --red: #f87171;
+    --bg: #ffffff;
+    --card: #f6f7f9;
+    --card-hover: #eef0f4;
+    --ink: #0e1526;
+    --ink-2: #4d5666;
+    --ink-3: #838b9b;
+    --line: #e3e6ec;
+    --blue: #0559d5;
+    --blue-soft: rgba(5, 89, 213, 0.08);
+    --green: #0d9e63;
+    --amber: #b97d07;
+    --red: #d5342c;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--graphite); color: var(--vellum); font-family: "Inter", -apple-system, "Segoe UI", sans-serif; line-height: 1.6; }
-  h1, h2, h3, .brand { font-family: "Archivo", "Inter", sans-serif; }
+  body { background: var(--bg); color: var(--ink); font-family: "Inter", -apple-system, "Segoe UI", sans-serif; line-height: 1.6; }
+  h1, h2, h3 { font-family: "Archivo", "Inter", sans-serif; }
 
   .shell { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
 
-  header.hero { padding: 72px 0 40px; border-bottom: 1px solid var(--line);
-    background: radial-gradient(ellipse 60% 50% at 50% -10%, rgba(232,185,60,0.10), transparent); }
-  .kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 800;
-    letter-spacing: 0.14em; text-transform: uppercase; color: var(--marking);
-    border: 1px solid rgba(232,185,60,0.35); background: rgba(232,185,60,0.08);
-    padding: 6px 14px; border-radius: 999px; margin-bottom: 20px; }
-  h1 { font-size: clamp(30px, 5vw, 52px); font-weight: 900; letter-spacing: -0.02em; line-height: 1.08; }
-  h1 span { color: var(--marking); }
-  .hero p { color: var(--slate-400); font-size: 18px; max-width: 680px; margin-top: 16px; }
-  .hero-stats { display: flex; gap: 32px; margin-top: 28px; flex-wrap: wrap; }
-  .hero-stats div { font-size: 13px; color: var(--slate-500); }
-  .hero-stats b { display: block; font-size: 26px; color: var(--vellum); font-family: "Archivo"; }
+  /* top bar — ui.com style: white, thin border, blue CTA */
+  .topbar { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .topbar .shell { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .brand { font-family: "Archivo"; font-weight: 900; font-size: 17px; letter-spacing: -0.02em; }
+  .brand span { color: var(--blue); }
+  .topbar nav a { color: var(--ink-2); text-decoration: none; font-size: 13.5px; font-weight: 600; margin-left: 22px; }
+  .topbar nav a:hover { color: var(--ink); }
+  .btn { background: var(--blue); color: #fff; border: none; font-weight: 700; font-size: 13.5px;
+    padding: 11px 22px; border-radius: 999px; cursor: pointer; text-decoration: none; display: inline-block; transition: background 0.15s; }
+  .btn:hover { background: #0448ab; }
+  .btn.ghost { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+  .btn.ghost:hover { background: var(--card); }
 
-  .controls { position: sticky; top: 0; z-index: 20; background: rgba(10,14,20,0.92); backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--line); padding: 14px 0; }
-  .controls-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-  .search { flex: 1 1 240px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
-    padding: 10px 14px; color: var(--vellum); font-size: 14px; outline: none; }
-  .search:focus { border-color: rgba(232,185,60,0.5); }
-  .chip { background: var(--panel); border: 1px solid var(--line); color: var(--slate-400);
-    padding: 8px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
-  .chip:hover { border-color: rgba(232,185,60,0.4); color: var(--vellum); }
-  .chip.active { background: var(--marking); border-color: var(--marking); color: var(--graphite); }
+  header.hero { padding: 64px 0 40px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, #f6f9ff 0%, #fff 100%); }
+  .kicker { display: inline-flex; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--blue); border: 1px solid rgba(5,89,213,0.25); background: var(--blue-soft);
+    padding: 6px 14px; border-radius: 999px; margin-bottom: 18px; }
+  h1 { font-size: clamp(28px, 4.6vw, 46px); font-weight: 900; letter-spacing: -0.025em; line-height: 1.1; }
+  h1 span { color: var(--blue); }
+  .hero p { color: var(--ink-2); font-size: 17px; max-width: 660px; margin-top: 14px; }
+  .hero-stats { display: flex; gap: 34px; margin-top: 26px; flex-wrap: wrap; }
+  .hero-stats div { font-size: 12.5px; color: var(--ink-3); }
+  .hero-stats b { display: block; font-size: 24px; color: var(--ink); font-family: "Archivo"; }
 
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; padding: 28px 0 60px; }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 20px;
-    cursor: pointer; transition: all 0.18s; display: flex; flex-direction: column; gap: 10px; position: relative; }
-  .card:hover { border-color: rgba(232,185,60,0.4); transform: translateY(-2px); }
-  .card.selected { border-color: var(--marking); background: var(--panel-2); }
+  .controls { position: sticky; top: 60px; z-index: 40; background: rgba(255,255,255,0.94); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line); padding: 12px 0; }
+  .controls-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .search { flex: 1 1 220px; background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+    padding: 9px 16px; color: var(--ink); font-size: 13.5px; outline: none; }
+  .search:focus { border-color: var(--blue); background: #fff; }
+  .chip { background: #fff; border: 1px solid var(--line); color: var(--ink-2);
+    padding: 7px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .chip:hover { border-color: var(--blue); color: var(--blue); }
+  .chip.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; padding: 26px 0 90px; }
+  .card { background: var(--card); border: 1px solid transparent; border-radius: 14px; padding: 20px;
+    cursor: pointer; transition: all 0.16s; display: flex; flex-direction: column; gap: 9px; }
+  .card:hover { background: var(--card-hover); border-color: var(--line); }
+  .card.selected { background: #fff; border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
   .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-  .card h3 { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
-  .card .tagline { color: var(--slate-400); font-size: 13.5px; flex: 1; }
-  .badges { display: flex; gap: 6px; flex-wrap: wrap; }
-  .badge { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
-    padding: 3px 8px; border-radius: 6px; }
-  .badge.tier-starter { background: rgba(52,211,153,0.12); color: var(--green); }
-  .badge.tier-pro { background: rgba(251,191,36,0.12); color: var(--amber); }
-  .badge.tier-enterprise { background: rgba(248,113,113,0.12); color: var(--red); }
-  .badge.cat { background: rgba(148,163,184,0.10); color: var(--slate-400); }
-  .card .add { font-size: 12px; font-weight: 700; color: var(--marking); margin-top: 2px; }
+  .card h3 { font-size: 15.5px; font-weight: 800; letter-spacing: -0.01em; }
+  .card .tagline { color: var(--ink-2); font-size: 13px; flex: 1; }
+  .badges { display: flex; gap: 5px; flex-wrap: wrap; }
+  .badge { font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em;
+    padding: 3px 8px; border-radius: 999px; }
+  .badge.tier-starter { background: rgba(13,158,99,0.1); color: var(--green); }
+  .badge.tier-pro { background: rgba(185,125,7,0.12); color: var(--amber); }
+  .badge.tier-enterprise { background: rgba(213,52,44,0.1); color: var(--red); }
+  .badge.cat { background: var(--card-hover); color: var(--ink-3); }
+  .card .add { font-size: 12px; font-weight: 700; color: var(--blue); margin-top: 2px; }
   .card.selected .add { color: var(--green); }
 
-  .tray { position: fixed; bottom: 0; left: 0; right: 0; z-index: 30; background: rgba(17,23,34,0.97);
-    border-top: 1px solid rgba(232,185,60,0.3); backdrop-filter: blur(12px);
+  .tray { position: fixed; bottom: 0; left: 0; right: 0; z-index: 30; background: rgba(255,255,255,0.97);
+    border-top: 1px solid var(--line); box-shadow: 0 -8px 30px rgba(14,21,38,0.08); backdrop-filter: blur(12px);
     transform: translateY(100%); transition: transform 0.25s; }
   .tray.open { transform: translateY(0); }
-  .tray-inner { max-width: 1180px; margin: 0 auto; padding: 16px 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-  .tray-count { font-family: "Archivo"; font-size: 20px; font-weight: 900; }
-  .tray-list { flex: 1; color: var(--slate-400); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .btn { background: var(--marking); color: var(--graphite); border: none; font-weight: 800; font-size: 13.5px;
-    padding: 12px 22px; border-radius: 12px; cursor: pointer; transition: opacity 0.15s; }
-  .btn:hover { opacity: 0.88; }
-  .btn.ghost { background: transparent; color: var(--slate-400); border: 1px solid var(--line); }
+  .tray-inner { max-width: 1180px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .tray-count { font-family: "Archivo"; font-size: 19px; font-weight: 900; color: var(--blue); }
+  .tray-list { flex: 1; color: var(--ink-3); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  .modal-backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,0.72); backdrop-filter: blur(4px);
+  .modal-backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(14,21,38,0.45); backdrop-filter: blur(4px);
     display: none; align-items: center; justify-content: center; padding: 20px; }
   .modal-backdrop.open { display: flex; }
-  .modal { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; max-width: 640px; width: 100%;
-    max-height: 85vh; overflow-y: auto; padding: 28px; }
-  .modal h2 { font-size: 22px; font-weight: 900; margin-bottom: 6px; }
-  .modal .tag { color: var(--slate-400); margin-bottom: 16px; }
-  .config-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
-  .config-table td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  .config-table td:first-child { font-family: ui-monospace, monospace; color: var(--marking); white-space: nowrap; }
-  .modal pre { background: var(--graphite); border: 1px solid var(--line); border-radius: 12px; padding: 14px;
-    font-size: 12px; overflow-x: auto; color: var(--slate-400); margin-top: 14px; }
-  .modal-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
-  .close-x { position: absolute; top: 14px; right: 18px; background: none; border: none; color: var(--slate-500);
+  .modal { background: #fff; border: 1px solid var(--line); border-radius: 18px; max-width: 620px; width: 100%;
+    max-height: 85vh; overflow-y: auto; padding: 26px; box-shadow: 0 24px 60px rgba(14,21,38,0.2); }
+  .modal h2 { font-size: 21px; font-weight: 900; margin-bottom: 4px; }
+  .modal .tag { color: var(--ink-2); margin-bottom: 14px; font-size: 14px; }
+  .config-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 12.5px; }
+  .config-table td { padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .config-table td:first-child { font-family: ui-monospace, monospace; color: var(--blue); white-space: nowrap; }
+  .modal pre { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 13px;
+    font-size: 11.5px; overflow-x: auto; color: var(--ink-2); margin-top: 12px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .close-x { position: absolute; top: 12px; right: 16px; background: none; border: none; color: var(--ink-3);
     font-size: 22px; cursor: pointer; }
-  .modal-wrap { position: relative; width: 100%; max-width: 640px; }
+  .modal-wrap { position: relative; width: 100%; max-width: 620px; }
 
-  footer { border-top: 1px solid var(--line); padding: 30px 0 46px; color: var(--slate-500); font-size: 13px; }
+  footer { border-top: 1px solid var(--line); padding: 26px 0 40px; color: var(--ink-3); font-size: 12.5px; background: var(--card); }
+  footer a { color: var(--blue); text-decoration: none; }
   @media (max-width: 640px) { .tray-list { display: none; } }
 </style>
 </head>
 <body>
 
+<div class="topbar">
+  <div class="shell">
+    <div class="brand">Nexus<span>Vision</span> Marketplace</div>
+    <nav>
+      <a href="/">Overview</a>
+      <a href="#pricing-note">Pricing</a>
+      <a href="/#signup" class="btn" style="padding:8px 18px;margin-left:22px">Start subscription</a>
+    </nav>
+  </div>
+</div>
+
 <header class="hero">
   <div class="shell">
-    <span class="kicker">◈ Nexus Vision Marketplace</span>
-    <h1>AI functions that plug into your <span>UniFi Protect</span> NVR.</h1>
-    <p>Point an API key at your existing cameras. Pick the functions your business needs. They run on your premises, on an NVIDIA GPU appliance we size for you. No cloud subscription to a third party. No new cameras.</p>
+    <span class="kicker">UniFi Protect · GPU AI · On-Premises</span>
+    <h1>The function marketplace for<br />your <span>UniFi Protect</span> cameras.</h1>
+    <p>Every function plugs into your existing NVR through an API key. Pick what solves your problem — it runs on your premises, on a GPU appliance we size for you.</p>
     <div class="hero-stats">
       <div><b id="stat-count">—</b>GPU functions</div>
       <div><b id="stat-cats">—</b>business categories</div>
@@ -118,7 +139,7 @@
 
 <div class="controls">
   <div class="shell controls-row">
-    <input class="search" id="search" placeholder="Search functions… (e.g. fall, dock, queue, parking)" />
+    <input class="search" id="search" placeholder="Search functions… (fall, dock, queue, parking)" />
     <div id="cat-chips"></div>
     <div id="tier-chips"></div>
   </div>
@@ -146,12 +167,17 @@
 
 <footer>
   <div class="shell">
-    Nexus Communications Technology · Schaumburg, IL · All inference on-prem, skeletons/objects/plates only — no biometric identification. · <span style="color:var(--marking)">nexusct.com</span>
+    Nexus Vision Marketplace · by <a href="https://nexusct.com">Nexus Communications Technology</a>, Schaumburg, IL ·
+    On-prem inference — skeletons, objects, plates only. No biometric identification.
   </div>
 </footer>
 
+<script src="catalog.js"></script>
 <script>
-let CATALOG = [];
+// catalog.js inlines the data (window.CATALOG_DATA) so this page works from
+// file://, GitHub Pages, and any subpath — no fetch, no path fragility.
+// innerHTML templates render only this repo's own generated catalog data.
+const CATALOG = window.CATALOG_DATA || [];
 const selected = new Set();
 let activeCat = "All", activeTier = "All", query = "";
 
@@ -160,15 +186,13 @@ const tray = document.getElementById("tray");
 const backdrop = document.getElementById("backdrop");
 const modal = document.getElementById("modal");
 
-// SECURITY NOTE: innerHTML is used with catalog.json, which is generated by
-// our own marketplace loader and shipped in this repo — no untrusted input
-// reaches these templates. Do not point this page at a third-party catalog.
-fetch("catalog.json")
-  .then(r => r.json())
-  .then(data => { CATALOG = data; init(); })
-  .catch(() => { grid.innerHTML = "<p style='color:var(--slate-400)'>catalog.json not found — serve this folder over HTTP.</p>"; });
+init();
 
 function init() {
+  if (!CATALOG.length) {
+    grid.innerHTML = "<p style='color:var(--ink-3)'>catalog.js missing — rebuild from the marketplace loader.</p>";
+    return;
+  }
   document.getElementById("stat-count").textContent = CATALOG.length;
   const cats = [...new Set(CATALOG.map(f => f.category))];
   document.getElementById("stat-cats").textContent = cats.length;
@@ -228,7 +252,7 @@ function openModal(id) {
     </div>
     <h2>${f.name}</h2>
     <p class="tag">${f.tagline}</p>
-    <h3 style="font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--slate-500);margin-top:14px">Configuration</h3>
+    <h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);margin-top:12px">Configuration</h3>
     <table class="config-table">${rows || "<tr><td>none — works out of the box</td></tr>"}</table>
     <pre>cameras:
   - id: "your-camera"

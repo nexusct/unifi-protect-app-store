@@ -6,34 +6,35 @@
 <title>Nexus Vision — AI Functions for UniFi Protect | Your Cameras, Working</title>
 <meta name="description" content="Plug GPU-powered AI functions into your existing UniFi Protect cameras. Fall detection, dock analytics, queue alerts, liability protection — on-prem, BIPA-safe, one subscription." />
 <style>
+  /* ui.com-style light theme: white canvas, gray cards, Ubiquiti blue */
   :root {
-    --graphite: #0a0e14; --panel: #111722; --panel-2: #161f2d;
-    --vellum: #e8e4d8; --marking: #e8b93c;
-    --slate-400: #94a3b8; --slate-500: #64748b;
-    --line: rgba(232,228,216,0.08);
-    --green: #34d399; --amber: #fbbf24; --red: #f87171;
+    --bg: #ffffff; --panel: #f6f7f9; --panel-2: #eef0f4;
+    --vellum: #0e1526; --marking: #0559d5;
+    --slate-400: #4d5666; --slate-500: #838b9b;
+    --line: #e3e6ec;
+    --green: #0d9e63; --amber: #b97d07; --red: #d5342c;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--graphite); color: var(--vellum); font-family: "Inter", -apple-system, sans-serif; line-height: 1.6; }
+  body { background: var(--bg); color: var(--vellum); font-family: "Inter", -apple-system, sans-serif; line-height: 1.6; }
   h1, h2, h3 { font-family: "Archivo", "Inter", sans-serif; }
   .shell { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
 
-  nav { position: sticky; top: 0; z-index: 50; background: rgba(10,14,20,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  nav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
   nav .shell { display: flex; align-items: center; justify-content: space-between; height: 62px; }
   .brand { font-family: "Archivo"; font-weight: 900; font-size: 18px; letter-spacing: -0.02em; }
   .brand span { color: var(--marking); }
   nav a { color: var(--slate-400); text-decoration: none; font-size: 13.5px; font-weight: 600; margin-left: 22px; }
   nav a:hover { color: var(--vellum); }
-  .btn { background: var(--marking); color: var(--graphite); border: none; font-weight: 800; font-size: 14px;
-    padding: 12px 24px; border-radius: 12px; cursor: pointer; text-decoration: none; display: inline-block; transition: opacity 0.15s; }
+  .btn { background: var(--marking); color: #fff; border: none; font-weight: 700; font-size: 14px;
+    padding: 12px 24px; border-radius: 999px; cursor: pointer; text-decoration: none; display: inline-block; transition: opacity 0.15s; }
   .btn:hover { opacity: 0.88; }
-  .btn.ghost { background: transparent; color: var(--vellum); border: 1px solid var(--line); }
+  .btn.ghost { background: #fff; color: var(--vellum); border: 1px solid var(--line); }
   .btn.big { padding: 16px 32px; font-size: 15.5px; }
 
   .hero { padding: 88px 0 64px; text-align: center;
-    background: radial-gradient(ellipse 55% 45% at 50% -5%, rgba(232,185,60,0.12), transparent); }
+    background: linear-gradient(180deg, #f6f9ff 0%, #fff 100%); }
   .kicker { display: inline-flex; font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--marking); border: 1px solid rgba(232,185,60,0.35); background: rgba(232,185,60,0.08);
+    color: var(--marking); border: 1px solid rgba(5,89,213,0.25); background: rgba(5,89,213,0.08);
     padding: 6px 14px; border-radius: 999px; margin-bottom: 22px; }
   .hero h1 { font-size: clamp(32px, 5.4vw, 58px); font-weight: 900; letter-spacing: -0.025em; line-height: 1.06; }
   .hero h1 em { color: var(--marking); font-style: normal; }
@@ -56,9 +57,9 @@
 
   .tier-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-top: 34px; }
   .tier { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 28px; display: flex; flex-direction: column; }
-  .tier.featured { border-color: var(--marking); background: var(--panel-2); position: relative; }
+  .tier.featured { border-color: var(--marking); background: #fff; position: relative; box-shadow: 0 0 0 1px var(--marking); }
   .tier .flag { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: var(--marking);
-    color: var(--graphite); font-size: 10.5px; font-weight: 800; padding: 4px 12px; border-radius: 999px; letter-spacing: 0.08em; }
+    color: #fff; font-size: 10.5px; font-weight: 800; padding: 4px 12px; border-radius: 999px; letter-spacing: 0.08em; }
   .tier h3 { font-size: 19px; font-weight: 900; }
   .tier .price { font-family: "Archivo"; font-size: 34px; font-weight: 900; margin: 8px 0 2px; }
   .tier .price span { font-size: 14px; color: var(--slate-500); font-weight: 600; }
@@ -80,19 +81,19 @@
   .signup-points b { color: var(--vellum); }
   .signup-points .ic { color: var(--marking); font-weight: 900; }
 
-  form.signup { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 28px; }
+  form.signup { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 28px; box-shadow: 0 8px 30px rgba(14,21,38,0.06); }
   .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   @media (max-width: 560px) { .frow { grid-template-columns: 1fr; } }
   .field { margin-bottom: 12px; }
   .field label { display: block; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate-500); margin-bottom: 5px; }
-  .field input, .field select, .field textarea { width: 100%; background: var(--graphite); border: 1px solid var(--line);
+  .field input, .field select, .field textarea { width: 100%; background: #fff; border: 1px solid var(--line);
     border-radius: 10px; padding: 11px 13px; color: var(--vellum); font-size: 14px; outline: none; font-family: inherit; }
-  .field input:focus, .field select:focus, .field textarea:focus { border-color: rgba(232,185,60,0.5); }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--marking); }
   .field textarea { resize: vertical; min-height: 76px; }
   .pick-bundles { display: flex; flex-wrap: wrap; gap: 8px; }
-  .pick-bundles .pk { border: 1px solid var(--line); background: var(--graphite); border-radius: 10px;
+  .pick-bundles .pk { border: 1px solid var(--line); background: #fff; border-radius: 10px;
     padding: 8px 13px; font-size: 12.5px; font-weight: 600; color: var(--slate-400); cursor: pointer; transition: all 0.15s; }
-  .pick-bundles .pk.on { border-color: var(--marking); color: var(--marking); background: rgba(232,185,60,0.08); }
+  .pick-bundles .pk.on { border-color: var(--marking); color: var(--marking); background: rgba(5,89,213,0.08); }
   .form-msg { margin-top: 12px; font-size: 13.5px; padding: 12px 14px; border-radius: 10px; display: none; }
   .form-msg.ok { display: block; background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3); color: var(--green); }
   .form-msg.err { display: block; background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: var(--red); }
@@ -103,9 +104,9 @@
   details.faq[open] summary::before { content: "–"; }
   details.faq p { color: var(--slate-400); font-size: 14px; margin: 10px 0 0 24px; max-width: 680px; }
 
-  footer { border-top: 1px solid var(--line); padding: 34px 0 48px; color: var(--slate-500); font-size: 13px; }
+  footer { border-top: 1px solid var(--line); padding: 34px 0 48px; color: var(--slate-500); font-size: 13px; background: var(--panel); }
   footer .shell { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
-  footer a { color: var(--slate-400); text-decoration: none; }
+  footer a { color: var(--marking); text-decoration: none; }
 </style>
 </head>
 <body>

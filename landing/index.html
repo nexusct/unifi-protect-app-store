@@ -3,8 +3,54 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Nexus Vision — AI Functions for UniFi Protect | Your Cameras, Working</title>
-<meta name="description" content="Plug GPU-powered AI functions into your existing UniFi Protect cameras. Fall detection, dock analytics, queue alerts, liability protection — on-prem, BIPA-safe, one subscription." />
+<title>Nexus Vision — AI Functions for UniFi Protect Cameras</title>
+<meta name="description" content="GPU-powered AI functions for existing UniFi Protect cameras — fall detection, dock analytics, queue alerts, liability protection. On-prem, no cloud video." />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Nexus Vision — AI Functions for UniFi Protect" />
+<meta property="og:description" content="120 GPU-accelerated video analytics functions for your existing UniFi Protect cameras. On-prem, biometric-free by design." />
+<meta property="og:image" content="assets/hero-banner.jpg" />
+<meta property="og:site_name" content="Nexus Vision" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Nexus Vision",
+  "applicationCategory": "SecurityApplication",
+  "operatingSystem": "Docker (Linux, NVIDIA GPU)",
+  "description": "GPU-accelerated AI function marketplace for UniFi Protect NVRs. 120 video analytics functions running on-premises.",
+  "offers": {
+    "@type": "AggregateOffer",
+    "priceCurrency": "USD",
+    "lowPrice": "149",
+    "highPrice": "399",
+    "offerCount": "3"
+  },
+  "provider": {
+    "@type": "Organization",
+    "name": "Nexus Communications Technology",
+    "url": "https://nexusct.com",
+    "address": { "@type": "PostalAddress", "streetAddress": "1171 Tower Road", "addressLocality": "Schaumburg", "addressRegion": "IL", "postalCode": "60173" }
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "Does this work with my existing UniFi setup?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Any UniFi Protect camera with RTSP enabled works. No new cameras, no NVR replacement, no network changes beyond the GPU appliance sitting next to your console." } },
+    { "@type": "Question", "name": "Where does the video go?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Nowhere. All inference runs on the GPU appliance in your building. Alerts carry metadata and, where you allow it, a snapshot. There is no cloud video." } },
+    { "@type": "Question", "name": "Is this BIPA-compliant in Illinois?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Designed to avoid BIPA applicability: no face recognition and no biometric identifiers — it analyzes skeletons, objects, plates, and counts. Biometric features would require written consent flows and counsel review." } },
+    { "@type": "Question", "name": "What if a function doesn't fit my site?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Functions are swappable monthly. Start with the obvious ones, tune zones on the onboarding call, swap what doesn't earn its keep." } },
+    { "@type": "Question", "name": "Who installs and supports it?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Nexus Communications Technology — Schaumburg, IL. A UniFi integrator and managed-services provider; the appliance, onboarding, and ongoing tuning come from the same team." } }
+  ]
+}
+</script>
 <style>
   /* ui.com-style light theme: white canvas, gray cards, Ubiquiti blue */
   :root {
@@ -135,13 +181,13 @@
   <div class="shell">
     <span class="kicker">UniFi Protect · GPU AI · On-Premises</span>
     <h1>Your cameras already see everything.<br /><em>Now they understand it.</em></h1>
-    <p>Nexus Vision plugs GPU-accelerated AI functions into your existing UniFi Protect NVR. Fall detection, dock analytics, queue alerts, liability protection — 67 sellable functions, running on your premises, with zero new cameras and zero cloud video.</p>
+    <p>Nexus Vision plugs GPU-accelerated AI functions into your existing UniFi Protect NVR. Fall detection, dock analytics, queue alerts, liability protection — 120 functions in the marketplace, running on your premises, with zero new cameras and zero cloud video.</p>
     <div class="hero-cta">
       <a href="#signup" class="btn big">Start a subscription</a>
-      <a href="/storefront/" class="btn big ghost">Browse 67 functions →</a>
+      <a href="/storefront/" class="btn big ghost">Browse 120 functions →</a>
     </div>
     <div class="trust">
-      <div><b>67</b> AI functions</div>
+      <div><b>120</b> AI functions</div>
       <div><b>9</b> business verticals</div>
       <div><b>100%</b> video stays on-prem</div>
       <div><b>0</b> biometric identification — BIPA-safe</div>
@@ -214,7 +260,7 @@
       <div class="tier">
         <h3>Enterprise</h3>
         <div class="price">Custom</div>
-        <p class="per">multi-site · unlimited streams · SLA</p>
+        <p class="per">multi-site · unlimited streams · documented response targets</p>
         <ul>
           <li>Unlimited functions, all tiers</li>
           <li>Multi-site fleet dashboard</li>
@@ -233,7 +279,7 @@
     <div>
       <p class="sec-kicker">Start</p>
       <h2 class="sec-title">Get your site subscribed</h2>
-      <p class="sec-sub">Tell us about your site and pick your bundle. A Nexus specialist follows up within one business day to size hardware and map zones.</p>
+      <p class="sec-sub">Tell us about your site and pick your bundle. A Nexus specialist follows up promptly to size hardware and map zones.</p>
       <div class="signup-points">
         <div><span class="ic">→</span><span><b>No rip-and-replace.</b> Works with the UniFi Protect cameras and NVR you already have.</span></div>
         <div><span class="ic">→</span><span><b>On-prem only.</b> Video never leaves your building. No biometric identification — Illinois BIPA-safe by design.</span></div>
@@ -291,7 +337,7 @@
     <h2 class="sec-title">Straight answers</h2>
     <details class="faq"><summary>Does this work with my existing UniFi setup?</summary><p>Yes — that's the point. Any UniFi Protect camera with RTSP enabled works. No new cameras, no NVR replacement, no network changes beyond the GPU appliance sitting next to your console.</p></details>
     <details class="faq"><summary>Where does the video go?</summary><p>Nowhere. All inference runs on the GPU appliance in your building. Alerts carry metadata and (where you allow it) a snapshot. There is no cloud video subscription because there is no cloud video.</p></details>
-    <details class="faq"><summary>Is this BIPA-compliant in Illinois?</summary><p>By design, yes. The platform performs no face recognition and no biometric identification — it analyzes skeletons, objects, plates, and counts. If you ever want biometric features, that requires written consent flows and counsel review, and we'll tell you that plainly.</p></details>
+    <details class="faq"><summary>Is this BIPA-compliant in Illinois?</summary><p>Designed to avoid BIPA applicability: the platform performs no face recognition and collects no biometric identifiers — it analyzes skeletons, objects, plates, and counts. If you ever want biometric features, that requires written consent flows and counsel review, and we'll tell you that plainly.</p></details>
     <details class="faq"><summary>What if a function doesn't fit my site?</summary><p>Functions are swappable monthly. Start with the obvious ones, tune zones on the onboarding call, swap what doesn't earn its keep.</p></details>
     <details class="faq"><summary>Who installs and supports it?</summary><p>Nexus Communications Technology — Schaumburg, IL. We're a UniFi integrator and managed-services provider; the appliance, onboarding, and ongoing tuning come from the same team that answers the phone.</p></details>
   </div>
@@ -307,12 +353,12 @@
 <script>
 // Bundle quick-picks from the catalog's top functions
 const PICKS = [
-  ["fall", "Fall detection"], ["bed-exit-sentinel", "Bed-exit prediction"],
+  ["fall", "Fall detection"], ["bed_exit", "Bed-exit prediction"],
   ["fire-exit-blocked", "Fire exit blocked"], ["slip-fall", "Slip & fall clips"],
   ["queue-length", "Queue alerts"], ["drive-thru-timer", "Drive-thru timing"],
   ["truck-turn-time", "Truck turn time"], ["yard-dwell", "Trailer dwell"],
   ["after-hours-activity", "After-hours activity"], ["tailgating", "Tailgating"],
-  ["camera-tamper", "Camera tamper"], ["video-search", "NL video search"],
+  ["camera-tamper", "Camera tamper"], ["video_search", "NL video search"],
 ];
 const picksEl = document.getElementById("bundle-picks");
 const chosen = new Set();

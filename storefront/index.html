@@ -18,7 +18,7 @@
 }
 </script>
 <style>
-  /* ui.com-style light theme: white canvas, gray cards, Ubiquiti blue */
+  /* Base styles; App Store-inspired overrides load after this block. */
   :root {
     --bg: #ffffff;
     --card: #f6f7f9;
@@ -124,8 +124,10 @@
   footer a { color: var(--blue); text-decoration: none; }
   @media (max-width: 640px) { .tray-list { display: none; } }
 </style>
+<link rel="stylesheet" href="/assets/app-store.css" />
 </head>
-<body>
+<body class="page-storefront">
+<a class="skip-link" href="#main-content">Skip to functions</a>
 
 <div class="topbar">
   <div class="shell">
@@ -143,20 +145,31 @@
   <div class="shell">
     <span class="kicker">UniFi Protect · GPU AI · On-Premises</span>
     <h1>The function marketplace for<br />your <span>UniFi Protect</span> cameras.</h1>
-    <p>Every function plugs into your existing NVR through an API key. Pick what solves your problem — it runs on your premises, on a GPU appliance we size for you.</p>
+    <p>Choose modules for the problems your cameras already see. A local connector uses a scoped Protect account, and inference runs on a GPU appliance at your site.</p>
     <div class="hero-stats">
       <div><b id="stat-count">—</b>GPU functions</div>
       <div><b id="stat-cats">—</b>business categories</div>
-      <div><b>100%</b>on-prem video</div>
-      <div><b>0</b>faces identified (biometric-free by design)</div>
+      <div><b>Local</b>video processing</div>
+      <div><b>0</b>biometric identifiers collected</div>
+    </div>
+    <div class="featured-rail" aria-label="Featured functions">
+      <button type="button" class="feature-card primary" data-feature-id="slip-fall">
+        <span class="feature-copy"><span class="feature-label">Featured · Liability review</span><span class="feature-title">Preserve the clip before it expires.</span><span class="feature-description">Slip &amp; Fall Liability Guard marks the event window for human review.</span></span>
+      </button>
+      <button type="button" class="feature-card safety" data-feature-id="fire-exit-blocked">
+        <span class="feature-copy"><span class="feature-label">Safety operations</span><span class="feature-title">Keep egress areas visible.</span><span class="feature-description">Watch a defined exit zone for persistent obstructions.</span></span>
+      </button>
+      <button type="button" class="feature-card operations" data-feature-id="dock-utilization">
+        <span class="feature-copy"><span class="feature-label">Warehouse intelligence</span><span class="feature-title">See which dock doors are actually busy.</span><span class="feature-description">Measure utilization from cameras already covering the dock.</span></span>
+      </button>
     </div>
   </div>
 </header>
 
 <div class="controls">
   <div class="shell controls-row">
-    <input class="search" id="search" placeholder="Search functions… (fall, dock, queue, parking)" />
-    <select class="sortsel" id="sort-sel" title="Sort">
+    <input class="search" id="search" type="search" aria-label="Search functions" placeholder="Search functions… (fall, dock, queue, parking)" />
+    <select class="sortsel" id="sort-sel" aria-label="Sort functions">
       <option value="category">Sort: Vertical</option>
       <option value="name">Sort: Function A–Z</option>
       <option value="tier">Sort: Service level</option>
@@ -166,7 +179,8 @@
   </div>
 </div>
 
-<main class="shell">
+<main class="shell" id="main-content">
+  <div class="results-head"><h2>All functions</h2><span id="result-count" aria-live="polite"></span></div>
   <div class="grid" id="grid"></div>
 </main>
 
@@ -179,9 +193,9 @@
   </div>
 </div>
 
-<div class="modal-backdrop" id="backdrop">
+<div class="modal-backdrop" id="backdrop" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Function details">
   <div class="modal-wrap">
-    <button class="close-x" id="close-x">×</button>
+    <button class="close-x" id="close-x" aria-label="Close function details">×</button>
     <div class="modal" id="modal"></div>
   </div>
 </div>
@@ -222,6 +236,9 @@ function init() {
   buildChips("tier-chips", ["All", "starter", "pro", "enterprise"], t => { activeTier = t; render(); });
   document.getElementById("search").addEventListener("input", e => { query = e.target.value.toLowerCase(); render(); });
   document.getElementById("sort-sel").addEventListener("change", e => { sortBy = e.target.value; render(); });
+  document.querySelectorAll("[data-feature-id]").forEach(card => {
+    card.addEventListener("click", () => openModal(card.dataset.featureId));
+  });
   render();
 }
 
@@ -240,7 +257,9 @@ function buildChips(elId, items, onPick) {
 function matches(f) {
   if (activeCat !== "All" && f.category !== activeCat) return false;
   if (activeTier !== "All" && f.tier !== activeTier) return false;
-  if (query && !(f.name + " " + f.tagline + " " + f.id).toLowerCase().includes(query)) return false;
+  const haystack = (f.name + " " + f.tagline + " " + f.id + " " + f.category + " " + f.tier).toLowerCase();
+  const terms = query.trim().split(/\s+/).filter(Boolean);
+  if (terms.length && !terms.every(term => haystack.includes(term))) return false;
   return true;
 }
 
@@ -256,21 +275,38 @@ function sortItems(items) {
   return arr;
 }
 
+function appInitials(name) {
+  const words = name.replace(/&/g, " ").split(/\s+/).filter(Boolean);
+  return words.slice(0, 2).map(word => word[0]).join("").toUpperCase();
+}
+
+function iconClass(category) {
+  let hash = 0;
+  for (const ch of category) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+  return `icon-${hash % 9}`;
+}
+
+function tierLabel(tier) {
+  return tier === "pro" ? "Professional" : tier[0].toUpperCase() + tier.slice(1);
+}
+
 function render() {
   const items = sortItems(CATALOG.filter(matches));
-  grid.innerHTML = items.map(f => `
-    <div class="card ${selected.has(f.id) ? "selected" : ""}" data-id="${f.id}">
-      <div class="card-top">
-        <h3>${f.name}</h3>
-        <div class="badges">
-          <span class="badge tier-${f.tier}">${f.tier}</span>
-          <span class="badge cat">${f.category}</span>
-        </div>
-      </div>
-      <p class="tagline">${f.tagline}</p>
-      <span class="add">${selected.has(f.id) ? "✓ In your stack" : "+ Details & add"}</span>
-    </div>`).join("");
-  grid.querySelectorAll(".card").forEach(c => c.addEventListener("click", () => openModal(c.dataset.id)));
+  document.getElementById("result-count").textContent = `${items.length} ${items.length === 1 ? "function" : "functions"}`;
+  grid.innerHTML = items.length ? items.map(f => `
+    <article class="card ${selected.has(f.id) ? "selected" : ""}" data-id="${f.id}">
+      <button type="button" class="app-main" data-open="${f.id}" aria-label="View ${f.name}">
+        <span class="app-icon ${iconClass(f.id)}" aria-hidden="true">${appInitials(f.name)}</span>
+        <span class="app-copy">
+          <span class="app-name">${f.name}</span>
+          <span class="tagline">${f.tagline}</span>
+          <span class="app-meta">${f.category} · ${tierLabel(f.tier)} · GPU</span>
+        </span>
+      </button>
+      <button type="button" class="get-btn ${selected.has(f.id) ? "added" : ""}" data-toggle="${f.id}" aria-label="${selected.has(f.id) ? "Remove" : "Add"} ${f.name}">${selected.has(f.id) ? "Added" : "Get"}</button>
+    </article>`).join("") : `<div class="empty-state"><strong>No functions found</strong>Try another search term, vertical, or service level.</div>`;
+  grid.querySelectorAll("[data-open]").forEach(button => button.addEventListener("click", () => openModal(button.dataset.open)));
+  grid.querySelectorAll("[data-toggle]").forEach(button => button.addEventListener("click", () => toggleSelect(button.dataset.toggle)));
   renderTray();
 }
 
@@ -280,13 +316,18 @@ function openModal(id) {
   const rows = Object.entries(f.config_schema || {})
     .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("");
   modal.innerHTML = `
-    <div class="badges" style="margin-bottom:10px">
-      <span class="badge tier-${f.tier}">${f.tier}</span>
-      <span class="badge cat">${f.category}</span>
-      ${f.requires_gpu ? '<span class="badge cat">GPU</span>' : ""}
+    <div class="modal-app-head">
+      <span class="app-icon ${iconClass(f.id)}" aria-hidden="true">${appInitials(f.name)}</span>
+      <div>
+        <div class="badges" style="margin-bottom:7px">
+          <span class="badge tier-${f.tier}">${tierLabel(f.tier)}</span>
+          <span class="badge cat">${f.category}</span>
+          ${f.requires_gpu ? '<span class="badge cat">GPU</span>' : ""}
+        </div>
+        <h2>${f.name}</h2>
+        <p class="tag">${f.tagline}</p>
+      </div>
     </div>
-    <h2>${f.name}</h2>
-    <p class="tag">${f.tagline}</p>
     <h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);margin-top:12px">Configuration</h3>
     <table class="config-table">${rows || "<tr><td>none — works out of the box</td></tr>"}</table>
     <pre>cameras:
@@ -299,13 +340,15 @@ function openModal(id) {
       <button class="btn ghost" id="close-btn">Close</button>
     </div>`;
   backdrop.classList.add("open");
+  backdrop.setAttribute("aria-hidden", "false");
   document.getElementById("toggle-sel").onclick = () => { toggleSelect(f.id); openModal(id); };
   document.getElementById("close-btn").onclick = closeModal;
 }
 
-function closeModal() { backdrop.classList.remove("open"); }
+function closeModal() { backdrop.classList.remove("open"); backdrop.setAttribute("aria-hidden", "true"); }
 backdrop.addEventListener("click", e => { if (e.target === backdrop) closeModal(); });
 document.getElementById("close-x").onclick = closeModal;
+document.addEventListener("keydown", e => { if (e.key === "Escape" && backdrop.classList.contains("open")) closeModal(); });
 
 function toggleSelect(id) {
   selected.has(id) ? selected.delete(id) : selected.add(id);
@@ -355,6 +398,7 @@ document.getElementById("generate-btn").onclick = () => {
       <button class="btn ghost" id="close-btn">Close</button>
     </div>`;
   backdrop.classList.add("open");
+  backdrop.setAttribute("aria-hidden", "false");
   document.getElementById("close-btn").onclick = closeModal;
 };
 </script>

@@ -52,7 +52,7 @@
 }
 </script>
 <style>
-  /* ui.com-style light theme: white canvas, gray cards, Ubiquiti blue */
+  /* Base styles; App Store-inspired overrides load after this block. */
   :root {
     --bg: #ffffff; --panel: #f6f7f9; --panel-2: #eef0f4;
     --vellum: #0e1526; --marking: #0559d5;
@@ -161,10 +161,12 @@
   footer .shell { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
   footer a { color: var(--marking); text-decoration: none; }
 </style>
+<link rel="stylesheet" href="/assets/app-store.css" />
 </head>
-<body>
+<body class="page-landing">
+<a class="skip-link" href="#main-content">Skip to content</a>
 
-<nav>
+<nav aria-label="Primary">
   <div class="shell">
     <div class="brand">Nexus<span>Vision</span></div>
     <div>
@@ -177,11 +179,12 @@
   </div>
 </nav>
 
+<main id="main-content">
 <header class="hero">
   <div class="shell">
     <span class="kicker">UniFi Protect · GPU AI · On-Premises</span>
     <h1>Your cameras already see everything.<br /><em>Now they understand it.</em></h1>
-    <p>Nexus Vision plugs GPU-accelerated AI functions into your existing UniFi Protect NVR. Fall detection, dock analytics, queue alerts, liability protection — 120 functions in the marketplace, running on your premises, with zero new cameras and zero cloud video.</p>
+    <p>Nexus Vision adds GPU-accelerated AI functions to your existing UniFi Protect NVR. Explore 120 modules for fall detection, dock analytics, queue alerts, and liability review—processed locally without replacing your cameras.</p>
     <div class="hero-cta">
       <a href="#signup" class="btn big">Start a subscription</a>
       <a href="/storefront/" class="btn big ghost">Browse 120 functions →</a>
@@ -189,8 +192,8 @@
     <div class="trust">
       <div><b>120</b> AI functions</div>
       <div><b>9</b> business verticals</div>
-      <div><b>100%</b> video stays on-prem</div>
-      <div><b>0</b> biometric identification — BIPA-safe</div>
+      <div><b>Local</b> video processing</div>
+      <div><b>0</b> biometric identifiers collected</div>
       <div><b>1</b> GPU appliance per site</div>
     </div>
   </div>
@@ -204,7 +207,7 @@
     <div class="pain-grid">
       <div class="pain"><div class="num">01</div><h3>Slip &amp; fall claims without footage</h3><p>The clip expired before anyone thought to save it. Slip &amp; Fall Liability Guard preserves the window the moment it happens.</p></div>
       <div class="pain"><div class="num">02</div><h3>Fire exit blocked by a pallet</h3><p>Five-figure OSHA fine waiting to happen. Fire Exit Blocked catches it within a minute.</p></div>
-      <div class="pain"><div class="num">03</div><h3>Residents falling at 2am</h3><p>Bed-Exit Prediction alerts staff before feet hit the floor. Fall Detection clips common areas. Skeleton-only, BIPA-safe.</p></div>
+      <div class="pain"><div class="num">03</div><h3>Residents falling at 2am</h3><p>Bed-Exit Prediction flags movement toward the bed edge. Fall Detection preserves common-area clips. Both are biometric-free by design.</p></div>
       <div class="pain"><div class="num">04</div><h3>Drive-thru times nobody measures</h3><p>Franchise scorecards run on service time. Drive-Thru Timer measures every car, order point to exit.</p></div>
       <div class="pain"><div class="num">05</div><h3>The trailer that's been in row C for 6 days</h3><p>Yard Dwell tracks every trailer's sitting time from one camera. No five-figure yard management system.</p></div>
       <div class="pain"><div class="num">06</div><h3>Camera sprayed the night of the theft</h3><p>You found out after. Camera Tamper Detection finds out in seconds.</p></div>
@@ -218,7 +221,7 @@
     <h2 class="sec-title">Plug in. Pick functions. Working.</h2>
     <div class="steps">
       <div class="step"><div class="n">1</div><h3>We size the appliance</h3><p>Jetson-class edge box for small sites, RTX-class server for campuses. It sits next to your NVR — your UniFi setup doesn't change.</p></div>
-      <div class="step"><div class="n">2</div><h3>Plug in your API key</h3><p>Your UniFi Protect console credentials connect the platform to your existing cameras. RTSP is already there — we just use it.</p></div>
+      <div class="step"><div class="n">2</div><h3>Connect the local appliance</h3><p>A scoped, read-only Protect account lets the on-site connector discover your existing cameras and RTSP streams.</p></div>
       <div class="step"><div class="n">3</div><h3>Pick your functions</h3><p>Browse the marketplace, add the ones that solve your problems, and we generate your subscription config. Zones get mapped on a short onboarding call.</p></div>
       <div class="step"><div class="n">4</div><h3>Alerts flow to your team</h3><p>Base44 NOC, Slack, Teams, email — your channel, your severity rules. Dedup and quiet hours built in.</p></div>
     </div>
@@ -282,22 +285,22 @@
       <p class="sec-sub">Tell us about your site and pick your bundle. A Nexus specialist follows up promptly to size hardware and map zones.</p>
       <div class="signup-points">
         <div><span class="ic">→</span><span><b>No rip-and-replace.</b> Works with the UniFi Protect cameras and NVR you already have.</span></div>
-        <div><span class="ic">→</span><span><b>On-prem only.</b> Video never leaves your building. No biometric identification — Illinois BIPA-safe by design.</span></div>
+        <div><span class="ic">→</span><span><b>Local by default.</b> Continuous video processing stays on the appliance. The platform collects no biometric identifiers.</span></div>
         <div><span class="ic">→</span><span><b>Cancel-friendly.</b> Monthly subscription, no multi-year lock-in.</span></div>
       </div>
     </div>
     <form class="signup" id="signup-form">
       <div class="frow">
-        <div class="field"><label>Company *</label><input name="company" required /></div>
-        <div class="field"><label>Contact name *</label><input name="contactName" required /></div>
+        <div class="field"><label for="company">Company *</label><input id="company" name="company" required /></div>
+        <div class="field"><label for="contact-name">Contact name *</label><input id="contact-name" name="contactName" required /></div>
       </div>
       <div class="frow">
-        <div class="field"><label>Work email *</label><input name="email" type="email" required /></div>
-        <div class="field"><label>Phone</label><input name="phone" type="tel" /></div>
+        <div class="field"><label for="work-email">Work email *</label><input id="work-email" name="email" type="email" required /></div>
+        <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" /></div>
       </div>
       <div class="frow">
-        <div class="field"><label>Industry *</label>
-          <select name="industry" required>
+        <div class="field"><label for="industry">Industry *</label>
+          <select id="industry" name="industry" required>
             <option value="">Select…</option>
             <option>Healthcare / Senior Living</option><option>Clinic / Outpatient</option>
             <option>Manufacturing / Warehouse</option><option>Logistics / Fleet</option>
@@ -307,7 +310,7 @@
             <option>Agriculture</option><option>Construction</option><option>Other</option>
           </select>
         </div>
-        <div class="field"><label>Tier *</label>
+        <div class="field"><label for="tier-select">Tier *</label>
           <select name="tier" id="tier-select" required>
             <option value="">Select…</option>
             <option value="starter">Starter — $149/mo</option>
@@ -317,16 +320,16 @@
         </div>
       </div>
       <div class="frow">
-        <div class="field"><label>Number of sites</label><input name="sites" type="number" min="1" value="1" /></div>
-        <div class="field"><label>Cameras on main site</label><input name="cameras" type="number" min="1" placeholder="e.g. 16" /></div>
+        <div class="field"><label for="sites">Number of sites</label><input id="sites" name="sites" type="number" min="1" value="1" /></div>
+        <div class="field"><label for="cameras">Cameras on main site</label><input id="cameras" name="cameras" type="number" min="1" placeholder="e.g. 16" /></div>
       </div>
       <div class="field">
-        <label>Which problems? (tap to pick — from the marketplace)</label>
-        <div class="pick-bundles" id="bundle-picks"></div>
+        <span class="field-label" id="problem-picks-label">Which problems? (tap to pick — from the marketplace)</span>
+        <div class="pick-bundles" id="bundle-picks" role="group" aria-labelledby="problem-picks-label"></div>
       </div>
-      <div class="field"><label>Anything else we should know?</label><textarea name="notes" placeholder="e.g. We have 2 SNFs, falls are the problem, we already have UniFi everywhere…"></textarea></div>
+      <div class="field"><label for="notes">Anything else we should know?</label><textarea id="notes" name="notes" placeholder="e.g. We have 2 SNFs, falls are the problem, we already have UniFi everywhere…"></textarea></div>
       <button type="submit" class="btn big" style="width:100%">Submit subscription request</button>
-      <div class="form-msg" id="form-msg"></div>
+      <div class="form-msg" id="form-msg" role="status" aria-live="polite"></div>
     </form>
   </div>
 </section>
@@ -336,12 +339,13 @@
     <p class="sec-kicker">FAQ</p>
     <h2 class="sec-title">Straight answers</h2>
     <details class="faq"><summary>Does this work with my existing UniFi setup?</summary><p>Yes — that's the point. Any UniFi Protect camera with RTSP enabled works. No new cameras, no NVR replacement, no network changes beyond the GPU appliance sitting next to your console.</p></details>
-    <details class="faq"><summary>Where does the video go?</summary><p>Nowhere. All inference runs on the GPU appliance in your building. Alerts carry metadata and (where you allow it) a snapshot. There is no cloud video subscription because there is no cloud video.</p></details>
+    <details class="faq"><summary>Where does the video go?</summary><p>Inference runs on the GPU appliance in your building. Continuous video is not sent to Nexus; alerts can include metadata and, where you allow it, a snapshot.</p></details>
     <details class="faq"><summary>Is this BIPA-compliant in Illinois?</summary><p>Designed to avoid BIPA applicability: the platform performs no face recognition and collects no biometric identifiers — it analyzes skeletons, objects, plates, and counts. If you ever want biometric features, that requires written consent flows and counsel review, and we'll tell you that plainly.</p></details>
     <details class="faq"><summary>What if a function doesn't fit my site?</summary><p>Functions are swappable monthly. Start with the obvious ones, tune zones on the onboarding call, swap what doesn't earn its keep.</p></details>
     <details class="faq"><summary>Who installs and supports it?</summary><p>Nexus Communications Technology — Schaumburg, IL. We're a UniFi integrator and managed-services provider; the appliance, onboarding, and ongoing tuning come from the same team that answers the phone.</p></details>
   </div>
 </section>
+</main>
 
 <footer>
   <div class="shell">
@@ -365,7 +369,12 @@ const chosen = new Set();
 PICKS.forEach(([id, label]) => {
   const b = document.createElement("button");
   b.type = "button"; b.className = "pk"; b.textContent = label; b.dataset.id = id;
-  b.onclick = () => { chosen.has(id) ? chosen.delete(id) : chosen.add(id); b.classList.toggle("on"); };
+  b.setAttribute("aria-pressed", "false");
+  b.onclick = () => {
+    chosen.has(id) ? chosen.delete(id) : chosen.add(id);
+    b.classList.toggle("on");
+    b.setAttribute("aria-pressed", String(chosen.has(id)));
+  };
   picksEl.appendChild(b);
 });
 
@@ -380,6 +389,8 @@ document.getElementById("signup-form").addEventListener("submit", async (e) => {
   const msg = document.getElementById("form-msg");
   msg.className = "form-msg"; msg.textContent = "";
   const data = Object.fromEntries(new FormData(form).entries());
+  // Do not send empty strings for optional typed fields such as camera count.
+  Object.keys(data).forEach(key => { if (typeof data[key] === "string" && !data[key].trim()) delete data[key]; });
   data.functions = [...chosen];
   const btn = form.querySelector("button[type=submit]");
   btn.disabled = true; btn.textContent = "Submitting…";
@@ -390,7 +401,7 @@ document.getElementById("signup-form").addEventListener("submit", async (e) => {
     const json = await res.json();
     if (!res.ok) throw new Error(json.error || "Submission failed");
     msg.className = "form-msg ok";
-    msg.textContent = `✓ Subscription request received — reference ${json.id}. A Nexus specialist will follow up within one business day.`;
+    msg.textContent = `Subscription request received — reference ${json.id}. A Nexus specialist will follow up promptly.`;
     form.reset(); chosen.clear(); document.querySelectorAll(".pk.on").forEach(b => b.classList.remove("on"));
   } catch (err) {
     msg.className = "form-msg err";

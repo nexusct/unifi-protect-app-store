@@ -73,21 +73,24 @@
 
   footer { padding: 30px 0 44px; color: var(--ink-3); font-size: 12.5px; }
 </style>
+<link rel="stylesheet" href="/assets/app-store.css" />
 </head>
-<body>
+<body class="page-guide">
+<a class="skip-link" href="#main-content">Skip to guide</a>
 
 <div class="topbar">
   <div class="shell">
     <div class="brand">Nexus<span>Vision</span> — Implementation Guide</div>
-    <nav><a href="/">Landing</a><a href="/storefront/">Marketplace</a></nav>
+    <nav aria-label="Primary"><a href="/">Landing</a><a href="/storefront/">Marketplace</a></nav>
   </div>
 </div>
 
+<main id="main-content">
 <header>
   <div class="shell">
     <span class="kicker">Deploy it yourself, or hand this to your integrator</span>
     <h1>How to implement Nexus Vision on UniFi Protect</h1>
-    <p>From a box with a GPU to working AI alerts on your existing cameras: hardware, UniFi setup, zone mapping, alert routing, and writing your own functions. Plan on 60–90 minutes per site.</p>
+    <p>From a GPU appliance to working AI alerts on your existing cameras: hardware, UniFi setup, zone mapping, alert routing, and writing your own functions. Setup time depends on stream count, camera placement, and calibration needs.</p>
     <div class="toc">
       <a href="#s1">1 · Hardware & GPU sizing</a>
       <a href="#s2">2 · UniFi Protect setup</a>
@@ -125,7 +128,7 @@
   <div class="shell">
     <h2><span class="step">2 ·</span> UniFi Protect setup</h2>
     <h3>Enable RTSP per camera</h3>
-    <p>Protect console → <b>Cameras → [camera] → Settings → Advanced → RTSP</b>. Enable it and copy the <code>rtsps://</code> alias URL. Use the lowest-resolution stream that still shows the target clearly — 720p is plenty for detection and halves GPU load.</p>
+    <p>Protect console → <b>Cameras → [camera] → Settings → Advanced → RTSP</b>. Enable it and copy the <code>rtsps://</code> alias URL. Use the lowest-resolution stream that still shows the target clearly; 720p is often sufficient and reduces GPU load versus higher resolutions.</p>
     <h3>Create a read-only service account</h3>
     <p>Console → <b>Settings → Users → Add User</b> → local-only, <b>Viewer</b> role. This is what the platform uses to discover cameras and pull events. Keep it read-only; the platform never writes to Protect.</p>
     <h3>UniFi Access (optional, unlocks correlation functions)</h3>
@@ -188,7 +191,7 @@ curl http://localhost:8090/streams    <span class="c"># every camera should show
     closed_hours: [20, 6]  <span class="c"># 8pm–6am</span></pre>
     <ul>
       <li><b>hold_seconds / hold_ms</b> exist on most detectors — they are your false-alarm budget. Start with defaults, tighten after the first week.</li>
-      <li><b>Every alert carries a snapshot</b> (unless the camera is in a privacy zone), so tuning is a judgment call on real examples, not guesswork.</li>
+      <li><b>Alerts can carry a snapshot</b> (unless the camera is in a privacy zone), so tuning can use real examples rather than guesswork.</li>
       <li><b>Domain-weight functions</b> (weapon, PPE, smoke, ALPR) ship with a weights path in config — drop the provided <code>.pt</code> file into <code>models/</code>.</li>
     </ul>
   </div>
@@ -255,6 +258,7 @@ class Function(MarketplaceFunction):
     <div class="callout"><b>The honest rule:</b> every function in the catalog solves a problem a business is already paying for. If yours does too, it belongs in the marketplace — pull requests welcome.</div>
   </div>
 </section>
+</main>
 
 <footer>
   <div class="shell">

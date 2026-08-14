@@ -73,7 +73,7 @@ class AlertEngine:
         }
 
         delivered = []
-        if self.url and self.token and "change-me" not in self.token:
+        if self.url and self.token and "change-me" not in self.token.lower():
             try:
                 r = requests.post(self.url, json=payload, timeout=15)
                 delivered.append(f"base44:{r.status_code}")

@@ -77,9 +77,17 @@ This platform is designed for deployment on **trusted on-premises networks** alo
 ### 4. Access Control
 
 - Limit access to the Docker host (SSH keys, firewall rules)
-- Protect the `VISION_ADMIN_TOKEN` — this grants full control over subscription data
-- Consider IP allowlisting for the admin API endpoints if exposed
-- Review container logs regularly for unauthorized access attempts
+- Protect the `VISION_ADMIN_TOKEN` — this grants full control over subscription data and door unlock capability
+- The system enforces secure token requirements: minimum 16 characters, rejects "change-me" default
+- Built-in rate limiting protects against brute-force attacks:
+  - Signup: 5 requests/minute per IP
+  - Status check: 30 requests/minute per IP
+  - Admin list: 10 requests/minute per IP
+  - Admin updates: 20 requests/minute per IP
+  - Door unlock: 5 requests/minute per IP
+  - Video search: 30 requests/minute per IP
+- Consider additional IP allowlisting for the admin API endpoints if exposed
+- Review container logs regularly for unauthorized access attempts and rate limit violations
 
 ### 5. Data Retention
 
@@ -111,15 +119,13 @@ This platform is designed for deployment on **trusted on-premises networks** alo
 
 ## Known Limitations
 
-1. **No built-in authentication for public endpoints**: The signup and status endpoints are intentionally public. If you need authentication, use a reverse proxy with basic auth or OAuth.
+1. **No built-in authentication for public endpoints**: The signup and status endpoints are intentionally public (with rate limiting). If you need stronger authentication, use a reverse proxy with basic auth or OAuth.
 
-2. **Admin token is bearer-style**: The `X-Admin-Token` header uses a simple bearer token. Protect it like a password. Consider rotating it after any exposure.
+2. **Admin token is bearer-style**: The `X-Admin-Token` header uses a simple bearer token. Protect it like a password. Consider rotating it after any exposure. The system enforces minimum 16-character tokens and rejects the default "change-me" value.
 
 3. **SQLite database has no encryption**: Subscription data is stored in `data/subscriptions.db` in plaintext. Encrypt the host volume if required by compliance.
 
-4. **No rate limiting**: The API does not implement rate limiting. Use a reverse proxy (nginx, Traefik) to add rate limiting if exposing endpoints.
-
-5. **Door unlock endpoint has minimal validation**: `/unlock/{door_id}` does not require authentication. This is by design for integration with intercom systems, but means any client with network access can trigger unlocks. **Implement network-level access control** if using this feature.
+4. **Rate limiting is IP-based**: Built-in rate limits use client IP addresses. Behind proxies or NAT, multiple clients may share the same IP. Configure `X-Forwarded-For` handling in your reverse proxy if needed.
 
 ## Illinois BIPA Compliance
 

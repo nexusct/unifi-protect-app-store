@@ -160,12 +160,27 @@ Alerts are logged locally by default. Configure these to forward alerts to exter
 | `VISION_ADMIN_TOKEN` | Bearer token for admin API endpoints | `change-me` |
 | `VISION_CONFIG` | Path to sites.yaml config file (container path) | `/app/config/sites.yaml` |
 
-**Security**: Treat `VISION_ADMIN_TOKEN` as a password. Generate a strong random token:
+**Security**: Treat `VISION_ADMIN_TOKEN` as a password. The system enforces minimum 16-character tokens and rejects the default "change-me" value. Generate a strong random token:
 ```bash
 openssl rand -hex 32
 ```
 
 Mount `VISION_DATA` to a host volume in docker-compose.yml for persistence (default: `./data`).
+
+### Rate Limiting
+
+Built-in rate limits protect public and admin endpoints from abuse:
+
+| Endpoint | Rate Limit | Purpose |
+|---|---|---|
+| `POST /api/subscriptions` (signup) | 5/minute per IP | Prevent spam signups |
+| `GET /api/subscriptions/{id}` (status) | 30/minute per IP | Prevent enumeration |
+| `GET /api/subscriptions` (admin list) | 10/minute per IP | Prevent brute-force |
+| `PATCH /api/subscriptions/{id}` (admin) | 20/minute per IP | Prevent brute-force |
+| `POST /unlock/{door_id}` | 5/minute per IP | Prevent unauthorized unlocks |
+| `GET /search` (video search) | 30/minute per IP | Prevent resource exhaustion |
+
+Rate limits are IP-based. Configure `X-Forwarded-For` handling in your reverse proxy if deploying behind NAT.
 
 ## Alert destinations
 

@@ -5,7 +5,7 @@ your existing cameras, pick the GPU-accelerated functions your business
 needs, and run everything on your own premises — no cloud video, no new
 cameras, no per-camera AI hardware.
 
-**67 functions across 9 business categories**, plus 10 core life-safety
+**120 functions across 9 business categories**, plus 10 core life-safety
 detectors. Built and maintained by [Nexus Communications Technology](https://nexusct.com),
 Schaumburg, IL.
 
@@ -73,7 +73,7 @@ Lobby Visitor Flow · Per-Tenant After-Hours Watch
 
 **Construction** — Site Theft Watch · Crane Exclusion Zone
 
-**67 marketplace functions total** (verified: 67/67 register with zero errors).
+**120 marketplace functions total** (verified: 120/120 register with zero errors).
 
 ## Quick start
 
@@ -89,7 +89,8 @@ The container serves three surfaces on port 8090:
 | Route | What |
 |---|---|
 | `/` | Subscription landing page (pricing, signup) |
-| `/storefront/` | Function marketplace catalog |
+| `/guide/` | 8-step implementation guide (hardware, zones, tuning, writing functions) |
+| `/storefront/` | Function marketplace catalog (filter + sort by vertical / name / service level) |
 | `/api/subscriptions` | Signup API (POST), status (GET /{id}), admin (token-gated) |
 | `/health`, `/streams`, `/detectors`, `/search` | Runtime + NL video search |
 

@@ -118,6 +118,38 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "cart-path-violation",
+  "name": "Cart Path Violation",
+  "tagline": "Cart-path-only day. Cart on the fairway at 14. Photo attached.",
+  "category": "Compliance",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "active",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 protected turf area",
+   "active": "bool \u2014 enable on path-only days"
+  }
+ },
+ {
+  "id": "change-machine-watch",
+  "name": "Change Machine Watch",
+  "tagline": "Twenty minutes at the change machine at 4am. That's not laundry.",
+  "category": "Security & Access",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "dwell_minutes",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 change machine approach",
+   "dwell_minutes": "int (default 12)"
+  }
+ },
+ {
   "id": "child-safety-zone",
   "name": "Child Safety Zone",
   "tagline": "A small person near the pool gate at 9pm. Phone alert, right now.",
@@ -131,6 +163,22 @@ window.CATALOG_DATA = [
   "config_schema": {
    "zone": "polygon \u2014 restricted area",
    "max_height_ratio": "float \u2014 child height proxy vs frame (default 0.35)"
+  }
+ },
+ {
+  "id": "clubhouse-flow",
+  "name": "Clubhouse Amenity Flow",
+  "tagline": "The patio does 3x the grill on Fridays. Staffing finally matches.",
+  "category": "Intelligence",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "digest_hour",
+   "zones"
+  ],
+  "config_schema": {
+   "zones": "map of amenity-name \u2192 polygon",
+   "digest_hour": "int (default 22)"
   }
  },
  {
@@ -150,6 +198,22 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "coolant-leak-visual",
+  "name": "Leak Pooling Watch",
+  "tagline": "The puddle under the CRAC unit, caught when it was a mop job.",
+  "category": "Property & Liability",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "growth_ratio",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 floor area near equipment",
+   "growth_ratio": "float \u2014 dark-region growth (default 0.03)"
+  }
+ },
+ {
   "id": "crane-exclusion",
   "name": "Crane Exclusion Zone",
   "tagline": "Person under the load path. The lift director's phone buzzes.",
@@ -163,6 +227,20 @@ window.CATALOG_DATA = [
   "config_schema": {
    "zone": "polygon \u2014 exclusion area under/near crane",
    "hold_ms": "int (default 500)"
+  }
+ },
+ {
+  "id": "crematory-access",
+  "name": "Crematory Access Log",
+  "tagline": "Every entry to the crematory, timestamped, with a clip. The log writes itself.",
+  "category": "Compliance",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 crematory door approach"
   }
  },
  {
@@ -216,6 +294,26 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "daycare-ratio",
+  "name": "Classroom Ratio Watch",
+  "tagline": "9 toddlers, 1 adult, room 3. Ratio alert before the licensor arrives.",
+  "category": "Compliance",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "child_height_ratio",
+   "hold_seconds",
+   "max_ratio",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 classroom",
+   "max_ratio": "float \u2014 children per adult (default 8)",
+   "child_height_ratio": "float \u2014 child proxy (default 0.38)",
+   "hold_seconds": "int (default 120)"
+  }
+ },
+ {
   "id": "desk-hotel-mapping",
   "name": "Desk Utilization Map",
   "tagline": "Row 4 sits empty every day. Row 1 is full by 9. Now you can prove it.",
@@ -229,6 +327,58 @@ window.CATALOG_DATA = [
   "config_schema": {
    "desks": "map of desk-name \u2192 polygon",
    "digest_hour": "int (default 17)"
+  }
+ },
+ {
+  "id": "detail-qc-walk",
+  "name": "Detail QC Flag",
+  "tagline": "Foam still on the rear quarter at delivery. Flagged before the customer saw it.",
+  "category": "Automotive & Parking",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "residue_ratio",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 QC/delivery area",
+   "residue_ratio": "float \u2014 bright-patch threshold (default 0.06)"
+  }
+ },
+ {
+  "id": "dispensary-capacity",
+  "name": "Sales Floor Capacity",
+  "tagline": "Licensed cap is 30. You're at 34. The door got the alert, not the inspector.",
+  "category": "Compliance",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "hold_seconds",
+   "max_persons",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 sales floor",
+   "max_persons": "int \u2014 licensed cap",
+   "hold_seconds": "int (default 30)"
+  }
+ },
+ {
+  "id": "dock-slip-occupancy",
+  "name": "Slip Occupancy Log",
+  "tagline": "Slip 22 has a boat that isn't on the register. The harbormaster has the frame.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "check_hour",
+   "min_object_ratio",
+   "slips"
+  ],
+  "config_schema": {
+   "slips": "map of slip-name \u2192 polygon",
+   "check_hour": "int (default 6)",
+   "min_object_ratio": "float \u2014 boat-sized object (default 0.02)"
   }
  },
  {
@@ -259,6 +409,22 @@ window.CATALOG_DATA = [
   "config_schema": {
    "zone": "polygon \u2014 door area",
    "propped_seconds": "int (default 90)"
+  }
+ },
+ {
+  "id": "drive-off-alert",
+  "name": "Drive-Off Alert",
+  "tagline": "Tank filled, nobody walked in, car gone. Alert before the plate leaves frame.",
+  "category": "Automotive & Parking",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "store_line",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 pump island",
+   "store_line": "2-point line across store entry"
   }
  },
  {
@@ -360,6 +526,24 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "forecourt-loiter",
+  "name": "Forecourt Loitering Watch",
+  "tagline": "Someone's been standing between the pumps for 15 minutes at 1am.",
+  "category": "Security & Access",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "after_hours",
+   "loiter_minutes",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 forecourt",
+   "after_hours": "[start,end] (default [23,5])",
+   "loiter_minutes": "int (default 10)"
+  }
+ },
+ {
   "id": "forklift-speed",
   "name": "Forklift Speed Governor",
   "tagline": "Speeding forklifts in pedestrian aisles, caught on camera you already own.",
@@ -376,6 +560,40 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "fuel-dock-dwell",
+  "name": "Fuel Dock Dwell",
+  "tagline": "That boat's been on the fuel dock 45 minutes. The line is three deep.",
+  "category": "Intelligence",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "max_minutes",
+   "min_object_ratio",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 fuel dock",
+   "max_minutes": "int (default 25)",
+   "min_object_ratio": "float (default 0.02)"
+  }
+ },
+ {
+  "id": "funeral-home-flow",
+  "name": "Visitation Room Flow",
+  "tagline": "The Johnson visitation ran 3 hours with 140 visitors. Documented for the family.",
+  "category": "Intelligence",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "visitation_windows",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 visitation room",
+   "visitation_windows": "[[start,end],...] hours"
+  }
+ },
+ {
   "id": "gate-cycle-time",
   "name": "Gate Cycle Time",
   "tagline": "2:40 average at the inbound gate. Peak hours hit 7 minutes. Now it's measured.",
@@ -389,6 +607,22 @@ window.CATALOG_DATA = [
   "config_schema": {
    "zone": "polygon \u2014 gate lane",
    "slow_seconds": "int (default 300)"
+  }
+ },
+ {
+  "id": "gate-tailgate-storage",
+  "name": "Storage Gate Tailgate",
+  "tagline": "One code, two cars. The gate camera saw it.",
+  "category": "Security & Access",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "line",
+   "window_seconds"
+  ],
+  "config_schema": {
+   "line": "2-point gate crossing line",
+   "window_seconds": "int \u2014 second-crossing window (default 8)"
   }
  },
  {
@@ -476,6 +710,22 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "hallway-overnight",
+  "name": "Hallway Overnight Presence",
+  "tagline": "Someone is in building C at 2am. Tenant, thief, or resident \u2014 you need to know which.",
+  "category": "Security & Access",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "after_hours",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 interior hallway",
+   "after_hours": "[start,end] (default [21,6])"
+  }
+ },
+ {
   "id": "hand-hygiene",
   "name": "Hand Hygiene Compliance",
   "tagline": "Entered the kitchen without the sink stop. Logged.",
@@ -491,6 +741,38 @@ window.CATALOG_DATA = [
    "sink_zone": "polygon \u2014 handwash/sanitizer station",
    "protected_zone": "polygon \u2014 kitchen line / patient room",
    "window_seconds": "int \u2014 sink-within window (default 120)"
+  }
+ },
+ {
+  "id": "handicap-stall-monitor",
+  "name": "Accessible Stall Usage Log",
+  "tagline": "Every use of the accessible stalls, logged \u2014 plus the suspiciously fast ones.",
+  "category": "Automotive & Parking",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "fast_minutes",
+   "stalls"
+  ],
+  "config_schema": {
+   "stalls": "map of stall-name \u2192 polygon",
+   "fast_minutes": "int \u2014 flag turns under this (default 3)"
+  }
+ },
+ {
+  "id": "hangar-door-state",
+  "name": "Hangar Door After-Hours",
+  "tagline": "Hangar 3's door is open at 11pm. Nobody's scheduled.",
+  "category": "Security & Access",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "after_hours",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 door face",
+   "after_hours": "[start,end] (default [19,7])"
   }
  },
  {
@@ -510,6 +792,54 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "ice-cooler-stock",
+  "name": "Ice Cooler Stock Watch",
+  "tagline": "Empty ice cooler on a 90-degree Saturday. Now it texts you.",
+  "category": "Retail & QSR",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "check_minutes",
+   "drop_ratio",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 cooler face",
+   "drop_ratio": "float vs stocked baseline (default 0.4)",
+   "check_minutes": "int \u2014 check cadence (default 30)"
+  }
+ },
+ {
+  "id": "impound-yard-log",
+  "name": "Impound Yard In/Out Log",
+  "tagline": "In at 2:14pm Tuesday, out at 9:03am Thursday. Billing stops arguing.",
+  "category": "Automotive & Parking",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "line"
+  ],
+  "config_schema": {
+   "line": "2-point yard crossing line"
+  }
+ },
+ {
+  "id": "kennel-restlessness",
+  "name": "Kennel Restlessness Score",
+  "tagline": "Run 12 paced all night. The morning report said so, with numbers.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "digest_hour",
+   "kennels"
+  ],
+  "config_schema": {
+   "kennels": "map of kennel-name \u2192 polygon",
+   "digest_hour": "int (default 7)"
+  }
+ },
+ {
   "id": "lab-coat-zone",
   "name": "Clinical Zone Access Check",
   "tagline": "A vendor in the clinical corridor without scrubs. Flagged.",
@@ -525,6 +855,38 @@ window.CATALOG_DATA = [
    "zone": "polygon \u2014 clinical corridor",
    "clinical_hue": "[low,high] HSV band for scrubs/whites (default [0,180] low-sat high-val = white)",
    "min_ratio": "float (default 0.2)"
+  }
+ },
+ {
+  "id": "laundromat-overnight",
+  "name": "Laundromat Overnight Watch",
+  "tagline": "Someone's been sitting on the folding table for two hours at 3am.",
+  "category": "Security & Access",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "watch_hours",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 store floor",
+   "watch_hours": "[start,end] (default [1,5])"
+  }
+ },
+ {
+  "id": "library-zone-count",
+  "name": "Library Zone Counts",
+  "tagline": "The kids' room peaks at 4pm on school days. The budget narrative just got data.",
+  "category": "Intelligence",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "digest_hour",
+   "zones"
+  ],
+  "config_schema": {
+   "zones": "map of zone-name \u2192 polygon",
+   "digest_hour": "int (default 20)"
   }
  },
  {
@@ -598,6 +960,22 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "lot-inventory-count",
+  "name": "Lot Inventory Count",
+  "tagline": "Row D is one car short vs the DMS. Found at 3am, not at month-end.",
+  "category": "Automotive & Parking",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "count_hour",
+   "rows"
+  ],
+  "config_schema": {
+   "rows": "map of row-name \u2192 polygon",
+   "count_hour": "int \u2014 quiet-hours count (default 3)"
+  }
+ },
+ {
   "id": "lot-occupancy",
   "name": "Parking Lot Occupancy",
   "tagline": "Live lot count. Full-lot alerts. Zero sensors in the pavement.",
@@ -629,6 +1007,72 @@ window.CATALOG_DATA = [
   "config_schema": {
    "machines": "map of machine-name \u2192 polygon",
    "motion_threshold": "float \u2014 active energy level (default 0.02)"
+  }
+ },
+ {
+  "id": "machine-monopoly",
+  "name": "Machine Monopoly Watch",
+  "tagline": "One customer, eight machines, forty minutes. The Saturday regulars are glaring.",
+  "category": "Retail & QSR",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "dwell_minutes",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 machine row approach",
+   "dwell_minutes": "int (default 40)"
+  }
+ },
+ {
+  "id": "magnet-crane-exclusion",
+  "name": "Magnet Crane Exclusion",
+  "tagline": "Person under the magnet while it's live. The operator's cab buzzer fires.",
+  "category": "People & Safety",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "hold_ms",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 exclusion area under crane/magnet path",
+   "hold_ms": "int (default 400)"
+  }
+ },
+ {
+  "id": "mandated-camera-check",
+  "name": "Mandated Camera Coverage Check",
+  "tagline": "The vault camera got nudged Tuesday. The inspector comes Friday.",
+  "category": "Compliance",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "check_hour",
+   "edge_drop_ratio",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 mandated view region",
+   "edge_drop_ratio": "float vs baseline (default 0.5)",
+   "check_hour": "int (default 6)"
+  }
+ },
+ {
+  "id": "medspa-room-turn",
+  "name": "Treatment Room Turn",
+  "tagline": "Room 2 turns in 6 minutes. Room 4 takes 22. Now scheduling knows.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "idle_alert_minutes",
+   "rooms"
+  ],
+  "config_schema": {
+   "rooms": "map of room-name \u2192 polygon",
+   "idle_alert_minutes": "int (default 30)"
   }
  },
  {
@@ -664,6 +1108,56 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "nap-room-check",
+  "name": "Nap Room Check",
+  "tagline": "Nap time with movement, or pickup time with a child still there. Both caught.",
+  "category": "People & Safety",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "nap_hours",
+   "still_minutes",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 nap room",
+   "nap_hours": "[start,end] (default [12,14])",
+   "still_minutes": "int \u2014 all-still check after hours (default 30)"
+  }
+ },
+ {
+  "id": "overnight-parking",
+  "name": "Overnight Parking Watch",
+  "tagline": "Posted no overnight parking. There's a van. It's 2am. Documented.",
+  "category": "Automotive & Parking",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "closed_hours",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 lot area",
+   "closed_hours": "[start,end] (default [22,6])"
+  }
+ },
+ {
+  "id": "pace-of-play",
+  "name": "Pace of Play Monitor",
+  "tagline": "22-minute gap after the group on 7. The marshal knows which cart.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "slow_gap_minutes",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 tee box approach",
+   "slow_gap_minutes": "int (default 15)"
+  }
+ },
+ {
   "id": "pallet-count",
   "name": "Pallet Count",
   "tagline": "The floor count vs the system count \u2014 settled by camera.",
@@ -679,6 +1173,42 @@ window.CATALOG_DATA = [
    "zone": "polygon \u2014 staging area",
    "min_area_ratio": "float \u2014 min object size vs frame (default 0.005)",
    "max_area_ratio": "float \u2014 max object size (default 0.15)"
+  }
+ },
+ {
+  "id": "pavilion-rental",
+  "name": "Pavilion Rental Verification",
+  "tagline": "Pavilion 2 is packed and nobody rented it. Or it's rented and empty. Either way, logged.",
+  "category": "Compliance",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "min_persons",
+   "rental_windows",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 pavilion",
+   "rental_windows": "[[start,end],...] hours rented (default [])",
+   "min_persons": "int \u2014 occupied threshold (default 4)"
+  }
+ },
+ {
+  "id": "pay-station-queue",
+  "name": "Pay Station Queue",
+  "tagline": "Four people deep at the pay machine at 5:55pm. One of them is about to bail on the ticket.",
+  "category": "Automotive & Parking",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "hold_seconds",
+   "max_queue",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 pay station approach",
+   "max_queue": "int (default 3)",
+   "hold_seconds": "int (default 45)"
   }
  },
  {
@@ -715,6 +1245,22 @@ window.CATALOG_DATA = [
    "zone": "polygon \u2014 pickup line area",
    "max_line": "int (default 5)",
    "wait_alert_minutes": "int (default 15)"
+  }
+ },
+ {
+  "id": "play-yard-cluster",
+  "name": "Play Yard Scuffle Alert",
+  "tagline": "Sudden chaos in the yard. Staff alerted in seconds, clip attached.",
+  "category": "People & Safety",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "energy_spike",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 play yard",
+   "energy_spike": "float \u2014 vs rolling baseline (default 3.0)"
   }
  },
  {
@@ -770,6 +1316,38 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "pump-dwell",
+  "name": "Pump Dwell Time",
+  "tagline": "A car camping at pump 4 during rush costs you three sales an hour.",
+  "category": "Automotive & Parking",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "slow_minutes",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 pump island",
+   "slow_minutes": "int (default 12)"
+  }
+ },
+ {
+  "id": "pump-turns",
+  "name": "Pump Turn Counter",
+  "tagline": "Pump 2 turned 41 cars today. Pump 5 turned 9. Now you know why the line forms.",
+  "category": "Intelligence",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "digest_hour",
+   "pumps"
+  ],
+  "config_schema": {
+   "pumps": "map of pump-name \u2192 polygon",
+   "digest_hour": "int (default 22)"
+  }
+ },
+ {
   "id": "queue-length",
   "name": "Queue Length Monitor",
   "tagline": "Know the moment a line forms \u2014 before customers walk out.",
@@ -785,6 +1363,38 @@ window.CATALOG_DATA = [
    "zone": "polygon \u2014 queue area (normalized)",
    "max_length": "int \u2014 persons before alert (default 4)",
    "hold_seconds": "int \u2014 sustained duration (default 30)"
+  }
+ },
+ {
+  "id": "rack-door-open",
+  "name": "Rack Door Watch",
+  "tagline": "Cabinet 14's door has been open for 20 minutes. The badge log says nobody.",
+  "category": "Security & Access",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "open_minutes",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 cabinet/row door",
+   "open_minutes": "int (default 15)"
+  }
+ },
+ {
+  "id": "range-utilization",
+  "name": "Driving Range Utilization",
+  "tagline": "Bay 1-8 full until 10, dead by 2. The pricing sheet should know.",
+  "category": "Intelligence",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "bays",
+   "digest_hour"
+  ],
+  "config_schema": {
+   "bays": "map of bay-name \u2192 polygon",
+   "digest_hour": "int (default 21)"
   }
  },
  {
@@ -804,6 +1414,22 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "route-verification",
+  "name": "Service Route Verification",
+  "tagline": "The sweeper hit zone 12 at 4:40am. Proven, timestamped, done.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "window",
+   "zones"
+  ],
+  "config_schema": {
+   "zones": "map of route-zone \u2192 polygon",
+   "window": "[start,end] hours the route should cover zones"
+  }
+ },
+ {
   "id": "safety-zone-breach",
   "name": "Safety Zone Breach",
   "tagline": "Person in the press cell. Alert in under a second.",
@@ -820,6 +1446,38 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "sanctuary-count",
+  "name": "Service Attendance Count",
+  "tagline": "9am: 212. 11am: 347. The attendance report writes itself.",
+  "category": "Intelligence",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "service_windows",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 sanctuary",
+   "service_windows": "[[start,end],...] hours (default [[9,10],[11,12]])"
+  }
+ },
+ {
+  "id": "scrap-scale-queue",
+  "name": "Scale House Queue",
+  "tagline": "Six trucks at the scale and one working it. Dispatch knows before the drivers call.",
+  "category": "Manufacturing & Warehouse",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "max_queue",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 scale approach lane",
+   "max_queue": "int (default 4)"
+  }
+ },
+ {
   "id": "seal-check",
   "name": "Trailer Seal Check",
   "tagline": "Trailer doors open in the parking row, not the dock. That's pilferage.",
@@ -833,6 +1491,24 @@ window.CATALOG_DATA = [
   "config_schema": {
    "zone": "polygon \u2014 trailer rear area in parking row",
    "diff_ratio": "float (default 0.15)"
+  }
+ },
+ {
+  "id": "service-lane-cycle",
+  "name": "Service Lane Cycle Time",
+  "tagline": "Average write-up-to-exit: 3h 12m today. The OEM scorecard knows \u2014 now you do too.",
+  "category": "Automotive & Parking",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "entry_zone",
+   "exit_zone",
+   "slow_hours"
+  ],
+  "config_schema": {
+   "entry_zone": "polygon \u2014 write-up lane",
+   "exit_zone": "polygon \u2014 service exit",
+   "slow_hours": "float (default 5)"
   }
  },
  {
@@ -869,6 +1545,22 @@ window.CATALOG_DATA = [
    "zone": "polygon \u2014 shelf area",
    "drop_ratio": "float \u2014 density drop vs baseline (default 0.35)",
    "learn_frames": "int \u2014 baseline frames to average (default 50)"
+  }
+ },
+ {
+  "id": "shelter-census",
+  "name": "Shelter Overnight Census",
+  "tagline": "Tuesday census: 47. Reported to the funder automatically.",
+  "category": "Intelligence",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "census_hour",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 bunk area",
+   "census_hour": "int (default 2)"
   }
  },
  {
@@ -938,6 +1630,24 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "splash-pad-capacity",
+  "name": "Splash Pad Capacity",
+  "tagline": "Posted limit 40. Count is 52. The alert went to the field supervisor.",
+  "category": "People & Safety",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "hold_seconds",
+   "max_persons",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 splash pad",
+   "max_persons": "int (default 40)",
+   "hold_seconds": "int (default 60)"
+  }
+ },
+ {
   "id": "table-turn",
   "name": "Table Turn Tracker",
   "tagline": "Which tables turn fast, which sit empty, and for how long.",
@@ -951,6 +1661,22 @@ window.CATALOG_DATA = [
   "config_schema": {
    "tables": "map of table-name \u2192 polygon",
    "empty_alert_minutes": "int \u2014 table empty this long during open hours (default 45)"
+  }
+ },
+ {
+  "id": "tarmac-fod",
+  "name": "Tarmac FOD Watch",
+  "tagline": "Something's on the ramp that wasn't there this morning. Found before the prop did.",
+  "category": "People & Safety",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "new_object_seconds",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 ramp area",
+   "new_object_seconds": "int \u2014 persistence to alert (default 120)"
   }
  },
  {
@@ -984,6 +1710,22 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "thermal-shimmer",
+  "name": "Thermal Shimmer Watch",
+  "tagline": "The exhaust plume changed shape at 2pm. The temp sensor noticed at 2:40.",
+  "category": "Intelligence",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "variance_shift",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 exhaust area",
+   "variance_shift": "float \u2014 vs baseline (default 0.5)"
+  }
+ },
+ {
   "id": "truck-turn-time",
   "name": "Truck Turn Time",
   "tagline": "How long each truck actually sat at your dock \u2014 per carrier.",
@@ -997,6 +1739,22 @@ window.CATALOG_DATA = [
   "config_schema": {
    "zone": "polygon \u2014 yard/dock area",
    "slow_minutes": "int \u2014 alert threshold (default 120)"
+  }
+ },
+ {
+  "id": "two-person-rule",
+  "name": "Two-Person Rule",
+  "tagline": "One person in the server room for 4 minutes. SOC 2 auditor never sees it \u2014 you already fixed it.",
+  "category": "Compliance",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "solo_seconds",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 server room",
+   "solo_seconds": "int (default 240)"
   }
  },
  {
@@ -1018,6 +1776,54 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "unit-door-open",
+  "name": "Storage Unit Door Watch",
+  "tagline": "Unit 214's door has been up for 40 minutes. Someone should walk the row.",
+  "category": "Security & Access",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "open_minutes",
+   "units"
+  ],
+  "config_schema": {
+   "units": "map of unit-name \u2192 door polygon",
+   "open_minutes": "int (default 30)"
+  }
+ },
+ {
+  "id": "unit-fullness",
+  "name": "Unit Fullness Audit",
+  "tagline": "Unit 87 is 90% full, not empty. The auction listing just changed.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "empty_ratio",
+   "units"
+  ],
+  "config_schema": {
+   "units": "map of unit-name \u2192 interior polygon",
+   "empty_ratio": "float \u2014 edge density below = empty (default 0.02)"
+  }
+ },
+ {
+  "id": "vault-approach",
+  "name": "Vault Two-Person Rule",
+  "tagline": "One person at the vault, alone, for 90 seconds. Compliance has the clip.",
+  "category": "Compliance",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "solo_seconds",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 vault approach",
+   "solo_seconds": "int (default 90)"
+  }
+ },
+ {
   "id": "vehicle-damage-scan",
   "name": "Vehicle Damage Scan",
   "tagline": "New scratch on a lot vehicle? Dated before/after frames settle it.",
@@ -1033,6 +1839,22 @@ window.CATALOG_DATA = [
    "stalls": "map of stall-name \u2192 polygon",
    "diff_ratio": "float \u2014 change threshold (default 0.12)",
    "scan_hour": "int \u2014 daily scan hour (default 7)"
+  }
+ },
+ {
+  "id": "vending-route-verify",
+  "name": "Vending Route Verification",
+  "tagline": "Bank 4 got a 40-second drive-by, not a service visit. The log says so.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "banks",
+   "min_service_seconds"
+  ],
+  "config_schema": {
+   "banks": "map of bank-name \u2192 polygon",
+   "min_service_seconds": "int \u2014 real visit threshold (default 180)"
   }
  },
  {
@@ -1056,6 +1878,42 @@ window.CATALOG_DATA = [
   }
  },
  {
+  "id": "viewing-room-privacy",
+  "name": "Viewing Room Privacy Window",
+  "tagline": "Someone entered viewing room B during setup. Staff knew before the door opened.",
+  "category": "Compliance",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "scheduled_windows",
+   "suppress_staff_hours",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 viewing room entry",
+   "scheduled_windows": "[[start,end],...] hours open to visitors (default [])",
+   "suppress_staff_hours": "[start,end] optional staff-only hours that never alert"
+  }
+ },
+ {
+  "id": "visitor-badge-check",
+  "name": "Visitor Badge Check",
+  "tagline": "No badge patch on the sales floor. Flagged in real time.",
+  "category": "Compliance",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "badge_hue",
+   "min_ratio",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 controlled floor",
+   "badge_hue": "[low,high] HSV badge color band (default [0,10] = red)",
+   "min_ratio": "float (default 0.02)"
+  }
+ },
+ {
   "id": "waiting-room-overflow",
   "name": "Waiting Room Overflow",
   "tagline": "The lobby hit 14 people at 9:12am. Triage got pinged at 9:12am.",
@@ -1071,6 +1929,22 @@ window.CATALOG_DATA = [
    "zone": "polygon \u2014 waiting area",
    "max_persons": "int (default 12)",
    "hold_seconds": "int (default 60)"
+  }
+ },
+ {
+  "id": "wash-bay-pace",
+  "name": "Wash Bay Pace",
+  "tagline": "Bay 3 is running 40% slower than the others. The camera noticed first.",
+  "category": "Automotive & Parking",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "bays",
+   "slow_seconds"
+  ],
+  "config_schema": {
+   "bays": "map of bay-name \u2192 polygon",
+   "slow_seconds": "int (default 420)"
   }
  },
  {

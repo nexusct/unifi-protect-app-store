@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Implementation Guide — Nexus Vision Marketplace</title>
+<meta name="description" content="How to deploy Nexus Vision AI functions on UniFi Protect: hardware sizing, camera setup, zone mapping, alert routing, and writing your own functions." />
+<style>
+  :root {
+    --bg: #ffffff; --card: #f6f7f9; --card-hover: #eef0f4;
+    --ink: #0e1526; --ink-2: #4d5666; --ink-3: #838b9b;
+    --line: #e3e6ec; --blue: #0559d5; --blue-soft: rgba(5,89,213,0.08);
+    --green: #0d9e63; --amber: #b97d07; --red: #d5342c;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: "Inter", -apple-system, sans-serif; line-height: 1.65; }
+  h1, h2, h3 { font-family: "Archivo", "Inter", sans-serif; }
+  .shell { max-width: 880px; margin: 0 auto; padding: 0 20px; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .topbar .shell { display: flex; align-items: center; justify-content: space-between; height: 60px; max-width: 1180px; }
+  .brand { font-family: "Archivo"; font-weight: 900; font-size: 17px; }
+  .brand span { color: var(--blue); }
+  .topbar a { color: var(--ink-2); text-decoration: none; font-size: 13.5px; font-weight: 600; margin-left: 22px; }
+
+  header { padding: 56px 0 32px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, #f6f9ff, #fff); }
+  .kicker { display: inline-flex; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--blue); border: 1px solid rgba(5,89,213,0.25); background: var(--blue-soft);
+    padding: 6px 14px; border-radius: 999px; margin-bottom: 16px; }
+  h1 { font-size: clamp(28px, 4.4vw, 42px); font-weight: 900; letter-spacing: -0.02em; }
+  header p { color: var(--ink-2); font-size: 16.5px; max-width: 640px; margin-top: 12px; }
+
+  section { padding: 40px 0; border-bottom: 1px solid var(--line); }
+  h2 { font-size: 24px; font-weight: 900; letter-spacing: -0.015em; margin-bottom: 12px; }
+  h2 .step { color: var(--blue); }
+  h3 { font-size: 16px; font-weight: 800; margin: 20px 0 8px; }
+  p { color: var(--ink-2); font-size: 14.5px; margin-bottom: 10px; }
+  ul { color: var(--ink-2); font-size: 14.5px; padding-left: 20px; margin-bottom: 12px; }
+  li { margin-bottom: 6px; }
+  li b { color: var(--ink); }
+  code { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; font-size: 12.5px; font-family: ui-monospace, monospace; color: var(--blue); }
+  pre { background: var(--ink); color: #d7e3f7; border-radius: 12px; padding: 16px 18px; font-size: 12.5px;
+    overflow-x: auto; margin: 12px 0 16px; font-family: ui-monospace, monospace; line-height: 1.55; }
+  pre .c { color: #7d8aa3; }
+
+  .callout { background: var(--blue-soft); border: 1px solid rgba(5,89,213,0.25); border-radius: 12px;
+    padding: 14px 18px; margin: 14px 0; font-size: 14px; color: var(--ink-2); }
+  .callout.warn { background: rgba(185,125,7,0.08); border-color: rgba(185,125,7,0.3); }
+  .callout b { color: var(--ink); }
+
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3);
+    padding: 8px 10px; border-bottom: 2px solid var(--line); }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
+  td:first-child { font-weight: 700; color: var(--ink); white-space: nowrap; }
+
+  .toc { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 22px; margin-top: 22px; }
+  .toc a { color: var(--blue); text-decoration: none; font-size: 13.5px; font-weight: 600; display: block; padding: 3px 0; }
+  .toc a:hover { text-decoration: underline; }
+
+  footer { padding: 30px 0 44px; color: var(--ink-3); font-size: 12.5px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="shell">
+    <div class="brand">Nexus<span>Vision</span> — Implementation Guide</div>
+    <nav><a href="/">Landing</a><a href="/storefront/">Marketplace</a></nav>
+  </div>
+</div>
+
+<header>
+  <div class="shell">
+    <span class="kicker">Deploy it yourself, or hand this to your integrator</span>
+    <h1>How to implement Nexus Vision on UniFi Protect</h1>
+    <p>From a box with a GPU to working AI alerts on your existing cameras: hardware, UniFi setup, zone mapping, alert routing, and writing your own functions. Plan on 60–90 minutes per site.</p>
+    <div class="toc">
+      <a href="#s1">1 · Hardware & GPU sizing</a>
+      <a href="#s2">2 · UniFi Protect setup</a>
+      <a href="#s3">3 · Install the platform (Docker)</a>
+      <a href="#s4">4 · Map cameras and zones</a>
+      <a href="#s5">5 · Pick functions & tune thresholds</a>
+      <a href="#s6">6 · Route alerts (NOC, Slack, Teams, email)</a>
+      <a href="#s7">7 · Go-live checklist & tuning window</a>
+      <a href="#s8">8 · Write your own function</a>
+    </div>
+  </div>
+</header>
+
+<section id="s1">
+  <div class="shell">
+    <h2><span class="step">1 ·</span> Hardware & GPU sizing</h2>
+    <p>Everything runs on one appliance on your network. Size it by stream count — not camera count, since most functions only need a few cameras each.</p>
+    <table>
+      <tr><th>Streams with AI</th><th>Appliance</th><th>Notes</th></tr>
+      <tr><td>1–6</td><td>NVIDIA Jetson Orin Nano/NX</td><td>Sits next to the NVR, fanless, ~15W</td></tr>
+      <tr><td>6–20</td><td>Desktop with RTX 4060–4070 class GPU</td><td>Typical single-site sweet spot</td></tr>
+      <tr><td>20–40</td><td>Server with L4 / RTX 4080+ class</td><td>Campus, multi-building, MDF install</td></tr>
+      <tr><td>40+</td><td>Multiple appliances</td><td>Split by building; each runs its own container</td></tr>
+    </table>
+    <ul>
+      <li><b>The GPU-load dial:</b> <code>VISION_FRAME_INTERVAL</code> (default 1 frame/second per stream). Most functions don't need more. Drop to 2.0s to double capacity; raise to 0.5s for fast scenes (drive-thru, conveyor).</li>
+      <li><b>Network:</b> the appliance needs to reach the Protect console (API) and each camera's RTSP port (7441). No internet access is required after model download.</li>
+      <li><b>Storage:</b> alert snapshots + clips are small; 50GB is generous. The NVR remains the recording system of record — we don't duplicate it.</li>
+    </ul>
+    <div class="callout"><b>Rule of thumb:</b> if the site already runs UniFi Protect happily, the AI appliance is a drop-in. Nothing about the existing camera or network config changes.</div>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="shell">
+    <h2><span class="step">2 ·</span> UniFi Protect setup</h2>
+    <h3>Enable RTSP per camera</h3>
+    <p>Protect console → <b>Cameras → [camera] → Settings → Advanced → RTSP</b>. Enable it and copy the <code>rtsps://</code> alias URL. Use the lowest-resolution stream that still shows the target clearly — 720p is plenty for detection and halves GPU load.</p>
+    <h3>Create a read-only service account</h3>
+    <p>Console → <b>Settings → Users → Add User</b> → local-only, <b>Viewer</b> role. This is what the platform uses to discover cameras and pull events. Keep it read-only; the platform never writes to Protect.</p>
+    <h3>UniFi Access (optional, unlocks correlation functions)</h3>
+    <p>For tailgating, vendor windows, and door-event correlation: create a local Access admin token and note the door names — they map to camera zones in step 4.</p>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="shell">
+    <h2><span class="step">3 ·</span> Install the platform (Docker)</h2>
+    <pre><span class="c"># on the appliance (Docker + nvidia-container-toolkit installed)</span>
+git clone https://github.com/nexusct/unifi-protect-app-store.git
+cd unifi-protect-app-store
+cp config/sites.example.yaml config/sites.yaml
+cp .env.example .env
+
+<span class="c"># edit .env: Protect host + service account, alert destination</span>
+<span class="c"># edit config/sites.yaml: cameras, zones, functions (step 4–5)</span>
+
+docker compose --profile gpu up -d
+
+<span class="c"># verify</span>
+curl http://localhost:8090/health
+curl http://localhost:8090/streams    <span class="c"># every camera should show up: true</span></pre>
+    <p>First boot downloads model weights (~200MB). After that the appliance can run fully offline.</p>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="shell">
+    <h2><span class="step">4 ·</span> Map cameras and zones</h2>
+    <p>Every function reads its geometry from <code>sites.yaml</code>. Zones are polygons in <b>normalized coordinates</b> (0.0–1.0 across the frame), so they survive resolution changes.</p>
+    <pre>cameras:
+  - id: "dock-east"
+    name: "Dock East"
+    <span class="c"># rtsp: omitted = auto-discovered from Protect by camera name</span>
+    functions: ["fire-exit-blocked", "truck-turn-time"]
+    zones:
+      exit: [[0.55, 0.30], [0.95, 0.30], [0.95, 0.90], [0.55, 0.90]]
+      yard: [[0.05, 0.20], [0.50, 0.20], [0.50, 0.95], [0.05, 0.95]]</pre>
+    <h3>Drawing zones without a special tool</h3>
+    <ul>
+      <li>Open the camera's live view in Protect, screenshot it.</li>
+      <li>Drop the image in any browser-based polygon tool (or PowerPoint) and read corner positions as fractions of width/height. Top-left of frame is <code>[0,0]</code>, bottom-right is <code>[1,1]</code>.</li>
+      <li><b>Zones should hug the floor plane</b> — draw where feet/wheels touch the ground, not up the wall. Detection points are bottom-center of each bounding box.</li>
+    </ul>
+    <div class="callout warn"><b>Onboarding shortcut:</b> on a managed subscription, send us the camera screenshots and we return a finished sites.yaml. Zone mapping is the only step that benefits from experience.</div>
+  </div>
+</section>
+
+<section id="s5">
+  <div class="shell">
+    <h2><span class="step">5 ·</span> Pick functions & tune thresholds</h2>
+    <p>Assign functions per camera in <code>sites.yaml</code>. Tune per-site thresholds in <code>function_settings</code>:</p>
+    <pre>function_settings:
+  queue-length:
+    max_length: 4          <span class="c"># people before alert</span>
+    hold_seconds: 30       <span class="c"># must stay true this long (kills blips)</span>
+  after-hours-activity:
+    closed_hours: [20, 6]  <span class="c"># 8pm–6am</span></pre>
+    <ul>
+      <li><b>hold_seconds / hold_ms</b> exist on most detectors — they are your false-alarm budget. Start with defaults, tighten after the first week.</li>
+      <li><b>Every alert carries a snapshot</b> (unless the camera is in a privacy zone), so tuning is a judgment call on real examples, not guesswork.</li>
+      <li><b>Domain-weight functions</b> (weapon, PPE, smoke, ALPR) ship with a weights path in config — drop the provided <code>.pt</code> file into <code>models/</code>.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="s6">
+  <div class="shell">
+    <h2><span class="step">6 ·</span> Route alerts</h2>
+    <table>
+      <tr><th>Destination</th><th>Config</th><th>Best for</th></tr>
+      <tr><td>Nexus Base44 NOC</td><td><code>BASE44_ALERT_URL</code> + <code>BASE44_INTERNAL_TOKEN</code></td><td>Managed-service customers — alerts become NocAlerts + field-team messages</td></tr>
+      <tr><td>Slack / Teams / generic webhook</td><td><code>EXTRA_WEBHOOK_URL</code></td><td>In-house teams</td></tr>
+      <tr><td>Local log + API</td><td>always on</td><td><code>/detectors</code> and the search API for review</td></tr>
+    </table>
+    <p>Dedup is built in: a repeating condition fires once per dedup window (default 10 minutes), not once per second.</p>
+  </div>
+</section>
+
+<section id="s7">
+  <div class="shell">
+    <h2><span class="step">7 ·</span> Go-live checklist & tuning window</h2>
+    <ul>
+      <li><code>/streams</code> shows every camera <code>up: true</code> with retries not climbing</li>
+      <li>Walk one real scenario per function (stand in the queue zone, block the exit with a box, cross the counting line)</li>
+      <li>Confirm one alert arrives at each destination with a readable snapshot</li>
+      <li>Set the dedup windows and quiet hours for the site</li>
+      <li><b>Week one:</b> expect one threshold pass per function. That's normal — it's calibration, not failure.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="s8">
+  <div class="shell">
+    <h2><span class="step">8 ·</span> Write your own function</h2>
+    <p>One file in <code>src/marketplace/functions/</code>. The loader validates the manifest and adds it to the storefront catalog automatically.</p>
+    <pre>from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+
+MANIFEST = {
+    "id": "my-function",
+    "name": "My Function",
+    "tagline": "What it does in one honest sentence.",
+    "category": "People & Safety",   <span class="c"># see contract.CATEGORIES</span>
+    "tier": "starter",               <span class="c"># starter | pro | enterprise</span>
+    "requires_gpu": True,
+    "config_schema": {"zone": "polygon — watch area"},
+}
+
+class Function(MarketplaceFunction):
+    def process(self, camera, frame, ts, ctx):
+        zone = (camera.get("zones") or {}).get("watch")
+        if not zone:
+            return
+        for (cls, cx, cy, *rest, tid) in boxes_of(frame, classes=[0]):
+            if in_zone(cx, cy, zone):
+                ctx.alerts.fire(site=ctx.site, camera=camera,
+                                detector=MANIFEST["id"], title="Person in zone",
+                                detail="...", frame=frame)</pre>
+    <ul>
+      <li><code>boxes_of(frame, classes=[...])</code> — tracked detections (0 = person; 2/5/7 = car/bus/truck). <code>tid</code> is a persistent track ID.</li>
+      <li><code>in_zone</code>, <code>crossed_line</code>, <code>ZoneTracker</code> — the geometry helpers every catalog function uses.</li>
+      <li><code>ctx.alerts.fire()</code> handles severity, dedup, snapshots, and routing. You never write alert plumbing.</li>
+      <li>Pose keypoints (falls, bed-exit, aggression) come from <code>model("yolov8n-pose.pt")</code> — see <code>src/detectors/fall.py</code> for the pattern.</li>
+    </ul>
+    <div class="callout"><b>The honest rule:</b> every function in the catalog solves a problem a business is already paying for. If yours does too, it belongs in the marketplace — pull requests welcome.</div>
+  </div>
+</section>
+
+<footer>
+  <div class="shell">
+    Nexus Vision Marketplace · Nexus Communications Technology, Schaumburg, IL ·
+    <a href="https://github.com/nexusct/unifi-protect-app-store" style="color:var(--blue)">github.com/nexusct/unifi-protect-app-store</a>
+  </div>
+</footer>
+
+</body>
+</html>

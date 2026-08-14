@@ -57,6 +57,9 @@
   .search { flex: 1 1 220px; background: var(--card); border: 1px solid var(--line); border-radius: 999px;
     padding: 9px 16px; color: var(--ink); font-size: 13.5px; outline: none; }
   .search:focus { border-color: var(--blue); background: #fff; }
+  .sortsel { background: #fff; border: 1px solid var(--line); border-radius: 999px; color: var(--ink-2);
+    padding: 8px 14px; font-size: 12.5px; font-weight: 600; cursor: pointer; outline: none; }
+  .sortsel:focus { border-color: var(--blue); }
   .chip { background: #fff; border: 1px solid var(--line); color: var(--ink-2);
     padding: 7px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
   .chip:hover { border-color: var(--blue); color: var(--blue); }
@@ -140,6 +143,11 @@
 <div class="controls">
   <div class="shell controls-row">
     <input class="search" id="search" placeholder="Search functions… (fall, dock, queue, parking)" />
+    <select class="sortsel" id="sort-sel" title="Sort">
+      <option value="category">Sort: Vertical</option>
+      <option value="name">Sort: Function A–Z</option>
+      <option value="tier">Sort: Service level</option>
+    </select>
     <div id="cat-chips"></div>
     <div id="tier-chips"></div>
   </div>
@@ -179,7 +187,8 @@
 // innerHTML templates render only this repo's own generated catalog data.
 const CATALOG = window.CATALOG_DATA || [];
 const selected = new Set();
-let activeCat = "All", activeTier = "All", query = "";
+let activeCat = "All", activeTier = "All", query = "", sortBy = "category";
+const TIER_ORDER = { starter: 0, pro: 1, enterprise: 2 };
 
 const grid = document.getElementById("grid");
 const tray = document.getElementById("tray");
@@ -199,6 +208,7 @@ function init() {
   buildChips("cat-chips", ["All", ...cats], c => { activeCat = c; render(); });
   buildChips("tier-chips", ["All", "starter", "pro", "enterprise"], t => { activeTier = t; render(); });
   document.getElementById("search").addEventListener("input", e => { query = e.target.value.toLowerCase(); render(); });
+  document.getElementById("sort-sel").addEventListener("change", e => { sortBy = e.target.value; render(); });
   render();
 }
 
@@ -221,8 +231,20 @@ function matches(f) {
   return true;
 }
 
+function sortItems(items) {
+  const arr = [...items];
+  if (sortBy === "name") {
+    arr.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sortBy === "tier") {
+    arr.sort((a, b) => (TIER_ORDER[a.tier] ?? 9) - (TIER_ORDER[b.tier] ?? 9) || a.name.localeCompare(b.name));
+  } else {
+    arr.sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
+  }
+  return arr;
+}
+
 function render() {
-  const items = CATALOG.filter(matches);
+  const items = sortItems(CATALOG.filter(matches));
   grid.innerHTML = items.map(f => `
     <div class="card ${selected.has(f.id) ? "selected" : ""}" data-id="${f.id}">
       <div class="card-top">

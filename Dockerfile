@@ -21,6 +21,7 @@ COPY src/ ./src/
 COPY config/ ./config/
 COPY landing/ ./landing/
 COPY storefront/ ./storefront/
+COPY guide/ ./guide/
 
 ENV PYTHONPATH=/app/src \
     VISION_CONFIG=/app/config/sites.yaml \

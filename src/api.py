@@ -10,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 ROOT = Path("/app")
 LANDING = ROOT / "landing"
 STOREFRONT = ROOT / "storefront"
+GUIDE = ROOT / "guide"
 
 
 def create_app(pipeline, streams):
@@ -29,6 +30,8 @@ def create_app(pipeline, streams):
 
     if STOREFRONT.exists():
         app.mount("/storefront", StaticFiles(directory=str(STOREFRONT), html=True), name="storefront")
+    if GUIDE.exists():
+        app.mount("/guide", StaticFiles(directory=str(GUIDE), html=True), name="guide")
 
     @app.get("/health")
     def health():

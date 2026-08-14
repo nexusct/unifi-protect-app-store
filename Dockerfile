@@ -19,6 +19,8 @@ RUN pip install --extra-index-url https://download.pytorch.org/whl/cu121 -r requ
 
 COPY src/ ./src/
 COPY config/ ./config/
+COPY landing/ ./landing/
+COPY storefront/ ./storefront/
 
 ENV PYTHONPATH=/app/src \
     VISION_CONFIG=/app/config/sites.yaml \

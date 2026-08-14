@@ -1,9 +1,34 @@
-"""FastAPI: health, stream status, detector status, NL video search."""
+"""FastAPI: health, stream status, detector status, NL video search,
+subscription signup API, landing page + storefront static mounts."""
+import os
+from pathlib import Path
+
 from fastapi import FastAPI, Query
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+
+ROOT = Path("/app")
+LANDING = ROOT / "landing"
+STOREFRONT = ROOT / "storefront"
 
 
 def create_app(pipeline, streams):
-    app = FastAPI(title="nexus-vision-ai", version="0.1.0")
+    app = FastAPI(title="nexus-vision-ai", version="0.2.0")
+
+    # ── subscription platform + storefront ──
+    from subscriptions import store
+    from subscriptions.app import router as sub_router
+    store.init_db()
+    app.include_router(sub_router)
+    if LANDING.exists():
+        app.mount("/assets-landing", StaticFiles(directory=str(LANDING)), name="landing-assets")
+
+        @app.get("/", include_in_schema=False)
+        def landing():
+            return FileResponse(str(LANDING / "index.html"))
+
+    if STOREFRONT.exists():
+        app.mount("/storefront", StaticFiles(directory=str(STOREFRONT), html=True), name="storefront")
 
     @app.get("/health")
     def health():

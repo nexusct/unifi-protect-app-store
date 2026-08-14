@@ -14,6 +14,8 @@ Schaumburg, IL.
 | Path | What it is |
 |---|---|
 | `storefront/` | The marketplace UI — a self-contained static page (browse, filter, add-to-stack, generates a subscription YAML). Serve the folder or drop it on GitHub Pages. |
+| `landing/` | The subscription landing page — pricing tiers, problem/solution, signup form. Served at `/` by the container. |
+| `src/subscriptions/` | Subscription platform — SQLite store, signup/status/admin endpoints, forwards signups into the Base44 sales pipeline as scored hot leads. |
 | `src/marketplace/` | The function library + plug-in contract + loader. Each function is one self-describing module with a `MANIFEST` (id, name, tier, category, config schema). |
 | `src/detectors/` | 10 core life-safety detectors (fall, bed-exit, weapon, smoke…). |
 | `src/` engine | RTSP stream manager, UniFi Protect + Access API clients, alert engine with dedup/severity routing, FastAPI status/search server. |
@@ -81,6 +83,19 @@ cp .env.example .env                             # UniFi + alert creds
 docker compose --profile gpu up -d               # NVIDIA runtime required
 docker compose --profile cpu up -d               # dev laptop (1-2 streams)
 ```
+
+The container serves three surfaces on port 8090:
+
+| Route | What |
+|---|---|
+| `/` | Subscription landing page (pricing, signup) |
+| `/storefront/` | Function marketplace catalog |
+| `/api/subscriptions` | Signup API (POST), status (GET /{id}), admin (token-gated) |
+| `/health`, `/streams`, `/detectors`, `/search` | Runtime + NL video search |
+
+Signups land in the container's SQLite store AND forward to your Base44
+sales pipeline as scored hot leads when `BASE44_ALERT_URL` +
+`BASE44_INTERNAL_TOKEN` are set.
 
 Storefront preview:
 

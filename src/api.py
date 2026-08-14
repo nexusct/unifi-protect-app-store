@@ -3,7 +3,7 @@ subscription signup API, landing page + storefront static mounts."""
 import os
 from pathlib import Path
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Header, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -61,7 +61,18 @@ def create_app(pipeline, streams):
         return {"query": q, "results": vs_search(q, limit=limit)}
 
     @app.post("/unlock/{door_id}")
-    def unlock_door(door_id: str):
+    def unlock_door(door_id: str, x_admin_token: str | None = Header(default=None)):
+        """Remote door unlock (requires admin token).
+        
+        Security: This endpoint can trigger physical door unlocks and must be
+        protected. Use network-level access control (firewall, reverse proxy)
+        in addition to token authentication.
+        """
+        expected = os.environ.get("VISION_ADMIN_TOKEN", "")
+        if not expected or "change-me" in expected:
+            raise HTTPException(503, "admin token not configured")
+        if x_admin_token != expected:
+            raise HTTPException(401, "invalid admin token")
         ok = pipeline.access.unlock(door_id) if getattr(pipeline, "access", None) else False
         return {"door_id": door_id, "unlocked": ok}
 

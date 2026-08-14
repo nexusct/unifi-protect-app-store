@@ -114,6 +114,59 @@ python3 -m http.server 8080 --directory storefront
 3. UniFi Access (optional): local admin token in `.env` unlocks door-event
    correlation (tailgating, vendor verification) and remote unlock.
 
+## Environment Variables
+
+All configuration is via environment variables in `.env` (copy from `.env.example`).
+
+### UniFi Protect (Required)
+
+| Variable | Description | Example |
+|---|---|---|
+| `UNIFI_PROTECT_HOST` | IP or hostname of UniFi Protect console | `192.168.1.10` |
+| `UNIFI_PROTECT_PORT` | HTTPS port (default 443) | `443` |
+| `UNIFI_PROTECT_USERNAME` | Local user (read-only recommended) | `vision-readonly` |
+| `UNIFI_PROTECT_PASSWORD` | Password for the Protect user | `secure-password` |
+| `UNIFI_PROTECT_VERIFY_SSL` | Verify SSL certificates (`true`/`false`) | `true` (recommended) |
+
+**Security**: Create a dedicated **read-only local user** in UniFi Protect. Do not use admin credentials. Enable SSL verification (`true`) in production — see [SECURITY.md](SECURITY.md) for details on self-signed certificates.
+
+### UniFi Access (Optional)
+
+| Variable | Description | Example |
+|---|---|---|
+| `UNIFI_ACCESS_HOST` | IP or hostname of UniFi Access controller | `192.168.1.10` |
+| `UNIFI_ACCESS_TOKEN` | Local API token (generate in Access console) | `your-access-token` |
+| `UNIFI_ACCESS_VERIFY_SSL` | Verify SSL certificates (`true`/`false`) | `true` (recommended) |
+
+Required only for door event correlation (tailgating detection, vendor verification) and remote unlock features.
+
+### Alert Destinations (Optional)
+
+| Variable | Description | Example |
+|---|---|---|
+| `BASE44_ALERT_URL` | Nexus Base44 alert ingestion endpoint | `https://nexusct.com/api/functions/nexusVisionIngest` |
+| `BASE44_INTERNAL_TOKEN` | Internal auth token for Base44 | `your-internal-token` |
+| `EXTRA_WEBHOOK_URL` | Additional webhook (Slack, Teams, custom) | `https://hooks.slack.com/services/...` |
+
+Alerts are logged locally by default. Configure these to forward alerts to external systems. Leave blank to disable.
+
+### Runtime Configuration
+
+| Variable | Description | Default |
+|---|---|---|
+| `VISION_DEVICE` | Compute backend: `cuda` or `cpu` | `cuda` |
+| `VISION_FRAME_INTERVAL` | Seconds between frame analysis (GPU load dial) | `1.0` |
+| `VISION_DATA` | Data directory for snapshots, clips, DB (container path) | `/app/data` |
+| `VISION_ADMIN_TOKEN` | Bearer token for admin API endpoints | `change-me` |
+| `VISION_CONFIG` | Path to sites.yaml config file (container path) | `/app/config/sites.yaml` |
+
+**Security**: Treat `VISION_ADMIN_TOKEN` as a password. Generate a strong random token:
+```bash
+openssl rand -hex 32
+```
+
+Mount `VISION_DATA` to a host volume in docker-compose.yml for persistence (default: `./data`).
+
 ## Alert destinations
 
 - **Base44 (Nexus NOC):** POSTs to a function that writes NocAlert /

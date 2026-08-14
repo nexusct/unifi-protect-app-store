@@ -97,6 +97,8 @@ class VideoSearchIndexer(Detector):
         self._last[camera["id"]] = ts
         try:
             vec = _embed_image(frame)
-            np.save(EMBED_DIR / f"{camera['name'].replace(' ', '_')}_{int(ts)}.npy", vec)
+            # Sanitize camera name to prevent path traversal
+            safe_name = camera['name'].replace(' ', '_').replace('/', '_').replace('\\', '_').replace('..', '_')
+            np.save(EMBED_DIR / f"{safe_name}_{int(ts)}.npy", vec)
         except Exception as exc:
             log.warning("embed failed on %s: %s", camera["name"], exc)

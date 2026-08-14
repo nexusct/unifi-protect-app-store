@@ -5,7 +5,7 @@ your existing cameras, pick the GPU-accelerated functions your business
 needs, and run everything on your own premises — no cloud video, no new
 cameras, no per-camera AI hardware.
 
-**37 functions across 8 business categories**, plus 10 core life-safety
+**67 functions across 9 business categories**, plus 10 core life-safety
 detectors. Built and maintained by [Nexus Communications Technology](https://nexusct.com),
 Schaumburg, IL.
 
@@ -46,7 +46,32 @@ Wrong-Way Movement
 **Intelligence** — Repeat Visitor Pattern (BIPA-safe) · Vendor Arrival
 Verification · Service Response Time
 
-**Security & Access** — After-Hours Activity
+**Security & Access** — After-Hours Activity · Supply Theft Watch · Site Theft Watch · Per-Tenant After-Hours Watch
+
+## 30 more: vertical expansion pack (v2)
+
+**Healthcare & Clinics** — Waiting Room Overflow · Clinical Zone Access Check ·
+Pharmacy Window Queue · MRI Zone IV Safety · Specimen Drop Verification
+
+**Education & Fitness** — Hall Pass Monitor · Playground Alone Alert ·
+Bus Loop Safety · Class Attendance Counter · Equipment Usage Analytics
+
+**Logistics & Fleet** — Trailer Yard Dwell · Gate Cycle Time ·
+Trailer Seal Check · Driver-in-Cab Dock Interlock · Service Bay Queue
+
+**Hospitality** — Pool Bather Load · Pool Distress Watch ·
+Housekeeping Pace Tracker · Banquet Setup Verification
+
+**Office & CRE** — Meeting Room Reality · Desk Utilization Map ·
+Lobby Visitor Flow · Per-Tenant After-Hours Watch
+
+**Agriculture** — Livestock Down Alert · Supply Theft Watch · Canopy Visual Health
+
+**Banking** — ATM Vestibule Watch · Teller Line Pace
+
+**Construction** — Site Theft Watch · Crane Exclusion Zone
+
+**67 marketplace functions total** (verified: 67/67 register with zero errors).
 
 ## Quick start
 

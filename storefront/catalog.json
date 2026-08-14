@@ -48,6 +48,58 @@
   }
  },
  {
+  "id": "atm-vestibule-watch",
+  "name": "ATM Vestibule Watch",
+  "tagline": "Two people, one transaction, 1am. The branch sees it live.",
+  "category": "Security & Access",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "closed_hours",
+   "dwell_minutes",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 ATM area",
+   "closed_hours": "[start,end] (default [22,6])",
+   "dwell_minutes": "int (default 5)"
+  }
+ },
+ {
+  "id": "banquet-setup-verify",
+  "name": "Banquet Setup Verification",
+  "tagline": "6pm wedding, 4:30pm room not set. The alert went out at 4:31.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "min_density_ratio",
+   "verify_hour",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 event room",
+   "verify_hour": "int \u2014 hour to check setup (default 15)",
+   "min_density_ratio": "float \u2014 vs set-up baseline (default 0.7)"
+  }
+ },
+ {
+  "id": "bus-loop-safety",
+  "name": "Bus Loop Safety",
+  "tagline": "A car in the bus loop at 8:15am is a headline you don't want.",
+  "category": "People & Safety",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "bell_windows",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 bus loop",
+   "bell_windows": "[[start,end],...] hours (default [[7,9],[14,16]])"
+  }
+ },
+ {
   "id": "camera-tamper",
   "name": "Camera Tamper Detection",
   "tagline": "Sprayed, covered, or turned \u2014 you find out in seconds, not after the theft.",
@@ -93,6 +145,22 @@
   "config_schema": {
    "zone": "polygon \u2014 belt area",
    "jam_seconds": "int \u2014 stationary threshold (default 20)"
+  }
+ },
+ {
+  "id": "crane-exclusion",
+  "name": "Crane Exclusion Zone",
+  "tagline": "Person under the load path. The lift director's phone buzzes.",
+  "category": "People & Safety",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "hold_ms",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 exclusion area under/near crane",
+   "hold_ms": "int (default 500)"
   }
  },
  {
@@ -146,6 +214,22 @@
   }
  },
  {
+  "id": "desk-hotel-mapping",
+  "name": "Desk Utilization Map",
+  "tagline": "Row 4 sits empty every day. Row 1 is full by 9. Now you can prove it.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "desks",
+   "digest_hour"
+  ],
+  "config_schema": {
+   "desks": "map of desk-name \u2192 polygon",
+   "digest_hour": "int (default 17)"
+  }
+ },
+ {
   "id": "dock-utilization",
   "name": "Dock Door Utilization",
   "tagline": "Every dock door's busy time, measured \u2014 not argued about.",
@@ -191,6 +275,22 @@
    "order_zone": "polygon \u2014 speaker/order point",
    "exit_zone": "polygon \u2014 past the window",
    "slow_seconds": "int \u2014 per-car alert threshold (default 240)"
+  }
+ },
+ {
+  "id": "driver-cab-time",
+  "name": "Driver-in-Cab Dock Interlock",
+  "tagline": "Driver in the cab while the forklift's in the trailer. Alert the dock.",
+  "category": "Manufacturing & Warehouse",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "cab_zone",
+   "dock_zone"
+  ],
+  "config_schema": {
+   "cab_zone": "polygon \u2014 truck cab area",
+   "dock_zone": "polygon \u2014 active dock"
   }
  },
  {
@@ -274,6 +374,106 @@
   }
  },
  {
+  "id": "gate-cycle-time",
+  "name": "Gate Cycle Time",
+  "tagline": "2:40 average at the inbound gate. Peak hours hit 7 minutes. Now it's measured.",
+  "category": "Manufacturing & Warehouse",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "slow_seconds",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 gate lane",
+   "slow_seconds": "int (default 300)"
+  }
+ },
+ {
+  "id": "supply-theft-watch",
+  "name": "Supply Zone Theft Watch",
+  "tagline": "Someone at the chemical shed at 11pm. Clip saved, phone pinged.",
+  "category": "Security & Access",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "work_hours",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 supply storage",
+   "work_hours": "[start,end] (default [6,19])"
+  }
+ },
+ {
+  "id": "greenhouse-visual-health",
+  "name": "Canopy Visual Health",
+  "tagline": "The canopy yellowed 8% this week. The camera caught it before the walkthrough.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "check_hour",
+   "hue_shift",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 canopy area",
+   "hue_shift": "float \u2014 alert threshold (default 6.0)",
+   "check_hour": "int \u2014 daily check (default 12)"
+  }
+ },
+ {
+  "id": "gym-equipment-usage",
+  "name": "Equipment Usage Analytics",
+  "tagline": "The leg press gets 4.2 hours a day. The ab machine gets 11 minutes.",
+  "category": "People & Safety",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "digest_hour",
+   "stations"
+  ],
+  "config_schema": {
+   "stations": "map of machine-name \u2192 polygon",
+   "digest_hour": "int (default 22)"
+  }
+ },
+ {
+  "id": "gym-occupancy-class",
+  "name": "Class Attendance Counter",
+  "tagline": "12 booked, 5 showed. Now your schedule knows.",
+  "category": "People & Safety",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "class_windows",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 studio floor",
+   "class_windows": "[[start,end],...] hours"
+  }
+ },
+ {
+  "id": "hall-pass-monitor",
+  "name": "Hall Pass Monitor",
+  "tagline": "Corridor roaming during class blocks, logged for the dean's office.",
+  "category": "People & Safety",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "class_hours",
+   "passing_minutes",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 hallway",
+   "class_hours": "[start,end] (default [8,15])",
+   "passing_minutes": "int \u2014 gap at hour start (default 10)"
+  }
+ },
+ {
   "id": "hand-hygiene",
   "name": "Hand Hygiene Compliance",
   "tagline": "Entered the kitchen without the sink stop. Logged.",
@@ -292,6 +492,40 @@
   }
  },
  {
+  "id": "housekeeping-pace",
+  "name": "Housekeeping Pace Tracker",
+  "tagline": "22 minutes per room, 14 rooms per shift. Finally measured.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "digest_hour",
+   "room_doors"
+  ],
+  "config_schema": {
+   "room_doors": "map of room-name \u2192 door polygon",
+   "digest_hour": "int (default 16)"
+  }
+ },
+ {
+  "id": "lab-coat-zone",
+  "name": "Clinical Zone Access Check",
+  "tagline": "A vendor in the clinical corridor without scrubs. Flagged.",
+  "category": "Healthcare & Senior Living",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "clinical_hue",
+   "min_ratio",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 clinical corridor",
+   "clinical_hue": "[low,high] HSV band for scrubs/whites (default [0,180] low-sat high-val = white)",
+   "min_ratio": "float (default 0.2)"
+  }
+ },
+ {
   "id": "lighting-outage",
   "name": "Lighting Outage Watch",
   "tagline": "The parking lot light that's been out for a week? Found in a day.",
@@ -307,6 +541,40 @@
    "zone": "polygon \u2014 lit area (optional: whole frame)",
    "min_luma": "float 0-255 (default 40)",
    "lit_hours": "[start,end] hours 0-23 (default [18,6] = overnight)"
+  }
+ },
+ {
+  "id": "livestock-down",
+  "name": "Livestock Down Alert",
+  "tagline": "The downer in pen 6, found at 2am instead of the morning round.",
+  "category": "People & Safety",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "min_blob_ratio",
+   "still_minutes",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 pen area",
+   "still_minutes": "int (default 45)",
+   "min_blob_ratio": "float \u2014 animal-sized blob (default 0.02)"
+  }
+ },
+ {
+  "id": "lobby-visitor-flow",
+  "name": "Lobby Visitor Flow",
+  "tagline": "Tuesday 11am is your real rush. Staff it like you know.",
+  "category": "Intelligence",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "digest_hour",
+   "line"
+  ],
+  "config_schema": {
+   "line": "2-point entry counting line",
+   "digest_hour": "int (default 17)"
   }
  },
  {
@@ -362,6 +630,38 @@
   }
  },
  {
+  "id": "meeting-room-usage",
+  "name": "Meeting Room Reality",
+  "tagline": "Booked solid on the calendar. Empty since Tuesday. Measured.",
+  "category": "Intelligence",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "digest_hour",
+   "rooms"
+  ],
+  "config_schema": {
+   "rooms": "map of room-name \u2192 polygon",
+   "digest_hour": "int (default 18)"
+  }
+ },
+ {
+  "id": "mri-zone-safety",
+  "name": "MRI Zone IV Safety",
+  "tagline": "Someone is approaching the magnet room unescorted. Right now.",
+  "category": "Healthcare & Senior Living",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "staffed_hours",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 Zone III/IV approach",
+   "staffed_hours": "[start,end] \u2014 suppress during staffed hours (optional)"
+  }
+ },
+ {
   "id": "pallet-count",
   "name": "Pallet Count",
   "tagline": "The floor count vs the system count \u2014 settled by camera.",
@@ -395,6 +695,76 @@
    "zone": "polygon \u2014 kitchen/storage floor",
    "active_hours": "[start,end] \u2014 closed hours (default [22,5])",
    "min_speed": "float \u2014 blob speed proxy (default 0.02 norm/frame)"
+  }
+ },
+ {
+  "id": "pharmacy-window-queue",
+  "name": "Pharmacy Window Queue",
+  "tagline": "Pickup line length and per-person wait, measured continuously.",
+  "category": "Healthcare & Senior Living",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "max_line",
+   "wait_alert_minutes",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 pickup line area",
+   "max_line": "int (default 5)",
+   "wait_alert_minutes": "int (default 15)"
+  }
+ },
+ {
+  "id": "playground-alone",
+  "name": "Playground Alone Alert",
+  "tagline": "One small figure on the playground at 3:45pm. Someone should walk out there.",
+  "category": "People & Safety",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "max_height_ratio",
+   "recess_windows",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 playground/field",
+   "recess_windows": "[[start,end],...] hours (default [[9,11],[13,14]])",
+   "max_height_ratio": "float \u2014 child proxy (default 0.35)"
+  }
+ },
+ {
+  "id": "pool-capacity",
+  "name": "Pool Bather Load",
+  "tagline": "Over posted capacity at the pool, documented and alerted.",
+  "category": "People & Safety",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "hold_seconds",
+   "max_bathers",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 pool + deck",
+   "max_bathers": "int (default 20)",
+   "hold_seconds": "int (default 45)"
+  }
+ },
+ {
+  "id": "pool-drowning-watch",
+  "name": "Pool Distress Watch",
+  "tagline": "Motionless in the water for 20 seconds. This is the call that matters.",
+  "category": "People & Safety",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "still_seconds",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 water only (not deck)",
+   "still_seconds": "int (default 20)"
   }
  },
  {
@@ -448,6 +818,22 @@
   }
  },
  {
+  "id": "seal-check",
+  "name": "Trailer Seal Check",
+  "tagline": "Trailer doors open in the parking row, not the dock. That's pilferage.",
+  "category": "Manufacturing & Warehouse",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "diff_ratio",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 trailer rear area in parking row",
+   "diff_ratio": "float (default 0.15)"
+  }
+ },
+ {
   "id": "service-response-time",
   "name": "Service Response Time",
   "tagline": "Customer needed help at 2:04:12. Staff arrived 2:07:48. Measured, every time.",
@@ -484,6 +870,24 @@
   }
  },
  {
+  "id": "site-theft-watch",
+  "name": "Construction Site Theft Watch",
+  "tagline": "Copper walks off at midnight. Now it walks off on camera, flagged.",
+  "category": "Security & Access",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "crew_hours",
+   "weekends_active",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 laydown yard / equipment",
+   "crew_hours": "[start,end] (default [6,17])",
+   "weekends_active": "bool (default true)"
+  }
+ },
+ {
   "id": "slip-fall",
   "name": "Slip & Fall Liability Guard",
   "tagline": "Someone fell. The clip is already saved.",
@@ -516,6 +920,22 @@
   }
  },
  {
+  "id": "specimen-chain",
+  "name": "Specimen Drop Verification",
+  "tagline": "Every drop logged with a timestamp. Every missing one flagged.",
+  "category": "Healthcare & Senior Living",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "min_dwell_seconds",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 specimen drop area",
+   "min_dwell_seconds": "int \u2014 deposit confirmation dwell (default 10)"
+  }
+ },
+ {
   "id": "table-turn",
   "name": "Table Turn Tracker",
   "tagline": "Which tables turn fast, which sit empty, and for how long.",
@@ -529,6 +949,36 @@
   "config_schema": {
    "tables": "map of table-name \u2192 polygon",
    "empty_alert_minutes": "int \u2014 table empty this long during open hours (default 45)"
+  }
+ },
+ {
+  "id": "teller-line-pace",
+  "name": "Teller Line Pace",
+  "tagline": "Average branch wait: 4:12 today. The board report writes itself.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "digest_hour",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 teller line",
+   "digest_hour": "int (default 16)"
+  }
+ },
+ {
+  "id": "tenant-after-hours",
+  "name": "Per-Tenant After-Hours Watch",
+  "tagline": "Suite 410's zone, suite 410's hours, suite 410's alerts.",
+  "category": "Security & Access",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "suites"
+  ],
+  "config_schema": {
+   "suites": "map of suite-name \u2192 {polygon, hours: [start,end]}"
   }
  },
  {
@@ -604,6 +1054,40 @@
   }
  },
  {
+  "id": "waiting-room-overflow",
+  "name": "Waiting Room Overflow",
+  "tagline": "The lobby hit 14 people at 9:12am. Triage got pinged at 9:12am.",
+  "category": "Healthcare & Senior Living",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "hold_seconds",
+   "max_persons",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 waiting area",
+   "max_persons": "int (default 12)",
+   "hold_seconds": "int (default 60)"
+  }
+ },
+ {
+  "id": "wash-bay-queue",
+  "name": "Service Bay Queue",
+  "tagline": "Five trucks deep at the wash bay at shift change. Dispatch already knows.",
+  "category": "Manufacturing & Warehouse",
+  "tier": "starter",
+  "requires_gpu": true,
+  "config_keys": [
+   "max_queue",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 queue lane",
+   "max_queue": "int (default 3)"
+  }
+ },
+ {
   "id": "wrong-way",
   "name": "Wrong-Way Movement",
   "tagline": "One-way means one-way \u2014 even at 2am when nobody's watching.",
@@ -617,6 +1101,22 @@
   "config_schema": {
    "line": "2-point crossing line",
    "forbidden": "'forward' or 'backward' \u2014 which crossing direction alerts"
+  }
+ },
+ {
+  "id": "yard-dwell",
+  "name": "Trailer Yard Dwell",
+  "tagline": "That trailer's been in row C for 6 days. The camera noticed on day one.",
+  "category": "Manufacturing & Warehouse",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "stale_hours",
+   "zone"
+  ],
+  "config_schema": {
+   "zone": "polygon \u2014 yard area",
+   "stale_hours": "int \u2014 stale trailer alert (default 72)"
   }
  }
 ]

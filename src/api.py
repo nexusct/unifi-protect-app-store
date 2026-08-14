@@ -22,7 +22,7 @@ def create_app(pipeline, streams):
     store.init_db()
     app.include_router(sub_router)
     if LANDING.exists():
-        app.mount("/assets-landing", StaticFiles(directory=str(LANDING)), name="landing-assets")
+        app.mount("/assets", StaticFiles(directory=str(LANDING / "assets")), name="landing-assets")
 
         @app.get("/", include_in_schema=False)
         def landing():

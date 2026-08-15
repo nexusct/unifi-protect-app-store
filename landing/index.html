@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Nexus Vision — AI Functions for UniFi Protect Cameras</title>
-<meta name="description" content="GPU-powered AI functions for existing UniFi Protect cameras — fall detection, dock analytics, queue alerts, liability protection. On-prem, no cloud video." />
+<meta name="description" content="GPU-powered AI functions for existing UniFi Protect cameras — fall detection, dock analytics, queue alerts, and liability review with local processing." />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Nexus Vision — AI Functions for UniFi Protect" />
 <meta property="og:description" content="120 GPU-accelerated video analytics functions for your existing UniFi Protect cameras. On-prem, biometric-free by design." />
@@ -41,7 +41,7 @@
     { "@type": "Question", "name": "Does this work with my existing UniFi setup?",
       "acceptedAnswer": { "@type": "Answer", "text": "Yes. Any UniFi Protect camera with RTSP enabled works. No new cameras, no NVR replacement, no network changes beyond the GPU appliance sitting next to your console." } },
     { "@type": "Question", "name": "Where does the video go?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Nowhere. All inference runs on the GPU appliance in your building. Alerts carry metadata and, where you allow it, a snapshot. There is no cloud video." } },
+      "acceptedAnswer": { "@type": "Answer", "text": "Continuous video inference runs on the local GPU appliance. Alerts can carry metadata and, where configured, a snapshot; continuous video is not sent to Nexus." } },
     { "@type": "Question", "name": "Is this BIPA-compliant in Illinois?",
       "acceptedAnswer": { "@type": "Answer", "text": "Designed to avoid BIPA applicability: no face recognition and no biometric identifiers — it analyzes skeletons, objects, plates, and counts. Biometric features would require written consent flows and counsel review." } },
     { "@type": "Question", "name": "What if a function doesn't fit my site?",
@@ -52,7 +52,7 @@
 }
 </script>
 <style>
-  /* Base styles; App Store-inspired overrides load after this block. */
+  /* Base styles; editorial marketplace overrides load after this block. */
   :root {
     --bg: #ffffff; --panel: #f6f7f9; --panel-2: #eef0f4;
     --vellum: #0e1526; --marking: #0559d5;
@@ -61,7 +61,7 @@
     --green: #0d9e63; --amber: #b97d07; --red: #d5342c;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--bg); color: var(--vellum); font-family: "Inter", -apple-system, sans-serif; line-height: 1.6; }
+  body { background: var(--bg); color: var(--vellum); font-family: "Inter", system-ui, sans-serif; line-height: 1.6; }
   h1, h2, h3 { font-family: "Archivo", "Inter", sans-serif; }
   .shell { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
 
@@ -78,7 +78,7 @@
   .btn.big { padding: 16px 32px; font-size: 15.5px; }
 
   .hero { padding: 0; text-align: left; position: relative; overflow: hidden;
-    background: #060a12 url("assets/hero-banner.jpg") center/cover no-repeat; }
+    background: #060a12 url("../assets/hero-banner.jpg") center/cover no-repeat; }
   .hero .shell { padding: 96px 20px 84px; position: relative; z-index: 2; }
   /* darken the copy zone for legibility, keep the scene visible on the right */
   .hero::before { content: ""; position: absolute; inset: 0; z-index: 1;
@@ -161,7 +161,7 @@
   footer .shell { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
   footer a { color: var(--marking); text-decoration: none; }
 </style>
-<link rel="stylesheet" href="/assets/app-store.css" />
+<link rel="stylesheet" href="../assets/marketplace.css" />
 </head>
 <body class="page-landing">
 <a class="skip-link" href="#main-content">Skip to content</a>
@@ -170,8 +170,8 @@
   <div class="shell">
     <div class="brand">Nexus<span>Vision</span></div>
     <div>
-      <a href="/storefront/">Marketplace</a>
-      <a href="/guide/">Implementation guide</a>
+      <a href="../storefront/index.html">Marketplace</a>
+      <a href="../guide/index.html">Implementation guide</a>
       <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
       <a href="#signup" class="btn" style="padding:9px 18px;margin-left:22px">Start subscription</a>
@@ -187,7 +187,7 @@
     <p>Nexus Vision adds GPU-accelerated AI functions to your existing UniFi Protect NVR. Explore 120 modules for fall detection, dock analytics, queue alerts, and liability review—processed locally without replacing your cameras.</p>
     <div class="hero-cta">
       <a href="#signup" class="btn big">Start a subscription</a>
-      <a href="/storefront/" class="btn big ghost">Browse 120 functions →</a>
+      <a href="../storefront/index.html" class="btn big ghost">Browse 120 functions →</a>
     </div>
     <div class="trust">
       <div><b>120</b> AI functions</div>
@@ -350,7 +350,7 @@
 <footer>
   <div class="shell">
     <div><b style="color:var(--vellum)">NexusVision</b> · by Nexus Communications Technology · Schaumburg, IL</div>
-    <div><a href="https://nexusct.com">nexusct.com</a> · <a href="https://github.com/nexusct/unifi-protect-app-store">GitHub</a> · <a href="/storefront/">Function marketplace</a></div>
+    <div><a href="https://nexusct.com">nexusct.com</a> · <a href="https://github.com/nexusct/unifi-protect-app-store">GitHub</a> · <a href="../storefront/index.html">Function marketplace</a></div>
   </div>
 </footer>
 

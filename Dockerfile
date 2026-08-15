@@ -19,6 +19,7 @@ RUN pip install --extra-index-url https://download.pytorch.org/whl/cu121 -r requ
 
 COPY src/ ./src/
 COPY config/ ./config/
+COPY assets/ ./assets/
 COPY landing/ ./landing/
 COPY storefront/ ./storefront/
 COPY guide/ ./guide/

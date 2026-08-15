@@ -11,6 +11,7 @@ ROOT = Path("/app")
 LANDING = ROOT / "landing"
 STOREFRONT = ROOT / "storefront"
 GUIDE = ROOT / "guide"
+ASSETS = ROOT / "assets"
 
 
 def create_app(pipeline, streams):
@@ -21,10 +22,13 @@ def create_app(pipeline, streams):
     from subscriptions.app import router as sub_router
     store.init_db()
     app.include_router(sub_router)
+    if ASSETS.exists():
+        app.mount("/assets", StaticFiles(directory=str(ASSETS)), name="public-assets")
+
     if LANDING.exists():
-        app.mount("/assets", StaticFiles(directory=str(LANDING / "assets")), name="landing-assets")
 
         @app.get("/", include_in_schema=False)
+        @app.get("/index.html", include_in_schema=False)
         def landing():
             return FileResponse(str(LANDING / "index.html"))
 

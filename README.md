@@ -1,9 +1,9 @@
-# UniFi Protect App Store (Nexus Vision Marketplace)
+# UniFi Protect Function Marketplace (Nexus Vision)
 
-An open function marketplace for UniFi Protect NVRs. Plug an API key into
-your existing cameras, pick the GPU-accelerated functions your business
-needs, and run everything on your own premises — no cloud video, no new
-cameras, no per-camera AI hardware.
+An open function marketplace for UniFi Protect NVRs. Connect through a scoped,
+local Protect account, pick the GPU-accelerated functions your business
+needs, and process continuous video on your own premises. Configured alerts can
+send metadata or snapshots; no new cameras or per-camera AI hardware required.
 
 **120 functions across 9 business categories**, plus 10 core life-safety
 detectors. Built and maintained by [Nexus Communications Technology](https://nexusct.com),

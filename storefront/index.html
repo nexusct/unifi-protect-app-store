@@ -7,7 +7,7 @@
 <meta name="description" content="120 GPU-accelerated AI functions for UniFi Protect NVRs — browse by vertical, add to your stack, generate a subscription config. On-prem, biometric-free." />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Nexus Vision Marketplace — 120 AI Functions for UniFi Protect" />
-<meta property="og:description" content="Browse 120 GPU video analytics functions by business vertical. Plug into your existing NVR via API key. On-prem, no cloud video." />
+<meta property="og:description" content="Browse 120 GPU video analytics functions by business vertical. Connect through a scoped local account and process continuous video on-site." />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -18,7 +18,7 @@
 }
 </script>
 <style>
-  /* Base styles; App Store-inspired overrides load after this block. */
+  /* Base styles; editorial marketplace overrides load after this block. */
   :root {
     --bg: #ffffff;
     --card: #f6f7f9;
@@ -34,7 +34,7 @@
     --red: #d5342c;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--bg); color: var(--ink); font-family: "Inter", -apple-system, "Segoe UI", sans-serif; line-height: 1.6; }
+  body { background: var(--bg); color: var(--ink); font-family: "Inter", system-ui, "Segoe UI", sans-serif; line-height: 1.6; }
   h1, h2, h3 { font-family: "Archivo", "Inter", sans-serif; }
 
   .shell { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
@@ -124,7 +124,7 @@
   footer a { color: var(--blue); text-decoration: none; }
   @media (max-width: 640px) { .tray-list { display: none; } }
 </style>
-<link rel="stylesheet" href="/assets/app-store.css" />
+<link rel="stylesheet" href="../assets/marketplace.css" />
 </head>
 <body class="page-storefront">
 <a class="skip-link" href="#main-content">Skip to functions</a>
@@ -133,10 +133,10 @@
   <div class="shell">
     <div class="brand">Nexus<span>Vision</span> Marketplace</div>
     <nav>
-      <a href="/">Overview</a>
-      <a href="/guide/">Guide</a>
-      <a href="/#pricing">Pricing</a>
-      <a href="/#signup" class="btn" style="padding:8px 18px;margin-left:22px">Start subscription</a>
+      <a href="../index.html">Overview</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../index.html#pricing">Pricing</a>
+      <a href="../index.html#signup" class="btn" style="padding:8px 18px;margin-left:22px">Start subscription</a>
     </nav>
   </div>
 </div>
@@ -152,7 +152,7 @@
       <div><b>Local</b>video processing</div>
       <div><b>0</b>biometric identifiers collected</div>
     </div>
-    <div class="featured-rail" aria-label="Featured functions">
+    <div class="featured-rail" role="region" aria-label="Featured functions">
       <button type="button" class="feature-card primary" data-feature-id="slip-fall">
         <span class="feature-copy"><span class="feature-label">Featured · Liability review</span><span class="feature-title">Preserve the clip before it expires.</span><span class="feature-description">Slip &amp; Fall Liability Guard marks the event window for human review.</span></span>
       </button>
@@ -174,8 +174,8 @@
       <option value="name">Sort: Function A–Z</option>
       <option value="tier">Sort: Service level</option>
     </select>
-    <div id="cat-chips"></div>
-    <div id="tier-chips"></div>
+    <div id="cat-chips" role="group" aria-label="Filter by vertical"></div>
+    <div id="tier-chips" role="group" aria-label="Filter by service level"></div>
   </div>
 </div>
 
@@ -221,6 +221,9 @@ const grid = document.getElementById("grid");
 const tray = document.getElementById("tray");
 const backdrop = document.getElementById("backdrop");
 const modal = document.getElementById("modal");
+const closeX = document.getElementById("close-x");
+let dialogReturnFocus = null;
+let currentModalId = null;
 
 init();
 
@@ -247,9 +250,19 @@ function buildChips(elId, items, onPick) {
   el.innerHTML = "";
   items.forEach((item, i) => {
     const b = document.createElement("button");
+    b.type = "button";
     b.className = "chip" + (i === 0 ? " active" : "");
     b.textContent = item;
-    b.onclick = () => { el.querySelectorAll(".chip").forEach(c => c.classList.remove("active")); b.classList.add("active"); onPick(item); };
+    b.setAttribute("aria-pressed", String(i === 0));
+    b.onclick = () => {
+      el.querySelectorAll(".chip").forEach(c => {
+        c.classList.remove("active");
+        c.setAttribute("aria-pressed", "false");
+      });
+      b.classList.add("active");
+      b.setAttribute("aria-pressed", "true");
+      onPick(item);
+    };
     el.appendChild(b);
   });
 }
@@ -339,15 +352,60 @@ function openModal(id) {
       <button class="btn" id="toggle-sel">${selected.has(f.id) ? "Remove from stack" : "Add to my stack"}</button>
       <button class="btn ghost" id="close-btn">Close</button>
     </div>`;
-  backdrop.classList.add("open");
-  backdrop.setAttribute("aria-hidden", "false");
+  showDialog(f.id);
   document.getElementById("toggle-sel").onclick = () => { toggleSelect(f.id); openModal(id); };
   document.getElementById("close-btn").onclick = closeModal;
 }
 
-function closeModal() { backdrop.classList.remove("open"); backdrop.setAttribute("aria-hidden", "true"); }
+function setPageInert(value) {
+  [...document.body.children].forEach(element => {
+    if (element !== backdrop && element.tagName !== "SCRIPT") element.inert = value;
+  });
+}
+
+function showDialog(functionId = null) {
+  if (!backdrop.classList.contains("open")) dialogReturnFocus = document.activeElement;
+  currentModalId = functionId;
+  setPageInert(true);
+  document.body.classList.add("modal-open");
+  backdrop.classList.add("open");
+  backdrop.setAttribute("aria-hidden", "false");
+  requestAnimationFrame(() => closeX.focus());
+}
+
+function closeModal() {
+  if (!backdrop.classList.contains("open")) return;
+  const fallback = currentModalId ? document.querySelector(`[data-open="${currentModalId}"]`) : document.getElementById("generate-btn");
+  const target = dialogReturnFocus && dialogReturnFocus.isConnected ? dialogReturnFocus : fallback;
+  setPageInert(false);
+  document.body.classList.remove("modal-open");
+  if (target) target.focus();
+  backdrop.classList.remove("open");
+  backdrop.setAttribute("aria-hidden", "true");
+  dialogReturnFocus = null;
+  currentModalId = null;
+}
+
 backdrop.addEventListener("click", e => { if (e.target === backdrop) closeModal(); });
-document.getElementById("close-x").onclick = closeModal;
+closeX.onclick = closeModal;
+backdrop.addEventListener("keydown", e => {
+  if (e.key !== "Tab") return;
+  const focusable = [...backdrop.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+    .filter(element => element.getClientRects().length);
+  if (!focusable.length) {
+    e.preventDefault();
+    closeX.focus();
+    return;
+  }
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first.focus();
+  }
+});
 document.addEventListener("keydown", e => { if (e.key === "Escape" && backdrop.classList.contains("open")) closeModal(); });
 
 function toggleSelect(id) {
@@ -368,7 +426,7 @@ document.getElementById("generate-btn").onclick = () => {
   const fns = CATALOG.filter(f => selected.has(f.id));
   const yaml = [
     "# Nexus Vision subscription — generated from the marketplace",
-    "# Paste your UniFi Protect credentials in .env, map cameras below.",
+    "# Set scoped local Protect credentials in .env, then map cameras below.",
     "",
     "site:",
     '  name: "My Site"',
@@ -397,8 +455,7 @@ document.getElementById("generate-btn").onclick = () => {
     <div class="modal-actions">
       <button class="btn ghost" id="close-btn">Close</button>
     </div>`;
-  backdrop.classList.add("open");
-  backdrop.setAttribute("aria-hidden", "false");
+  showDialog(null);
   document.getElementById("close-btn").onclick = closeModal;
 };
 </script>

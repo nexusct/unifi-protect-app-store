@@ -1,11 +1,11 @@
-/* Nexus Vision — App Store-inspired visual system.
-   Uses familiar marketplace hierarchy without Apple trademarks or assets. */
+/* Nexus Vision editorial marketplace visual system.
+   Uses familiar software-marketplace hierarchy with original Nexus branding. */
 :root {
   --store-bg: #f5f5f7;
   --store-card: #ffffff;
   --store-label: #1d1d1f;
   --store-secondary: #6e6e73;
-  --store-tertiary: #86868b;
+  --store-tertiary: #5f5f65;
   --store-blue: #0071e3;
   --store-blue-hover: #0077ed;
   --store-green: #248a3d;
@@ -20,6 +20,7 @@
 }
 
 html { scroll-behavior: smooth; }
+body.modal-open { overflow: hidden; }
 
 body.page-landing,
 body.page-storefront,
@@ -27,7 +28,7 @@ body.page-guide {
   margin: 0;
   background: var(--store-bg);
   color: var(--store-label);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  font-family: system-ui, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -44,7 +45,7 @@ body.page-guide h3,
 body.page-landing .brand,
 body.page-storefront .brand,
 body.page-guide .brand {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  font-family: system-ui, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   text-wrap: balance;
 }
 
@@ -58,8 +59,9 @@ body.page-storefront button:focus-visible,
 body.page-storefront input:focus-visible,
 body.page-storefront select:focus-visible,
 body.page-guide a:focus-visible {
-  outline: 3px solid rgba(0, 113, 227, 0.36);
-  outline-offset: 3px;
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #004f9e;
 }
 
 .skip-link {
@@ -105,6 +107,8 @@ body.page-guide .brand {
 body.page-landing .brand span,
 body.page-storefront .brand span,
 body.page-guide .brand span { color: var(--store-blue); }
+
+body.page-guide .brand a { color: inherit; text-decoration: none; }
 
 body.page-landing nav a,
 body.page-storefront .topbar nav a,
@@ -251,7 +255,7 @@ body.page-landing .tier.featured { background: linear-gradient(160deg, #0b75d8, 
 body.page-landing .tier .flag { top: 20px; left: auto; right: 20px; transform: none; padding: 4px 9px; background: rgba(255,255,255,.18); color: #fff; font-size: 10px; }
 body.page-landing .tier h3 { font-size: 20px; font-weight: 650; }
 body.page-landing .tier .price { font-size: 40px; font-weight: 700; letter-spacing: -0.04em; }
-body.page-landing .tier .price { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; }
+body.page-landing .tier .price { font-family: system-ui, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif; }
 body.page-landing .tier.featured .price span,
 body.page-landing .tier.featured .per,
 body.page-landing .tier.featured li { color: rgba(255,255,255,.76); }
@@ -309,7 +313,7 @@ body.page-storefront .hero-stats b { color: var(--store-label); font-size: 28px;
 .feature-card:hover { transform: translateY(-4px); box-shadow: var(--store-shadow); }
 .feature-card:active { transform: scale(.99); }
 .feature-card::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 80% 18%, rgba(255,255,255,.26), transparent 28%); pointer-events: none; }
-.feature-card.primary { background: #06101f url("/assets/hero-banner.jpg") 68% center/cover no-repeat; }
+.feature-card.primary { background: #06101f url("hero-banner.jpg") 68% center/cover no-repeat; }
 .feature-card.primary::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(4,9,18,.9), rgba(4,9,18,.18)); }
 .feature-card.safety { background: linear-gradient(145deg, #ff9f0a, #ff375f 70%, #c70035); }
 .feature-card.operations { background: linear-gradient(145deg, #5e5ce6, #0a84ff); }
@@ -372,11 +376,11 @@ body.page-storefront .card.selected { border-color: var(--store-separator); back
 .app-copy { min-width: 0; }
 .app-name { display: block; overflow: hidden; margin: 0; color: var(--store-label); font-size: 15px; font-weight: 600; letter-spacing: -.015em; text-overflow: ellipsis; white-space: nowrap; }
 body.page-storefront .card .tagline { display: -webkit-box; overflow: hidden; margin-top: 3px; color: var(--store-secondary); font-size: 13px; line-height: 1.34; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
-.app-meta { margin-top: 5px; color: var(--store-tertiary); font-size: 11px; }
-.get-btn { min-width: 70px; padding: 7px 15px; border: 0; border-radius: 999px; background: rgba(0,113,227,.1); color: var(--store-blue); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: background 160ms ease, transform 160ms ease; }
+.app-meta { margin-top: 5px; color: #5f5f65; font-size: 11px; }
+.get-btn { min-width: 70px; padding: 7px 15px; border: 0; border-radius: 999px; background: rgba(0,113,227,.1); color: #0055a8; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: background 160ms ease, transform 160ms ease; }
 .get-btn:hover { background: rgba(0,113,227,.17); }
 .get-btn:active { transform: scale(.96); }
-.get-btn.added { background: rgba(36,138,61,.12); color: var(--store-green); }
+.get-btn.added { background: rgba(36,138,61,.12); color: #0f6b2f; }
 body.page-storefront .badges { gap: 5px; }
 body.page-storefront .badge { padding: 2px 7px; border-radius: 5px; font-size: 9px; }
 
@@ -461,7 +465,7 @@ body.page-guide footer { background: transparent; }
   .feature-card { min-height: 260px; }
   body.page-storefront h1 { font-size: 46px; }
   body.page-storefront .hero-stats div { min-width: 50%; padding: 10px 12px; border-right: 0; }
-  body.page-storefront .controls { top: 72px; }
+  body.page-storefront .controls { top: 52px; }
   body.page-storefront .controls-row { border-radius: 16px; }
   #cat-chips, #tier-chips { display: flex; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
   body.page-storefront .card { min-height: 102px; }
@@ -470,7 +474,9 @@ body.page-guide footer { background: transparent; }
   .modal-app-head { grid-template-columns: 78px minmax(0,1fr); }
   .modal-app-head .app-icon { width: 78px; height: 78px; border-radius: 18px; }
   body.page-guide h1 { font-size: 46px; }
-  body.page-guide .topbar nav { display: none; }
+  body.page-guide .guide-label { display: none; }
+  body.page-guide .topbar .brand a { margin-left: 0; }
+  body.page-guide .topbar nav a:first-child { display: none; }
   body.page-guide .toc { grid-template-columns: 1fr; }
   body.page-guide .toc a:nth-last-child(2) { border-bottom: 1px solid var(--store-separator); }
   body.page-guide section .shell { padding: 0 24px; }

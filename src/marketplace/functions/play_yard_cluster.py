@@ -1,16 +1,15 @@
 """Play Yard Cluster — sudden multi-animal motion cluster (fight proxy).
 
-Rapid simultaneous high-motion across the play-yard zone = likely
-scuffle. Daycare staff get an immediate "check the yard" alert with the
-clip — the difference between a scuffle and a vet bill.
+Reports a simultaneous high-motion cluster in the configured play-yard zone
+with an optional JPEG snapshot. The signal does not establish a fight.
 """
 import numpy as np
 from marketplace.contract import MarketplaceFunction
 
 MANIFEST = {
     "id": "play-yard-cluster",
-    "name": "Play Yard Scuffle Alert",
-    "tagline": "Sudden chaos in the yard. Staff alerted in seconds, clip attached.",
+    "name": "Play Yard Motion Spike",
+    "tagline": "Flags motion energy above a calibrated rolling baseline and saves a local alert snapshot for staff review.",
     "category": "People & Safety",
     "tier": "pro",
     "requires_gpu": True,

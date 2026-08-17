@@ -1,0 +1,33 @@
+.git
+.github
+.DS_Store
+
+# Local credentials and deployment state
+.env
+.env.*
+!.env.example
+config/sites.yaml
+config/sites.*.yaml
+!config/sites.example.yaml
+!config/sites.unraid.yaml
+data/
+*.db
+*.sqlite
+*.sqlite3
+*.pem
+*.key
+
+# Local environments, caches, review workspaces, and test output
+.hallmark/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+test-results/
+playwright-report/
+coverage/
+*.log

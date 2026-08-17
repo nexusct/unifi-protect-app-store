@@ -1,16 +1,15 @@
-"""Unit Fullness Estimate — auction-ready visual audit.
+"""Storage-unit occupied/empty appearance estimate.
 
-Estimates unit fullness from edge density + floor-coverage in the unit
-zone. Managers verify "empty" units before over-lock removal and document
-fullness for auction compliance photos — without walking every row.
+Classifies a configured view as appearing occupied or empty from edge density.
+Operators must verify the view before any operational or legal decision.
 """
 import numpy as np
 from marketplace.contract import MarketplaceFunction
 
 MANIFEST = {
     "id": "unit-fullness",
-    "name": "Unit Fullness Audit",
-    "tagline": "Unit 87 is 90% full, not empty. The auction listing just changed.",
+    "name": "Unit Occupancy Appearance Check",
+    "tagline": "Classifies configured unit zones as appearing empty or occupied from edge density; it does not estimate percent fullness.",
     "category": "Intelligence",
     "tier": "pro",
     "requires_gpu": True,

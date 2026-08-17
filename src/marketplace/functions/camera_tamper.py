@@ -9,8 +9,8 @@ from marketplace.contract import MarketplaceFunction
 
 MANIFEST = {
     "id": "camera-tamper",
-    "name": "Camera Tamper Detection",
-    "tagline": "Sprayed, covered, or turned — you find out in seconds, not after the theft.",
+    "name": "Camera View Change Alert",
+    "tagline": "Flags substantial edge-density loss or frame change from the learned reference; confirm detection and delivery timing during commissioning.",
     "category": "Property & Liability",
     "tier": "starter",
     "requires_gpu": True,

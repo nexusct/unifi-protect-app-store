@@ -9,7 +9,7 @@ from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, cro
 MANIFEST = {
     "id": "drive-off-alert",
     "name": "Drive-Off Alert",
-    "tagline": "Tank filled, nobody walked in, car gone. Alert before the plate leaves frame.",
+    "tagline": "Flags a vehicle leaving a configured pump zone when no person crossing of the store-entry line was observed in the associated time bucket; review before action.",
     "category": "Automotive & Parking",
     "tier": "pro",
     "requires_gpu": True,

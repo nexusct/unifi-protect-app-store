@@ -8,7 +8,7 @@ from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_
 MANIFEST = {
     "id": "wash-bay-queue",
     "name": "Service Bay Queue",
-    "tagline": "Five trucks deep at the wash bay at shift change. Dispatch already knows.",
+    "tagline": "Flags queue estimates above the configured threshold at a wash-bay approach zone.",
     "category": "Manufacturing & Warehouse",
     "tier": "starter",
     "requires_gpu": True,

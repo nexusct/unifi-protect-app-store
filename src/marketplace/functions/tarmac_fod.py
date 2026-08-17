@@ -9,8 +9,8 @@ from marketplace.contract import MarketplaceFunction
 
 MANIFEST = {
     "id": "tarmac-fod",
-    "name": "Tarmac FOD Watch",
-    "tagline": "Something's on the ramp that wasn't there this morning. Found before the prop did.",
+    "name": "Ramp Change Watch",
+    "tagline": "Flags small persistent image changes in a calibrated ramp zone for required human inspection; it does not replace FOD walks.",
     "category": "People & Safety",
     "tier": "enterprise",
     "requires_gpu": True,

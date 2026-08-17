@@ -1,0 +1,120 @@
+/* Hallmark · tokens · genre: modern-minimal · tone: utilitarian
+ * theme: studied-DNA (source: https://ui.com/) · design-system: design.md
+ * Locked token system. Every colour and font-family in this project must
+ * reference a token from this file by name. No inline hex, rgb(), or oklch().
+ */
+
+/* ---- Type -------------------------------------------------------------
+ * Single family, on purpose: the studied DNA ships exactly one neutral
+ * grotesk. Self-hosted rather than CDN-linked — this product deploys
+ * on-premises, sometimes air-gapped, so a live font CDN would be both a
+ * runtime dependency and a privacy leak.
+ * Archivo, SIL Open Font License 1.1, variable 400..900, Latin subset.
+ */
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("./fonts/archivo-variable.woff2") format("woff2-variations");
+}
+
+:root {
+  /* ---- Colour ---------------------------------------------------------
+   * Converted from the studied DNA's exact sRGB values.
+   * paper #ffffff · ink #212327 · accent #006fff · deep #01183e
+   */
+  --color-paper:       oklch(100.0% 0.000  89.9);
+  --color-paper-2:     oklch( 97.6% 0.003 264.5);
+  --color-paper-3:     oklch( 94.8% 0.006 264.5);
+
+  --color-ink:         oklch( 25.6% 0.008 264.4);
+  --color-ink-2:       oklch( 45.1% 0.029 262.0);
+  --color-ink-3:       oklch( 53.4% 0.028 265.4);  /* 4.6:1 on paper — AA for small text */
+
+  --color-rule:        oklch( 92.4% 0.009 264.5);
+  --color-rule-strong: oklch( 85.0% 0.012 264.5);
+
+  --color-accent:       oklch( 58.1% 0.230 259.5);
+  --color-accent-hover: oklch( 52.0% 0.220 259.5);
+  --color-accent-soft:  oklch( 58.1% 0.230 259.5 / 0.08);
+  --color-accent-ink:   oklch(100.0% 0.000  89.9);  /* text on accent — 4.9:1 */
+  --color-accent-deep:  oklch( 21.9% 0.079 258.5);
+
+  --color-focus:       oklch( 58.1% 0.230 259.5);
+
+  --color-ok:          oklch( 52.0% 0.130 155.0);
+  --color-warn:        oklch( 58.0% 0.130  75.0);
+  --color-danger:      oklch( 53.0% 0.200  27.0);
+
+  /* ---- Fonts ---------------------------------------------------------- */
+  --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-body:    "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semi:    600;
+  --weight-bold:    700;
+  --weight-black:   900;
+
+  --tracking-display: -0.022em;
+  --tracking-tight:   -0.012em;
+  --tracking-wide:     0.06em;
+
+  /* ---- Space · 4-point scale, from the studied DNA -------------------- */
+  --space-3xs: 0.25rem;   /*  4px */
+  --space-2xs: 0.5rem;    /*  8px */
+  --space-xs:  0.75rem;   /* 12px */
+  --space-sm:  1rem;      /* 16px */
+  --space-md:  1.5rem;    /* 24px */
+  --space-lg:  2rem;      /* 32px */
+  --space-xl:  3rem;      /* 48px */
+  --space-2xl: 4.5rem;    /* 72px */
+  --space-3xl: 7rem;      /* 112px */
+
+  /* ---- Type scale ----------------------------------------------------- */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-md:   1.125rem;
+  --text-lg:   1.375rem;
+  --text-xl:   1.75rem;
+  --text-2xl:  2.25rem;
+  --text-3xl:  3rem;
+  --text-display-s: clamp(2.25rem, 1.4rem + 3.4vw, 3.5rem);
+  --text-display:   clamp(2.75rem, 1.5rem + 5vw,  5rem);
+
+  --leading-tight: 1.08;
+  --leading-snug:  1.3;
+  --leading-body:  1.65;
+
+  --measure: 68ch;
+
+  /* ---- Motion — the DNA's signature curve ----------------------------- */
+  --ease-out:    cubic-bezier(0.4, 0, 0.6, 1);
+  --ease-in:     cubic-bezier(0.6, 0, 1, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
+
+  --dur-instant: 90ms;
+  --dur-short:   180ms;
+  --dur-mid:     280ms;
+
+  /* ---- Rules & radii --------------------------------------------------- */
+  --rule-hair:  1px;
+  --rule-thick: 2px;
+
+  --radius-input: 6px;
+  --radius-card:  10px;
+  --radius-pill:  999px;
+}
+
+/* Spatial motion collapses to an opacity crossfade; the focus ring never
+ * animates, in either mode. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-instant: 0ms;
+    --dur-short:   120ms;
+    --dur-mid:     150ms;
+  }
+}

@@ -1,0 +1,12 @@
+site:
+  name: Nexus Vision AI
+  timezone: UTC
+
+# The authenticated setup wizard writes discovered Protect feeds here.
+cameras: []
+
+detector_settings: {}
+
+alerts:
+  dedup_seconds: 120
+  severities: {}

@@ -1,15 +1,14 @@
-"""Queue Length Monitor — checkout/service queue detection.
+"""Checkout/service queue person-count estimate.
 
 Counts persons inside a queue zone; when the count exceeds the threshold
-for `hold_seconds`, alerts floor staff to open another register/station.
-The #1 controllable driver of retail walk-aways and QSR abandonment.
+for `hold_seconds`, emits a staff review alert.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "queue-length",
     "name": "Queue Length Monitor",
-    "tagline": "Know the moment a line forms — before customers walk out.",
+    "tagline": "Flags sustained person-count estimates above a configured queue threshold for staff review.",
     "category": "Retail & QSR",
     "tier": "pro",
     "requires_gpu": True,
@@ -40,7 +39,7 @@ class Function(MarketplaceFunction):
             if ts - self._since[key] >= self.hold:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=self.manifest_id(),
-                    title=f"Queue at {count} — open another station",
+                    title=f"Queue count estimate: {count}",
                     detail=f"{count} people in queue zone on {camera['name']} for {ts - self._since[key]:.0f}s.",
                     frame=frame, meta={"queue_length": count})
                 self._since[key] = ts

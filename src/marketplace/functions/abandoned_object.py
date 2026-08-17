@@ -1,15 +1,15 @@
-"""Abandoned Object — new static object appears and stays.
+"""Persistent Object Review — tracked object remains near one image position.
 
-Tracks objects that appear in a public zone where no person is holding
-them, then persist past the threshold. Lobby bag-drop / package-left
-scenarios for transit, education, and corporate lobbies.
+Flags an object-class track after limited image-space movement and no nearby
+person-class detection for the configured duration. Human review is required;
+the signal does not determine ownership or abandonment.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "abandoned-object",
-    "name": "Abandoned Object Detection",
-    "tagline": "The bag that nobody picked back up, flagged in under a minute.",
+    "name": "Persistent Object Review",
+    "tagline": "Flags a stationary object after the configured dwell threshold for human review; detection and delivery latency vary by deployment.",
     "category": "People & Safety",
     "tier": "enterprise",
     "requires_gpu": True,
@@ -50,7 +50,7 @@ class Function(MarketplaceFunction):
             if not near_person and ts - st["since"] >= self.limit:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Unattended object",
-                    detail=f"Object stationary {ts - st['since']:.0f}s with no person nearby on {camera['name']}.",
+                    title="Stationary object review",
+                    detail=f"Object track had limited image-space movement for {ts - st['since']:.0f}s with no nearby person-class detection on {camera['name']}.",
                     frame=frame, meta={"seconds": ts - st["since"]})
                 self._objects.pop(key, None)

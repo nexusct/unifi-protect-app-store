@@ -9,7 +9,7 @@ from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 MANIFEST = {
     "id": "waiting-room-overflow",
     "name": "Waiting Room Overflow",
-    "tagline": "The lobby hit 14 people at 9:12am. Triage got pinged at 9:12am.",
+    "tagline": "Flags estimated waiting-room occupancy above the configured threshold for staff review.",
     "category": "Healthcare & Senior Living",
     "tier": "starter",
     "requires_gpu": True,

@@ -1,21 +1,20 @@
-"""Two-Person Rule — server-room access always in pairs.
+"""Two-Person Rule — configured dual-presence zone monitoring.
 
 Person count in the server-room zone: exactly one person present beyond
-the threshold = policy violation alert. SOC 2 and PCI physical controls
-often mandate dual presence; this produces the evidence.
+the threshold produces a policy-review alert and supporting event record.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "two-person-rule",
-    "name": "Two-Person Rule",
-    "tagline": "One person in the server room for 4 minutes. SOC 2 auditor never sees it — you already fixed it.",
+    "name": "Solo Server-Room Dwell Alert",
+    "tagline": "Flags sustained solo occupancy in a configured server-room zone for policy review; it does not establish SOC 2, PCI, or other compliance.",
     "category": "Compliance",
     "tier": "enterprise",
     "requires_gpu": True,
     "config_schema": {
-        "zone": "polygon — server room",
-        "solo_seconds": "int (default 240)",
+        "zone": "Polygon for the server-room area to monitor.",
+        "solo_seconds": "Seconds of sustained solo occupancy before review (default 240).",
     },
 }
 

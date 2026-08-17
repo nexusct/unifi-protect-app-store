@@ -9,7 +9,7 @@ from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_
 MANIFEST = {
     "id": "pump-dwell",
     "name": "Pump Dwell Time",
-    "tagline": "A car camping at pump 4 during rush costs you three sales an hour.",
+    "tagline": "Flags vehicles that remain in a configured pump zone beyond the set threshold.",
     "category": "Automotive & Parking",
     "tier": "starter",
     "requires_gpu": True,

@@ -5,12 +5,12 @@ KPI. Feeds staffing, pump-maintenance prioritization, and site comparison
 for multi-site operators.
 """
 from collections import defaultdict
-from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, ZoneTracker, boxes_of, in_zone
 
 MANIFEST = {
     "id": "pump-turns",
     "name": "Pump Turn Counter",
-    "tagline": "Pump 2 turned 41 cars today. Pump 5 turned 9. Now you know why the line forms.",
+    "tagline": "Counts vehicle visits per configured pump zone and emits a daily summary.",
     "category": "Intelligence",
     "tier": "starter",
     "requires_gpu": True,
@@ -43,7 +43,7 @@ class Function(MarketplaceFunction):
                 entered, _, _ = self._tracker.update((camera["id"], name, tid), in_zone(cx, cy, poly), ts)
                 if entered:
                     self._turns[name] += 1
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         day = _t.strftime("%Y-%m-%d", tm)
         if tm.tm_hour == self.digest_hour and self._last_day != day and self._turns:
             ctx.alerts.fire(

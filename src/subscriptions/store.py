@@ -7,6 +7,7 @@ them up on the NexusCT side).
 """
 import json
 import os
+import secrets
 import sqlite3
 import threading
 import time
@@ -14,6 +15,10 @@ from pathlib import Path
 
 DB_PATH = Path(os.environ.get("VISION_DATA", "/app/data")) / "subscriptions.db"
 _lock = threading.Lock()
+
+
+class SubscriptionCapacityError(RuntimeError):
+    """Raised when the configured local signup-record bound is reached."""
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS subscriptions (
@@ -47,7 +52,7 @@ def init_db():
 
 
 def create_sub(data: dict) -> dict:
-    sub_id = "SUB-" + hex(int(time.time()))[2:].upper()[-8:]
+    sub_id = "SUB-" + secrets.token_urlsafe(24)
     now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     row = {
         "id": sub_id,
@@ -64,7 +69,11 @@ def create_sub(data: dict) -> dict:
         "status": "new",
         "created_at": now,
     }
+    max_records = max(1, int(os.environ.get("VISION_SUBSCRIPTION_MAX_RECORDS", "10000")))
     with _lock, _conn() as c:
+        count = c.execute("SELECT COUNT(*) FROM subscriptions").fetchone()[0]
+        if count >= max_records:
+            raise SubscriptionCapacityError(f"subscription record limit {max_records} reached")
         c.execute(
             "INSERT INTO subscriptions (id, company, contact_name, email, phone, industry, tier, sites, cameras, functions, notes, status, created_at) "
             "VALUES (:id, :company, :contact_name, :email, :phone, :industry, :tier, :sites, :cameras, :functions, :notes, :status, :created_at)",
@@ -111,7 +120,7 @@ def forward_to_base44(row: dict) -> bool:
     The existing scoreAndRouteLead workflow scores and routes it as a hot lead."""
     url = os.environ.get("BASE44_ALERT_URL", "")
     token = os.environ.get("BASE44_INTERNAL_TOKEN", "")
-    if not url or "change-me" in token:
+    if not url or not token or "change-me" in token.lower():
         return False
     try:
         import requests
@@ -127,6 +136,6 @@ def forward_to_base44(row: dict) -> bool:
             "camera": "landing-page",
             "meta": {"tier": row["tier"], "subscription_id": row["id"]},
         }, timeout=15)
-        return r.status_code == 200
+        return 200 <= r.status_code < 300
     except Exception:
         return False

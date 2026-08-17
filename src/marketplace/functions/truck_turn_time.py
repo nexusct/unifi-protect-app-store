@@ -1,22 +1,16 @@
-"""Truck Turn Time — arrival-to-departure per carrier at the dock.
-
-Vehicle track enters the yard zone → leaves the yard zone = turn time.
-Per-carrier scorecards in the daily digest; detention-fee disputes end
-with timestamps instead of arguments.
-"""
-from collections import defaultdict
+"""Tracked-truck dwell estimate for a configured yard or dock zone."""
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "truck-turn-time",
-    "name": "Truck Turn Time",
-    "tagline": "How long each truck actually sat at your dock — per carrier.",
+    "name": "Truck Yard Dwell Estimate",
+    "tagline": "Measures tracked-truck dwell from first presence in a configured yard or dock zone until the track leaves; it does not identify carriers.",
     "category": "Manufacturing & Warehouse",
     "tier": "pro",
     "requires_gpu": True,
     "config_schema": {
-        "zone": "polygon — yard/dock area",
-        "slow_minutes": "int — alert threshold (default 120)",
+        "zone": "Polygon for the yard or dock area to monitor.",
+        "slow_minutes": "Minutes of continuous tracked presence before review (default 120).",
     },
 }
 
@@ -48,6 +42,6 @@ class Function(MarketplaceFunction):
                 if dur >= self.slow:
                     ctx.alerts.fire(
                         site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                        title=f"Truck turn {dur/60:.0f} min",
-                        detail=f"Truck sat {dur/60:.1f} min in yard on {camera['name']}.",
+                        title=f"Truck-track dwell {dur/60:.0f} min",
+                        detail=f"Truck track remained in the configured yard zone for {dur/60:.1f} min on {camera['name']}.",
                         frame=frame, meta={"turn_minutes": round(dur / 60, 1)})

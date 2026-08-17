@@ -4,6 +4,7 @@
 site:
   name: "Demo Senior Living Campus"
   client: "Demo Client Co"
+  timezone: "America/Chicago"             # required IANA timezone; schedules follow local DST
 
 cameras:
   - id: "cam-hallway-a"                 # UniFi Protect camera id or friendly name
@@ -47,6 +48,51 @@ cameras:
     name: "Parking Lot"
     rtsp: "rtsps://192.168.1.10:7441/REPLACE_ME"
     detectors: ["alpr"]
+
+  # Access ↔ Protect cross-system pack. Every module here reads the shared
+  # access-event buffer; with UNIFI_ACCESS_HOST / UNIFI_ACCESS_TOKEN unset the
+  # buffer stays empty and the modules idle without running inference.
+  # Also available on a door camera: access-incident-index and
+  # access-evidence-package (no zones), and occupancy-reconciliation
+  # (needs count_line).
+  - id: "cam-east-entrance"
+    name: "East Entrance"
+    rtsp: "rtsps://192.168.1.10:7441/REPLACE_ME"
+    detectors:
+      - "verified-door-timeline"
+      - "tailgating-correlation"
+      - "door-alarm-verification"
+      - "denied-access-escalation"
+      - "after-hours-entry-verification"
+      - "door-operation-verification"
+    zones:
+      door_line: [[0.2, 0.62], [0.8, 0.62]]                              # two-point doorway crossing line
+      door_zone: [[0.32, 0.18], [0.68, 0.18], [0.68, 0.78], [0.32, 0.78]]
+      approach_zone: [[0.0, 0.45], [1.0, 0.45], [1.0, 1.0], [0.0, 1.0]]
+    verified-door-timeline:
+      door_id: "door-east-entrance"     # UniFi Access door id or door name
+      review_seconds: 12
+    tailgating-correlation:
+      door_id: "door-east-entrance"
+      window_seconds: 12
+      inbound: "forward"                # crossing direction counted as an entry
+      crossings_per_grant: 1
+    door-alarm-verification:
+      door_id: "door-east-entrance"
+      observe_seconds: 30
+    denied-access-escalation:
+      door_id: "door-east-entrance"
+      window_seconds: 300
+      min_denials: 3
+      cooldown_seconds: 600
+    after-hours-entry-verification:
+      door_id: "door-east-entrance"
+      open_hours: [7, 19]               # site-local; grants outside these hours are reported
+      escort_distance: 0.25
+    door-operation-verification:
+      door_id: "door-east-entrance"
+      verify_seconds: 20
+      change_threshold: 0.06            # calibrate against the door zone during commissioning
 
 detector_settings:
   fall:

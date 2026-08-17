@@ -6,12 +6,12 @@ digest. The metric QSR franchises are scored on.
 """
 import time as _t
 from collections import defaultdict
-from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, ZoneTracker, boxes_of, in_zone
 
 MANIFEST = {
     "id": "drive-thru-timer",
     "name": "Drive-Thru Service Timer",
-    "tagline": "Every car's time, order point to window exit — automatically.",
+    "tagline": "Measures observed vehicle time between configured order-point and exit zones.",
     "category": "Retail & QSR",
     "tier": "pro",
     "requires_gpu": True,
@@ -48,7 +48,7 @@ class Function(MarketplaceFunction):
                 self._entered[tid] = ts
             if tid in self._entered and in_zone(cx, cy, exit_):
                 dur = ts - self._entered.pop(tid)
-                self._times[_t.strftime("%Y-%m-%d", _t.gmtime(ts))].append(dur)
+                self._times[_t.strftime("%Y-%m-%d", site_time(ts, ctx))].append(dur)
                 if dur >= self.slow:
                     ctx.alerts.fire(
                         site=ctx.site, camera=camera, detector=MANIFEST["id"],

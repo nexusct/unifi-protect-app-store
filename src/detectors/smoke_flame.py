@@ -1,16 +1,16 @@
-"""Detector 10: smoke/flame visual detection (before sensors trip).
+"""Detector 10: possible smoke/flame visual-signature review.
 
 Domain weights recommended (detector_settings.smoke_flame.weights with
 smoke/fire classes). Without them, a heuristic fallback watches for
-fast-growing bright warm-color regions in the upper frame — crude but
-better than nothing in tall-ceiling spaces; expect false positives and
-tune per camera.
+fast-growing bright warm-color regions in the upper frame. Expect false
+positives, tune per camera, and never use this in place of life-safety sensors.
 """
 import logging
 
 import numpy as np
 
-from detectors.base import Detector, get_model, register
+from detectors.base import Detector, get_model, register, run_inference
+from model_paths import model_path
 
 log = logging.getLogger("detectors.smoke_flame")
 
@@ -21,7 +21,7 @@ class SmokeFlameDetector(Detector):
 
     def __init__(self, settings):
         super().__init__(settings)
-        self.weights = self.settings.get("weights", "/app/models/smoke.pt")
+        self.weights = self.settings.get("weights", model_path("smoke.pt"))
         self.conf = float(self.settings.get("confidence", 0.50))
         self._model = None
         self._warm_history = {}
@@ -29,15 +29,15 @@ class SmokeFlameDetector(Detector):
     def _custom_model(self, camera, frame, ts, ctx) -> bool:
         if self._model is None:
             self._model = get_model(self.weights)
-        res = self._model(frame, verbose=False, conf=self.conf)[0]
+        res = run_inference(self._model, frame, conf=self.conf)
         names = {k: str(v).lower() for k, v in (res.names or {}).items()}
         for box in res.boxes or []:
             cls = names.get(int(box.cls[0]), "")
             if cls in ("smoke", "fire", "flame"):
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=self.name,
-                    title=f"{cls.title()} detected",
-                    detail=f"Visual {cls} at {float(box.conf[0]):.0%} on {camera['name']} — before sensor thresholds.",
+                    title=f"Possible {cls} visual signature",
+                    detail=f"Model classified a visual region as {cls} at {float(box.conf[0]):.0%} on {camera['name']}; verify visually. This does not replace life-safety sensors.",
                     frame=frame,
                     meta={"class": cls, "confidence": float(box.conf[0])},
                 )

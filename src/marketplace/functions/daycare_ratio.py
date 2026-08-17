@@ -1,22 +1,21 @@
-"""Daycare Ratio — children-per-staff count in room zones.
+"""Classroom image-height grouping ratio estimate.
 
-License ratios (e.g. 4:1 infants, 8:1 toddlers) are enforced by state.
-This counts child-height vs adult-height figures per room zone and alerts
-when the ratio crosses the configured limit.
+Groups person detections above and below a calibrated image-height threshold.
+The groups are not age or staff classifications and require manual review.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "daycare-ratio",
-    "name": "Classroom Ratio Watch",
-    "tagline": "9 toddlers, 1 adult, room 3. Ratio alert before the licensor arrives.",
+    "name": "Classroom Ratio Estimate",
+    "tagline": "Compares smaller and larger image-height person-detection groups for staff review; it does not classify age or replace required headcounts.",
     "category": "Compliance",
     "tier": "enterprise",
     "requires_gpu": True,
     "config_schema": {
         "zone": "polygon — classroom",
-        "max_ratio": "float — children per adult (default 8)",
-        "child_height_ratio": "float — child proxy (default 0.38)",
+        "max_ratio": "float — smaller-to-larger image-height group ratio (default 8)",
+        "child_height_ratio": "Camera-specific image-height split used only for visual grouping; it does not determine age.",
         "hold_seconds": "int (default 120)",
     },
 }
@@ -34,25 +33,24 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("classroom")
         if not zone:
             return
-        h = frame.shape[0]
-        children = adults = 0
+        smaller = larger = 0
         for (cls, cx, cy, x1, y1, x2, y2, tid) in boxes_of(frame, classes=[0]):
             if not in_zone(cx, cy, zone):
                 continue
-            if (y2 - y1) / h <= self.child_h:
-                children += 1
+            if y2 - y1 <= self.child_h:
+                smaller += 1
             else:
-                adults += 1
+                larger += 1
         key = camera["id"]
-        ratio = children / max(adults, 1) if children else 0
-        if children and ratio > self.max_ratio:
+        ratio = smaller / max(larger, 1) if smaller else 0
+        if smaller and ratio > self.max_ratio:
             self._since.setdefault(key, ts)
             if ts - self._since[key] >= self.hold:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title=f"Ratio {ratio:.1f}:1 in classroom",
-                    detail=f"{children} children / {adults} adults on {camera['name']} for {ts - self._since[key]:.0f}s.",
-                    frame=frame, meta={"children": children, "adults": adults, "ratio": round(ratio, 1)})
+                    title=f"Image-height group ratio {ratio:.1f}:1",
+                    detail=f"{smaller} smaller-height and {larger} larger-height person detections on {camera['name']} persisted for {ts - self._since[key]:.0f}s; verify classroom counts manually.",
+                    frame=frame, meta={"smaller_height": smaller, "larger_height": larger, "ratio": round(ratio, 1)})
                 self._since[key] = ts
         else:
             self._since.pop(key, None)

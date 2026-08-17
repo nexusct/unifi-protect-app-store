@@ -1,16 +1,14 @@
-"""Magnet Crane Exclusion — person in the magnet/crane swing zone.
+"""Magnet-crane exclusion-zone person-presence signal.
 
-Scrap magnet cranes and yard cranes kill people who wander under them.
-Person in the exclusion zone while the crane zone shows activity =
-immediate alert. Same physics as construction crane exclusion, tuned for
-yard operations.
+Flags a person detection in the configured exclusion polygon. The function
+does not determine crane, magnet, load, or operating state.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "magnet-crane-exclusion",
-    "name": "Magnet Crane Exclusion",
-    "tagline": "Person under the magnet while it's live. The operator's cab buzzer fires.",
+    "name": "Magnet-Crane Exclusion-Zone Alert",
+    "tagline": "Flags a person detected in a configured magnet-crane exclusion zone; verify operating state and alert routing through site procedures.",
     "category": "People & Safety",
     "tier": "enterprise",
     "requires_gpu": True,
@@ -39,7 +37,7 @@ class Function(MarketplaceFunction):
             if ts - self._since[key] >= self.hold:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="PERSON IN CRANE EXCLUSION ZONE",
-                    detail=f"Person under magnet/crane path on {camera['name']}.",
+                    title="Person detected in configured magnet-crane exclusion zone",
+                    detail=f"Person track remained in the configured exclusion zone on {camera['name']}; verify crane and load state through site procedures.",
                     frame=frame, meta={"track": tid})
                 self._since[key] = ts

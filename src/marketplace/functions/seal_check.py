@@ -9,8 +9,8 @@ from marketplace.contract import MarketplaceFunction
 
 MANIFEST = {
     "id": "seal-check",
-    "name": "Trailer Seal Check",
-    "tagline": "Trailer doors open in the parking row, not the dock. That's pilferage.",
+    "name": "Trailer Rear-State Change",
+    "tagline": "Flags a sustained visual change in a configured trailer-rear zone for review; it does not determine door state, seal status, or pilferage.",
     "category": "Manufacturing & Warehouse",
     "tier": "enterprise",
     "requires_gpu": True,

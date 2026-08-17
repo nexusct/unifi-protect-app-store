@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Nexus Vision AI · UniFi Setup</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --blue: #0559d5;
+      --blue-dark: #0347aa;
+      --ink: #18202a;
+      --muted: #667085;
+      --line: #dfe4ea;
+      --canvas: #f6f7f9;
+      --surface: #ffffff;
+      --success: #067647;
+      --success-bg: #ecfdf3;
+      --warning: #b54708;
+      --warning-bg: #fffaeb;
+      --danger: #b42318;
+      --danger-bg: #fef3f2;
+      --radius: 14px;
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--canvas); }
+    button, input, select { font: inherit; }
+    button, input, select { min-height: 44px; }
+    button { border: 0; border-radius: 999px; padding: 0 18px; font-weight: 700; cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .5; }
+    button.primary { color: white; background: var(--blue); }
+    button.primary:hover:not(:disabled) { background: var(--blue-dark); }
+    button.secondary { color: var(--blue); background: #eaf2ff; }
+    button.ghost { color: #344054; background: transparent; border: 1px solid var(--line); }
+    a { color: var(--blue); }
+    .topbar { background: var(--surface); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: 1180px; margin: auto; padding: 18px 24px; display: flex; align-items: center; gap: 14px; }
+    .mark { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: var(--blue); color: white; font-weight: 800; }
+    .brand { font-weight: 800; letter-spacing: -.02em; }
+    .brand small { display: block; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: 0; }
+    .shell { max-width: 1180px; margin: auto; padding: 32px 24px 64px; display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 24px; }
+    .intro { margin-bottom: 24px; }
+    h1 { margin: 0 0 10px; font-size: clamp(30px, 4vw, 46px); line-height: 1.04; letter-spacing: -.04em; }
+    h2 { margin: 0; font-size: 21px; letter-spacing: -.02em; }
+    h3 { margin: 0; font-size: 16px; }
+    p { color: var(--muted); line-height: 1.55; }
+    .eyebrow { color: var(--blue); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .stack { display: grid; gap: 16px; }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+    .step-head { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; }
+    .step-number { flex: 0 0 32px; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; color: var(--blue); background: #eaf2ff; font-weight: 800; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .field { display: grid; gap: 7px; }
+    .field.full { grid-column: 1 / -1; }
+    label, legend { font-size: 13px; font-weight: 700; color: #344054; }
+    input, select { width: 100%; border: 1px solid #cfd6df; border-radius: 10px; background: white; color: var(--ink); padding: 10px 12px; }
+    input:focus, select:focus, button:focus-visible { outline: 3px solid rgba(5, 89, 213, .2); outline-offset: 2px; border-color: var(--blue); }
+    .help { margin: 0; font-size: 12px; color: var(--muted); }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 18px; }
+    .notice { border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.45; }
+    .notice.info { background: #eff8ff; color: #175cd3; }
+    .notice.warning { background: var(--warning-bg); color: var(--warning); }
+    .notice.success { background: var(--success-bg); color: var(--success); }
+    .notice.error { background: var(--danger-bg); color: var(--danger); }
+    .fingerprint { margin-top: 10px; padding: 12px; overflow-wrap: anywhere; border-radius: 8px; background: #101828; color: #d0d5dd; font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .checkline { display: flex; align-items: flex-start; gap: 9px; font-size: 13px; line-height: 1.4; }
+    .checkline input { width: 18px; min-height: 18px; margin-top: 1px; }
+    #camera-list { display: grid; gap: 10px; margin-top: 14px; }
+    .camera { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 13px; align-items: center; padding: 14px; border: 1px solid var(--line); border-radius: 11px; }
+    .camera input { width: 18px; min-height: 18px; }
+    .camera-meta { min-width: 0; }
+    .camera-meta p { margin: 3px 0 0; font-size: 12px; }
+    .badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 5px 9px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+    .badge.ok { color: var(--success); background: var(--success-bg); }
+    .badge.off { color: var(--danger); background: var(--danger-bg); }
+    .side { display: grid; align-content: start; gap: 16px; position: sticky; top: 20px; }
+    .side dl { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin: 16px 0 0; font-size: 13px; }
+    .side dt { color: var(--muted); }
+    .side dd { margin: 0; font-weight: 800; }
+    .status-dot { width: 9px; height: 9px; display: inline-block; border-radius: 50%; background: #98a2b3; margin-right: 7px; }
+    .status-dot.ok { background: #12b76a; }
+    .status-dot.warn { background: #f79009; }
+    [hidden] { display: none !important; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    @media (max-width: 850px) {
+      .shell { grid-template-columns: 1fr; }
+      .side { position: static; order: -1; }
+    }
+    @media (max-width: 620px) {
+      .topbar-inner, .shell { padding-left: 16px; padding-right: 16px; }
+      .grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .camera { grid-template-columns: auto minmax(0, 1fr); }
+      .camera .badge { grid-column: 2; justify-self: start; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="mark" aria-hidden="true">N</div>
+      <div class="brand">Nexus Vision AI<small>Local UniFi onboarding</small></div>
+    </div>
+  </header>
+
+  <div class="shell">
+    <main>
+      <header class="intro">
+        <div class="eyebrow">First-run setup</div>
+        <h1>Connect your UniFi Protect feeds.</h1>
+        <p>Verify the local console, discover enabled RTSP/S channels, choose cameras, and write a protected server configuration. Credentials stay on this server and are never saved by this page.</p>
+      </header>
+
+      <div class="stack">
+        <section class="card" aria-labelledby="step-1-title">
+          <div class="step-head"><span class="step-number">1</span><div><h2 id="step-1-title">Authorize and identify this site</h2><p>Use the administrator token entered in the Unraid template.</p></div></div>
+          <div class="grid">
+            <div class="field full">
+              <label for="admin-token">Administrator token</label>
+              <input id="admin-token" type="password" autocomplete="current-password" spellcheck="false" required>
+              <p class="help">Held only in this page’s memory. It is not written to browser storage.</p>
+            </div>
+            <div class="field">
+              <label for="site-name">Site name</label>
+              <input id="site-name" value="Nexus Vision AI" maxlength="100" autocomplete="organization" required>
+            </div>
+            <div class="field">
+              <label for="site-timezone">IANA timezone</label>
+              <input id="site-timezone" value="UTC" placeholder="America/Chicago" maxlength="100" required>
+            </div>
+          </div>
+          <div class="actions"><button id="check-status" class="secondary" type="button">Check server status</button></div>
+        </section>
+
+        <section class="card" aria-labelledby="step-2-title">
+          <div class="step-head"><span class="step-number">2</span><div><h2 id="step-2-title">Verify the UniFi console or NVR</h2><p>Use a dedicated local Protect account. The wizard fails closed on TLS, authentication, and permission errors.</p></div></div>
+          <div class="grid">
+            <div class="field">
+              <label for="protect-host">Console/NVR hostname or IP</label>
+              <input id="protect-host" placeholder="192.168.1.1" maxlength="253" autocomplete="url" required>
+            </div>
+            <div class="field">
+              <label for="protect-port">HTTPS port</label>
+              <input id="protect-port" type="number" value="443" min="1" max="65535" inputmode="numeric" required>
+            </div>
+            <div class="field">
+              <label for="protect-username">Local Protect username</label>
+              <input id="protect-username" maxlength="256" autocomplete="username" required>
+            </div>
+            <div class="field">
+              <label for="protect-password">Password</label>
+              <input id="protect-password" type="password" maxlength="4096" autocomplete="current-password" required>
+            </div>
+            <div class="field full">
+              <label for="tls-mode">TLS trust mode</label>
+              <select id="tls-mode">
+                <option value="system">System-trusted certificate</option>
+                <option value="pinned">Review and pin this controller certificate</option>
+                <option value="custom_ca">Private CA bundle mounted under /config/certs</option>
+              </select>
+            </div>
+            <div id="pin-panel" class="field full" hidden>
+              <div class="actions"><button id="inspect-certificate" class="ghost" type="button">Inspect certificate fingerprint</button></div>
+              <output id="certificate-fingerprint" class="fingerprint" hidden></output>
+              <label class="checkline"><input id="certificate-confirmed" type="checkbox">I verified this SHA-256 fingerprint against the intended UniFi console before trusting it.</label>
+            </div>
+            <div id="ca-panel" class="field full" hidden>
+              <label for="ca-bundle">CA bundle path</label>
+              <input id="ca-bundle" value="/config/certs/unifi-ca.pem" maxlength="1024" spellcheck="false">
+              <p class="help">Copy the private CA PEM into the mapped config/certs directory before testing.</p>
+            </div>
+          </div>
+          <div class="notice info">Protect camera discovery uses HTTPS 443. Selected live analytics feeds use the camera’s enabled secure RTSP channel on port 7441.</div>
+          <div class="actions"><button id="discover" class="primary" type="button">Verify and discover cameras</button></div>
+        </section>
+
+        <section class="card" aria-labelledby="step-3-title">
+          <div class="step-head"><span class="step-number">3</span><div><h2 id="step-3-title">Select NVR feeds</h2><p>Only cameras with an enabled Protect RTSP/S channel can be selected.</p></div></div>
+          <div class="actions"><button id="select-all" class="ghost" type="button" disabled>Select all available</button></div>
+          <div id="camera-list"><p class="help">No cameras discovered yet.</p></div>
+        </section>
+
+        <section class="card" aria-labelledby="step-4-title">
+          <div class="step-head"><span class="step-number">4</span><div><h2 id="step-4-title">Save, restart, and verify</h2><p>The server re-discovers every selected camera before saving, then restarts through Unraid’s container restart policy.</p></div></div>
+          <div class="notice warning">The readiness check remains unavailable until every configured camera has a fresh frame and detector/alert maintenance is healthy. A saved configuration alone is not a passing readiness result.</div>
+          <div class="actions">
+            <button id="save-setup" class="primary" type="button" disabled>Save verified configuration</button>
+            <button id="restart-server" class="secondary" type="button" disabled>Restart server</button>
+            <button id="check-readiness" class="ghost" type="button">Check readiness</button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <aside class="side" aria-label="Setup status">
+      <section class="card">
+        <h3>Readiness summary</h3>
+        <dl>
+          <dt>Configuration</dt><dd id="summary-config"><span class="status-dot"></span>Unknown</dd>
+          <dt>Protect</dt><dd id="summary-protect"><span class="status-dot"></span>Not tested</dd>
+          <dt>Feeds selected</dt><dd id="summary-cameras">0</dd>
+          <dt>Runtime</dt><dd id="summary-runtime"><span class="status-dot"></span>Not ready</dd>
+        </dl>
+      </section>
+      <section id="message" class="notice info" aria-live="polite">Enter the administrator token to begin.</section>
+      <section class="card">
+        <h3>Security boundary</h3>
+        <p class="help">Keep port 8090 on the trusted LAN or behind an authenticated reverse proxy. Never expose setup or administrative routes directly to the Internet.</p>
+      </section>
+    </aside>
+  </div>
+
+  <script>
+    const state = { cameras: [], connected: false, saved: false, certificateSha256: '' };
+    const byId = (id) => document.getElementById(id);
+    const message = byId('message');
+
+    function setMessage(text, kind = 'info') {
+      message.className = `notice ${kind}`;
+      message.textContent = text;
+    }
+
+    function token() {
+      const value = byId('admin-token').value.trim();
+      if (!value) throw new Error('Enter the administrator token from the Unraid template.');
+      return value;
+    }
+
+    async function api(path, options = {}) {
+      const headers = new Headers(options.headers || {});
+      headers.set('x-admin-token', token());
+      if (options.body) headers.set('content-type', 'application/json');
+      const response = await fetch(path, {...options, headers});
+      let payload = {};
+      try { payload = await response.json(); } catch (_error) { payload = {}; }
+      if (!response.ok) throw new Error(typeof payload.detail === 'string' ? payload.detail : `Request failed (${response.status}).`);
+      return payload;
+    }
+
+    function connection() {
+      const tlsMode = byId('tls-mode').value;
+      const result = {
+        host: byId('protect-host').value.trim(),
+        port: Number(byId('protect-port').value),
+        username: byId('protect-username').value,
+        password: byId('protect-password').value,
+        tls_mode: tlsMode,
+        certificate_sha256: null,
+        ca_bundle: null
+      };
+      if (!result.host || !result.username || !result.password) throw new Error('Enter the Protect host, username, and password.');
+      if (tlsMode === 'pinned') {
+        if (!state.certificateSha256 || !byId('certificate-confirmed').checked) {
+          throw new Error('Inspect and independently verify the controller certificate fingerprint first.');
+        }
+        result.certificate_sha256 = state.certificateSha256;
+      }
+      if (tlsMode === 'custom_ca') result.ca_bundle = byId('ca-bundle').value.trim();
+      return result;
+    }
+
+    function summary(id, text, kind = '') {
+      const target = byId(id);
+      target.replaceChildren();
+      if (id !== 'summary-cameras') {
+        const dot = document.createElement('span');
+        dot.className = `status-dot ${kind}`.trim();
+        target.append(dot);
+      }
+      target.append(document.createTextNode(text));
+    }
+
+    function renderCameras() {
+      const list = byId('camera-list');
+      list.replaceChildren();
+      if (!state.cameras.length) {
+        const empty = document.createElement('p');
+        empty.className = 'help';
+        empty.textContent = 'No cameras were returned by Protect.';
+        list.append(empty);
+        return;
+      }
+      for (const camera of state.cameras) {
+        const row = document.createElement('label');
+        row.className = 'camera';
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'camera-select';
+        checkbox.value = camera.id;
+        checkbox.disabled = !camera.rtsp_enabled;
+        checkbox.checked = Boolean(camera.rtsp_enabled && String(camera.state).toUpperCase() === 'CONNECTED');
+        checkbox.addEventListener('change', updateSelection);
+        const meta = document.createElement('span');
+        meta.className = 'camera-meta';
+        const name = document.createElement('strong');
+        name.textContent = camera.name;
+        const detail = document.createElement('p');
+        const stream = camera.stream || {};
+        detail.textContent = `${camera.model} · ${stream.width || '?'}×${stream.height || '?'} · ${stream.fps || '?'} fps`;
+        meta.append(name, detail);
+        const badge = document.createElement('span');
+        badge.className = `badge ${camera.rtsp_enabled ? 'ok' : 'off'}`;
+        badge.textContent = camera.rtsp_enabled ? 'RTSP/S ready' : 'Enable RTSP in Protect';
+        row.append(checkbox, meta, badge);
+        list.append(row);
+      }
+      updateSelection();
+    }
+
+    function selectedCameraIds() {
+      return [...document.querySelectorAll('.camera-select:checked')].map((input) => input.value);
+    }
+
+    function updateSelection() {
+      const count = selectedCameraIds().length;
+      summary('summary-cameras', String(count));
+      byId('save-setup').disabled = !state.connected || count === 0;
+    }
+
+    byId('tls-mode').addEventListener('change', () => {
+      const mode = byId('tls-mode').value;
+      byId('pin-panel').hidden = mode !== 'pinned';
+      byId('ca-panel').hidden = mode !== 'custom_ca';
+      state.connected = false;
+      summary('summary-protect', 'Not tested');
+      updateSelection();
+    });
+
+    byId('check-status').addEventListener('click', async () => {
+      try {
+        const status = await api('/api/setup/status');
+        summary('summary-config', status.configured ? `${status.camera_count} camera(s)` : 'Not configured', status.configured ? 'ok' : 'warn');
+        byId('site-name').value = status.site_name || byId('site-name').value;
+        setMessage(status.configured ? 'A saved configuration is present. Check live readiness below.' : 'Server is ready for first-run configuration.', 'success');
+      } catch (error) { setMessage(error.message, 'error'); }
+    });
+
+    byId('inspect-certificate').addEventListener('click', async () => {
+      try {
+        setMessage('Reading the presented certificate. Verify the fingerprint out of band before confirming it.', 'info');
+        const result = await api('/api/setup/protect/certificate', {
+          method: 'POST',
+          body: JSON.stringify({host: byId('protect-host').value.trim(), port: Number(byId('protect-port').value)})
+        });
+        state.certificateSha256 = result.sha256;
+        const output = byId('certificate-fingerprint');
+        output.textContent = result.display_sha256;
+        output.hidden = false;
+        byId('certificate-confirmed').checked = false;
+        setMessage('Certificate read. Compare the SHA-256 fingerprint with the intended UniFi console, then confirm it.', 'warning');
+      } catch (error) { setMessage(error.message, 'error'); }
+    });
+
+    byId('discover').addEventListener('click', async () => {
+      const button = byId('discover');
+      button.disabled = true;
+      try {
+        setMessage('Verifying TLS and Protect credentials…', 'info');
+        const result = await api('/api/setup/protect/discover', {method: 'POST', body: JSON.stringify(connection())});
+        state.cameras = result.cameras || [];
+        state.connected = true;
+        renderCameras();
+        byId('select-all').disabled = !state.cameras.some((camera) => camera.rtsp_enabled);
+        summary('summary-protect', `${result.camera_count} discovered`, 'ok');
+        setMessage(`Protect verified. ${result.camera_count} camera(s) discovered; select enabled feeds.`, 'success');
+      } catch (error) {
+        state.connected = false;
+        summary('summary-protect', 'Connection failed', 'warn');
+        updateSelection();
+        setMessage(error.message, 'error');
+      } finally { button.disabled = false; }
+    });
+
+    byId('select-all').addEventListener('click', () => {
+      document.querySelectorAll('.camera-select:not(:disabled)').forEach((input) => { input.checked = true; });
+      updateSelection();
+    });
+
+    byId('save-setup').addEventListener('click', async () => {
+      const button = byId('save-setup');
+      button.disabled = true;
+      try {
+        setMessage('Re-verifying selected feeds and writing protected configuration…', 'info');
+        const result = await api('/api/setup/save', {
+          method: 'POST',
+          body: JSON.stringify({
+            site_name: byId('site-name').value.trim(),
+            timezone: byId('site-timezone').value.trim(),
+            connection: connection(),
+            selected_camera_ids: selectedCameraIds(),
+            detectors_by_camera: {}
+          })
+        });
+        state.saved = true;
+        byId('protect-password').value = '';
+        byId('restart-server').disabled = !result.restart_required;
+        summary('summary-config', `${result.camera_count} camera(s)`, 'ok');
+        setMessage('Configuration saved with owner-only permissions. Restart the container to activate the selected feeds.', 'success');
+      } catch (error) {
+        setMessage(error.message, 'error');
+        updateSelection();
+      }
+    });
+
+    byId('restart-server').addEventListener('click', async () => {
+      const button = byId('restart-server');
+      button.disabled = true;
+      try {
+        await api('/api/setup/restart', {method: 'POST'});
+        setMessage('Restart requested. Wait for the container to return, then check readiness.', 'info');
+        summary('summary-runtime', 'Restarting', 'warn');
+      } catch (error) {
+        setMessage(error.message, 'error');
+        button.disabled = false;
+      }
+    });
+
+    byId('check-readiness').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/ready', {cache: 'no-store'});
+        const result = await response.json();
+        const label = `${result.streams_up || 0}/${result.streams_total || 0} feeds ready`;
+        summary('summary-runtime', label, response.ok ? 'ok' : 'warn');
+        setMessage(response.ok ? 'All configured feeds have fresh frames and the runtime is ready.' : 'Runtime is not ready yet. Review container logs and camera RTSP settings.', response.ok ? 'success' : 'warning');
+      } catch (_error) {
+        summary('summary-runtime', 'Server unavailable', 'warn');
+        setMessage('The server is unavailable or restarting. Try again shortly.', 'warning');
+      }
+    });
+  </script>
+</body>
+</html>

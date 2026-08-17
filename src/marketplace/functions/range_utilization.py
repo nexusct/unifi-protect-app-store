@@ -5,12 +5,12 @@ peak windows and dead bays — feeding pricing, staffing, and the "should
 we extend the range" question.
 """
 from collections import defaultdict
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "range-utilization",
     "name": "Driving Range Utilization",
-    "tagline": "Bay 1-8 full until 10, dead by 2. The pricing sheet should know.",
+    "tagline": "Summarizes observed bay occupancy patterns by time window for utilization and pricing review.",
     "category": "Intelligence",
     "tier": "starter",
     "requires_gpu": True,
@@ -40,7 +40,7 @@ class Function(MarketplaceFunction):
         for name, poly in bays.items():
             if any(in_zone(cx, cy, poly) for (_, cx, cy, *_r) in boxes):
                 self._occ[name] += max(dt, 0)
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         day = _t.strftime("%Y-%m-%d", tm)
         if tm.tm_hour == self.digest_hour and self._last_day != day and self._occ:
             lines = sorted(self._occ.items(), key=lambda x: x[1], reverse=True)

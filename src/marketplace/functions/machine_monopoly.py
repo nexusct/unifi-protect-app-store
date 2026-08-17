@@ -1,15 +1,14 @@
-"""Machine Monopoly — cart parked blocking machine rows past the limit.
+"""Machine-Row Dwell — tracked person presence beyond a threshold.
 
-The "one person holding eight machines" behavior that starts laundromat
-arguments. Cart/person stationary in the machine-row zone past the dwell
-limit = a gentle staff heads-up.
+Reports when a person-class track remains in the configured machine-row zone.
+It does not determine machine usage, obstruction, or customer behavior.
 """
 from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
 
 MANIFEST = {
     "id": "machine-monopoly",
-    "name": "Machine Monopoly Watch",
-    "tagline": "One customer, eight machines, forty minutes. The Saturday regulars are glaring.",
+    "name": "Machine-Row Dwell Watch",
+    "tagline": "Flags a person-class track remaining in a configured machine-row zone beyond the dwell threshold.",
     "category": "Retail & QSR",
     "tier": "starter",
     "requires_gpu": True,
@@ -40,8 +39,8 @@ class Function(MarketplaceFunction):
                 self._alerted.add(key)
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title=f"Machine row camped {(ts - st['since'])/60:.0f} min",
-                    detail=f"Person stationary at machine row on {camera['name']} past dwell limit.",
+                    title=f"Machine-row dwell {(ts - st['since'])/60:.0f} min",
+                    detail=f"Person-class track remained in the machine-row zone on {camera['name']} past the configured dwell threshold.",
                     frame=frame, meta={"minutes": (ts - st["since"]) / 60})
             if not st["in"]:
                 self._alerted.discard(key)

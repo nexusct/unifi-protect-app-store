@@ -9,7 +9,7 @@ from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 MANIFEST = {
     "id": "crowd-density",
     "name": "Crowd Density Alert",
-    "tagline": "The floor crossed its density cap at 11:43pm. You knew at 11:43pm.",
+    "tagline": "Flags estimated crowd density above a configured threshold in a calibrated floor zone.",
     "category": "People & Safety",
     "tier": "pro",
     "requires_gpu": True,

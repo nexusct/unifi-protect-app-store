@@ -1,22 +1,22 @@
-"""Uniform Check — staff-zone presence without the uniform color signature.
+"""Uniform Color-Signature Check — configured torso-color proxy.
 
-Samples torso-region hue of each person in a staff-only zone and compares
-against the configured uniform color band. Mismatches = contractor/visitor
-in staff area or dress-code gap, flagged with the frame.
+Samples torso-region hue for person-class detections in a configured zone and
+flags ratios below an operator-selected color threshold. It does not determine
+role, attire type, authorization, or compliance.
 """
 import numpy as np
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import MarketplaceFunction, boxes_of, in_zone, pixel_box
 
 MANIFEST = {
     "id": "uniform-check",
-    "name": "Uniform Compliance Check",
-    "tagline": "Who's on the floor without the uniform? The camera knows.",
+    "name": "Uniform Color-Signature Check",
+    "tagline": "Flags people whose torso region lacks a calibrated uniform-color signature for human review.",
     "category": "Compliance",
     "tier": "pro",
     "requires_gpu": True,
     "config_schema": {
         "zone": "polygon — staff-only area",
-        "uniform_hue": "[low, high] HSV hue band (default [90, 130] = blue scrubs)",
+        "uniform_hue": "[low, high] configured HSV hue band (default [90, 130])",
         "min_ratio": "float — min uniform pixels (default 0.25)",
     },
 }
@@ -41,9 +41,11 @@ class Function(MarketplaceFunction):
                 continue
             if ts - self._flagged.get(tid, 0) < 300:
                 continue
-            # torso band: middle 40% of the bbox
-            ty1, ty2 = int(y1 + (y2 - y1) * 0.3), int(y1 + (y2 - y1) * 0.7)
-            torso = hsv[ty1:ty2, int(x1):int(x2)]
+            # torso band: middle 40% of the normalized bbox, converted for slicing
+            px1, py1, px2, py2 = pixel_box(frame, x1, y1, x2, y2)
+            ty1 = int(py1 + (py2 - py1) * 0.3)
+            ty2 = int(py1 + (py2 - py1) * 0.7)
+            torso = hsv[ty1:ty2, px1:px2]
             if torso.size == 0:
                 continue
             mask = cv2.inRange(torso, (self.lo, 40, 40), (self.hi, 255, 255))
@@ -52,6 +54,6 @@ class Function(MarketplaceFunction):
                 self._flagged[tid] = ts
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Uniform mismatch in staff area",
-                    detail=f"Person on {camera['name']} lacks the uniform color signature (ratio {ratio:.2f}).",
+                    title="Configured torso color signature not observed",
+                    detail=f"Torso-region color ratio {ratio:.2f} was below the configured threshold on {camera['name']}; review attire and authorization manually.",
                     frame=frame, meta={"track": tid, "ratio": round(ratio, 3)})

@@ -1,14 +1,14 @@
-"""Splash Pad Capacity — bather count vs posted limit.
+"""Splash-pad person count vs configured review threshold.
 
-Counts persons in the splash-pad zone against the posted bather load.
-Park districts carry the liability; this carries the count.
+Counts person detections in the configured splash-pad zone. The estimate does
+not establish actual occupancy or compliance with a posted limit.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "splash-pad-capacity",
     "name": "Splash Pad Capacity",
-    "tagline": "Posted limit 40. Count is 52. The alert went to the field supervisor.",
+    "tagline": "Flags estimated occupancy above the configured splash-pad capacity threshold for supervisor review.",
     "category": "People & Safety",
     "tier": "starter",
     "requires_gpu": True,
@@ -38,8 +38,8 @@ class Function(MarketplaceFunction):
             if ts - self._since[key] >= self.hold:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title=f"Splash pad at {count} (limit {self.max_n})",
-                    detail=f"Bather count over posted limit on {camera['name']} for {ts - self._since[key]:.0f}s.",
+                    title=f"Splash-pad count estimate {count} (review threshold {self.max_n})",
+                    detail=f"Detected-person count {count} exceeded the configured review threshold on {camera['name']} for {ts - self._since[key]:.0f}s; verify manually.",
                     frame=frame, meta={"count": count})
                 self._since[key] = ts
         else:

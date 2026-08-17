@@ -4,12 +4,12 @@ Hangar door zone state vs the closed reference, after-hours only. Open
 hangars at night are weather, security, and insurance exposure.
 """
 import numpy as np
-from marketplace.contract import MarketplaceFunction
+from marketplace.contract import site_time, MarketplaceFunction
 
 MANIFEST = {
     "id": "hangar-door-state",
     "name": "Hangar Door After-Hours",
-    "tagline": "Hangar 3's door is open at 11pm. Nobody's scheduled.",
+    "tagline": "Flags a persistent visual open-state at a configured hangar-door zone during selected hours.",
     "category": "Security & Access",
     "tier": "starter",
     "requires_gpu": True,
@@ -32,7 +32,7 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("door")
         if not zone:
             return
-        hour = int(_t.strftime("%H", _t.gmtime(ts)))
+        hour = int(_t.strftime("%H", site_time(ts, ctx)))
         s, e = int(self.hours[0]), int(self.hours[1])
         if not ((hour >= s or hour < e) if s > e else (s <= hour < e)):
             return

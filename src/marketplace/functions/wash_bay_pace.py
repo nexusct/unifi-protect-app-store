@@ -8,8 +8,8 @@ from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_
 
 MANIFEST = {
     "id": "wash-bay-pace",
-    "name": "Wash Bay Pace",
-    "tagline": "Bay 3 is running 40% slower than the others. The camera noticed first.",
+    "name": "Wash Bay Dwell Review",
+    "tagline": "Flags a vehicle remaining in a configured bay beyond the set duration; it does not compare bays by percentage.",
     "category": "Automotive & Parking",
     "tier": "starter",
     "requires_gpu": True,

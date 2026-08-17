@@ -1,16 +1,15 @@
-"""Nap Room Check — all-still verification + unexpected movement.
+"""Nap-room motion and sustained-stillness check.
 
-Two modes in one: during nap window, unexpected motion = a child up and
-wandering; outside nap window, all-still = a child left behind. Both
-matter to a daycare director.
+Flags motion during configured nap hours and sustained low motion outside
+them. Neither signal establishes occupancy, age, or the reason for motion.
 """
 import numpy as np
-from marketplace.contract import MarketplaceFunction
+from marketplace.contract import site_time, MarketplaceFunction
 
 MANIFEST = {
     "id": "nap-room-check",
-    "name": "Nap Room Check",
-    "tagline": "Nap time with movement, or pickup time with a child still there. Both caught.",
+    "name": "Nap-Room Motion Check",
+    "tagline": "Flags motion during configured nap hours or prolonged low motion outside them; staff must inspect the room and calibrate thresholds.",
     "category": "People & Safety",
     "tier": "pro",
     "requires_gpu": True,
@@ -47,7 +46,7 @@ class Function(MarketplaceFunction):
         if prev is None or prev.shape != crop.shape:
             return
         motion = float(np.mean(cv2.absdiff(crop, prev))) / 255.0
-        hour = int(_t.strftime("%H", _t.gmtime(ts)))
+        hour = int(_t.strftime("%H", site_time(ts, ctx)))
         nap_now = int(self.nap[0]) <= hour < int(self.nap[1])
         if nap_now and motion > 0.02:
             ctx.alerts.fire(
@@ -60,8 +59,8 @@ class Function(MarketplaceFunction):
             if ts - self._still_since[key] >= self.still_limit:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Nap room still after hours — check for child left behind",
-                    detail=f"No motion in nap room for {(ts - self._still_since[key])/60:.0f} min on {camera['name']}.",
+                    title="Sustained low motion outside nap window",
+                    detail=f"Low visual motion persisted in the configured nap-room zone for {(ts - self._still_since[key])/60:.0f} min on {camera['name']}; inspect the room.",
                     frame=frame, meta={"still_min": (ts - self._still_since[key]) / 60})
                 self._still_since[key] = ts
         else:

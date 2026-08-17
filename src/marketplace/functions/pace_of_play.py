@@ -9,7 +9,7 @@ from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 MANIFEST = {
     "id": "pace-of-play",
     "name": "Pace of Play Monitor",
-    "tagline": "22-minute gap after the group on 7. The marshal knows which cart.",
+    "tagline": "Flags unusually long gaps between tracked groups or carts on configured course zones for marshal review.",
     "category": "Intelligence",
     "tier": "pro",
     "requires_gpu": True,

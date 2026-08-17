@@ -1,16 +1,15 @@
-"""Thermal Shimmer — heat-plume visual signature near rack exhausts.
+"""Exhaust-zone texture-variance change signal.
 
-Heat shimmer shows as high-frequency pixel variance in the exhaust zone.
-A new shimmer pattern where none should be = a cooling problem developing
-before the temp sensors move. The cheap early-warning layer for MDFs.
+Measures high-frequency image variance in a configured exhaust zone against a
+learned visual baseline. It does not measure heat or compare sensor response.
 """
 import numpy as np
 from marketplace.contract import MarketplaceFunction
 
 MANIFEST = {
     "id": "thermal-shimmer",
-    "name": "Thermal Shimmer Watch",
-    "tagline": "The exhaust plume changed shape at 2pm. The temp sensor noticed at 2:40.",
+    "name": "Exhaust-Zone Texture Change",
+    "tagline": "Flags a calibrated change in image variance within an exhaust zone; it does not measure temperature or compare sensor response.",
     "category": "Intelligence",
     "tier": "enterprise",
     "requires_gpu": True,
@@ -48,7 +47,7 @@ class Function(MarketplaceFunction):
         if base > 0 and abs(var - base) / base >= self.shift:
             ctx.alerts.fire(
                 site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                title="Thermal signature changed",
+                title="Exhaust-zone texture variance changed",
                 detail=f"Exhaust-zone variance {var:.0f} vs baseline {base:.0f} on {camera['name']}.",
                 frame=frame, meta={"variance": round(var, 1), "baseline": round(base, 1)})
             self._samples[key] = [var]  # reset around new state after alert

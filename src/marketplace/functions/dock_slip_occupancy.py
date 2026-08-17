@@ -1,16 +1,15 @@
-"""Dock Slip Occupancy — per-slip occupied/empty for marinas.
+"""Dock-slip visual occupancy estimate.
 
-Slip zone occupied by a boat-hull-sized object, logged daily. Transient
-billing verification, unauthorized liveaboard detection, and the
-occupancy report harbormasters file monthly.
+Emits a daily occupied/empty estimate from large-object presence in each
+configured slip zone. Billing, tenancy, and authorization require other records.
 """
 from collections import defaultdict
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "dock-slip-occupancy",
-    "name": "Slip Occupancy Log",
-    "tagline": "Slip 22 has a boat that isn't on the register. The harbormaster has the frame.",
+    "name": "Slip Occupancy Estimate",
+    "tagline": "Emits a scheduled occupied or empty estimate for configured slip zones; register reconciliation requires a separate system or human review.",
     "category": "Intelligence",
     "tier": "pro",
     "requires_gpu": True,
@@ -34,7 +33,7 @@ class Function(MarketplaceFunction):
         slips = (camera.get("zones") or {}).get("slips") or {}
         if not slips:
             return
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         if tm.tm_hour != self.check_hour:
             return
         day = _t.strftime("%Y-%m-%d", tm)
@@ -46,8 +45,8 @@ class Function(MarketplaceFunction):
         status = {}
         for name, poly in slips.items():
             occupied = any(
-                in_zone(cx, cy, poly) and cls != "person"
-                and ((x2 - x1) * (y2 - y1)) / (frame.shape[0] * frame.shape[1]) >= self.min_area
+                in_zone(cx, cy, poly) and cls != 0
+                and (x2 - x1) * (y2 - y1) >= self.min_area
                 for (cls, cx, cy, x1, y1, x2, y2, tid) in boxes)
             status[name] = "occupied" if occupied else "empty"
         ctx.alerts.fire(

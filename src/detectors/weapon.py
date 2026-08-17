@@ -1,11 +1,12 @@
-"""Detector 3: visible-weapon detection → lockdown trigger.
+"""Detector 3: possible visible-weapon review signal.
 
 Requires domain weights (detector_settings.weapon.weights). With COCO
 fallback the knife class still fires; firearm classes need the custom
-model. CRITICAL severity — payload includes lock=True so the Base44 ingest
-function can trigger Access lockdown workflows.
+model. The detector emits an alert only; response actions remain governed by
+the site's reviewed procedures and separate control systems.
 """
-from detectors.base import Detector, get_model, register
+from detectors.base import Detector, get_model, register, run_inference
+from model_paths import model_path
 
 COCO_WEAPON_CLASSES = {34: "knife"}  # COCO ids that count as weapons in fallback
 CUSTOM_WEAPON_CLASSES = {"pistol", "rifle", "firearm", "knife", "gun"}
@@ -17,7 +18,7 @@ class WeaponDetector(Detector):
 
     def __init__(self, settings):
         super().__init__(settings)
-        self.weights = self.settings.get("weights", "/app/models/weapon.pt")
+        self.weights = self.settings.get("weights", model_path("weapon.pt"))
         self.conf = float(self.settings.get("confidence", 0.60))
         self._model = None
 
@@ -25,7 +26,7 @@ class WeaponDetector(Detector):
         if self._model is None:
             import os
             self._model = get_model(self.weights if os.path.exists(self.weights) else "yolov8n.pt")
-        res = self._model(frame, verbose=False, conf=self.conf)[0]
+        res = run_inference(self._model, frame, conf=self.conf)
         names = res.names or {}
         for box in res.boxes or []:
             cls_id = int(box.cls[0])
@@ -37,8 +38,8 @@ class WeaponDetector(Detector):
             ctx.alerts.fire(
                 site=ctx.site, camera=camera, detector=self.name,
                 title=f"Possible weapon visible ({cls_name or 'knife'})",
-                detail=f"{cls_name or 'knife'} detected at {conf:.0%} on {camera['name']}. Lockdown flag set.",
+                detail=f"Model labeled a possible {cls_name or 'knife'} at {conf:.0%} on {camera['name']}; verify immediately under site procedure.",
                 frame=frame,
-                meta={"class": cls_name, "confidence": conf, "lock": True},
+                meta={"class": cls_name, "confidence": conf},
             )
             return  # one alert per frame is enough; dedup handles the rest

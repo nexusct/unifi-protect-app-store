@@ -5,12 +5,12 @@ get traffic patterns for staffing and tenant experience reporting;
 security gets an anomaly baseline for free.
 """
 from collections import defaultdict
-from marketplace.contract import MarketplaceFunction, boxes_of, crossed_line
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, crossed_line
 
 MANIFEST = {
     "id": "lobby-visitor-flow",
     "name": "Lobby Visitor Flow",
-    "tagline": "Tuesday 11am is your real rush. Staff it like you know.",
+    "tagline": "Summarizes estimated lobby occupancy patterns by configured time window.",
     "category": "Intelligence",
     "tier": "starter",
     "requires_gpu": True,
@@ -35,7 +35,7 @@ class Function(MarketplaceFunction):
         line = (camera.get("zones") or {}).get("entry_line")
         if not line or len(line) != 2:
             return
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         for (cls, cx, cy, *rest, tid) in boxes_of(frame, classes=[0]):
             if tid is None:
                 continue

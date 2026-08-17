@@ -1,15 +1,14 @@
-"""Hall Pass Monitor — students in corridors during class time.
+"""Scheduled Hallway Presence — person detections in configured time blocks.
 
-Person detected in hallway zones during scheduled class blocks (with
-passing-period gaps configured) = hall-roaming alert for deans. Schools
-get corridor coverage without adding duty assignments.
+Reports tracked person-class detections in a hallway zone outside configured
+passing-period gaps. It does not determine student identity or pass status.
 """
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "hall-pass-monitor",
     "name": "Hall Pass Monitor",
-    "tagline": "Corridor roaming during class blocks, logged for the dean's office.",
+    "tagline": "Flags tracked person-class presence in a hallway during configured time blocks and outside passing-period gaps.",
     "category": "People & Safety",
     "tier": "pro",
     "requires_gpu": True,
@@ -33,7 +32,7 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("hallway")
         if not zone:
             return
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         if not (int(self.hours[0]) <= tm.tm_hour < int(self.hours[1])) or tm.tm_wday >= 5:
             return
         if tm.tm_min < self.passing:  # passing period at hour start
@@ -45,6 +44,6 @@ class Function(MarketplaceFunction):
                 self._alerted[tid] = ts
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Hallway presence during class",
-                    detail=f"Person in corridor on {camera['name']} during a class block.",
+                    title="Hallway person detection during configured block",
+                    detail=f"Tracked person-class detection appeared in the corridor on {camera['name']} outside the configured passing-period gap.",
                     frame=frame, meta={"track": tid})

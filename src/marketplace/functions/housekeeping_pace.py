@@ -5,12 +5,12 @@ minutes per room. Hotel housekeeping is the margin line — this is its
 measurement, no wearable badges required.
 """
 from collections import defaultdict
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "housekeeping-pace",
     "name": "Housekeeping Pace Tracker",
-    "tagline": "22 minutes per room, 14 rooms per shift. Finally measured.",
+    "tagline": "Summarizes observed visits and dwell intervals at configured room-door zones.",
     "category": "Intelligence",
     "tier": "pro",
     "requires_gpu": True,
@@ -44,7 +44,7 @@ class Function(MarketplaceFunction):
                     self._inside[key] = ts
                 elif not inside and key in self._inside:
                     self._times[room].append(ts - self._inside.pop(key))
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         day = _t.strftime("%Y-%m-%d", tm)
         if tm.tm_hour == self.digest_hour and self._last_day != day and self._times:
             total_rooms = sum(len(v) for v in self._times.values())

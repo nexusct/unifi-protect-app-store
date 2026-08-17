@@ -1,15 +1,14 @@
-"""Crane Exclusion Zone — person under the lift path.
+"""Crane exclusion-zone person-presence signal.
 
-Person detected inside the crane swing/load exclusion zone during active
-operation windows. Construction's most fatal scenario gets a camera-based
-interlock alert to the lift director.
+Flags a person detection inside the configured exclusion polygon. Camera
+analysis does not determine crane, load, or operating state.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "crane-exclusion",
-    "name": "Crane Exclusion Zone",
-    "tagline": "Person under the load path. The lift director's phone buzzes.",
+    "name": "Crane Exclusion-Zone Presence Alert",
+    "tagline": "Flags a person detected in a calibrated crane exclusion zone; verify operating state and alert routing through site procedures.",
     "category": "People & Safety",
     "tier": "enterprise",
     "requires_gpu": True,
@@ -38,8 +37,8 @@ class Function(MarketplaceFunction):
             if ts - self._since[key] >= self.hold:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="PERSON UNDER CRANE LOAD PATH",
-                    detail=f"Person in crane exclusion zone on {camera['name']}.",
+                    title="Person detected in configured crane exclusion zone",
+                    detail=f"Person track remained in the configured exclusion zone on {camera['name']}; verify crane and load state through site procedures.",
                     frame=frame, meta={"track": tid})
                 self._since[key] = ts
         # cleanup

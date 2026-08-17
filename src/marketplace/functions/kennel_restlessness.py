@@ -6,12 +6,12 @@ and owners get a "how did he sleep" report worth paying for.
 """
 from collections import defaultdict
 import numpy as np
-from marketplace.contract import MarketplaceFunction
+from marketplace.contract import site_time, MarketplaceFunction
 
 MANIFEST = {
     "id": "kennel-restlessness",
     "name": "Kennel Restlessness Score",
-    "tagline": "Run 12 paced all night. The morning report said so, with numbers.",
+    "tagline": "Flags sustained movement above a configured baseline in selected kennel zones during rest periods.",
     "category": "Intelligence",
     "tier": "pro",
     "requires_gpu": True,
@@ -52,7 +52,7 @@ class Function(MarketplaceFunction):
             self._energy[key] += e
             self._frames[key] += 1
         import time as _t
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         day = _t.strftime("%Y-%m-%d", tm)
         if tm.tm_hour == self.digest_hour and self._last_day != day and self._energy:
             lines = {k[1]: round(self._energy[k] / max(self._frames[k], 1), 4)

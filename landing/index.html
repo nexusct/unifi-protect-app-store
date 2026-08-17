@@ -4,12 +4,19 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Nexus Vision — AI Functions for UniFi Protect Cameras</title>
-<meta name="description" content="GPU-powered AI functions for existing UniFi Protect cameras — fall detection, dock analytics, queue alerts, and liability review with local processing." />
+<meta name="description" content="GPU-powered AI functions for existing UniFi Protect cameras — possible-fall review, dock analytics, queue alerts, and local liability-event review." />
+<link rel="canonical" href="./" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Nexus Vision — AI Functions for UniFi Protect" />
-<meta property="og:description" content="120 GPU-accelerated video analytics functions for your existing UniFi Protect cameras. On-prem, biometric-free by design." />
-<meta property="og:image" content="assets/hero-banner.jpg" />
+<meta property="og:description" content="100 GPU video analytics functions for existing UniFi Protect cameras. Continuous-video inference runs on-site by default; no face recognition." />
+<meta property="og:image" content="https://raw.githubusercontent.com/nexusct/unifi-protect-app-store/main/assets/hero-banner.jpg" />
+<meta property="og:image:width" content="1672" />
+<meta property="og:image:height" content="941" />
 <meta property="og:site_name" content="Nexus Vision" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Nexus Vision — AI Functions for UniFi Protect" />
+<meta name="twitter:description" content="100 GPU video analytics functions for existing UniFi Protect cameras, with continuous video processed on-site." />
+<meta name="twitter:image" content="https://raw.githubusercontent.com/nexusct/unifi-protect-app-store/main/assets/hero-banner.jpg" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -17,7 +24,11 @@
   "name": "Nexus Vision",
   "applicationCategory": "SecurityApplication",
   "operatingSystem": "Docker (Linux, NVIDIA GPU)",
-  "description": "GPU-accelerated AI function marketplace for UniFi Protect NVRs. 120 video analytics functions running on-premises.",
+  "description": "GPU-accelerated AI function marketplace for UniFi Protect NVRs. 100 video analytics functions running on-premises.",
+  "datePublished": "2026-08-14",
+  "dateModified": "2026-08-15",
+  "softwareRequirements": "UniFi Protect NVR with RTSP enabled; NVIDIA GPU host; Docker with the NVIDIA container runtime",
+  "featureList": "Automotive & Parking, Compliance, Healthcare & Senior Living, Intelligence, Manufacturing & Warehouse, People & Safety, Property & Liability, Retail & QSR, Security & Access",
   "offers": {
     "@type": "AggregateOffer",
     "priceCurrency": "USD",
@@ -39,15 +50,15 @@
   "@type": "FAQPage",
   "mainEntity": [
     { "@type": "Question", "name": "Does this work with my existing UniFi setup?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Any UniFi Protect camera with RTSP enabled works. No new cameras, no NVR replacement, no network changes beyond the GPU appliance sitting next to your console." } },
+      "acceptedAnswer": { "@type": "Answer", "text": "Compatible UniFi Protect cameras with RTSP enabled can use the local connector. Model, firmware, stream quality, and camera placement are confirmed during site sizing; the design does not require replacing the Protect NVR." } },
     { "@type": "Question", "name": "Where does the video go?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Continuous video inference runs on the local GPU appliance. Alerts can carry metadata and, where configured, a snapshot; continuous video is not sent to Nexus." } },
-    { "@type": "Question", "name": "Is this BIPA-compliant in Illinois?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Designed to avoid BIPA applicability: no face recognition and no biometric identifiers — it analyzes skeletons, objects, plates, and counts. Biometric features would require written consent flows and counsel review." } },
+      "acceptedAnswer": { "@type": "Answer", "text": "Inference runs on the GPU appliance in your building. Continuous video is not sent to Nexus; alerts can include metadata and, where you allow it, a snapshot." } },
+    { "@type": "Question", "name": "How does the platform address Illinois biometric privacy concerns?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The current design does not use face recognition or biometric identity matching. It processes pose, object, plate, count, and appearance-similarity signals. Those clusters are not intended to establish identity. Review each deployment and policy with privacy counsel." } },
     { "@type": "Question", "name": "What if a function doesn't fit my site?",
       "acceptedAnswer": { "@type": "Answer", "text": "Functions are swappable monthly. Start with the obvious ones, tune zones on the onboarding call, swap what doesn't earn its keep." } },
     { "@type": "Question", "name": "Who installs and supports it?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Nexus Communications Technology — Schaumburg, IL. A UniFi integrator and managed-services provider; the appliance, onboarding, and ongoing tuning come from the same team." } }
+      "acceptedAnswer": { "@type": "Answer", "text": "Nexus Communications Technology — Schaumburg, IL. We're a UniFi integrator and managed-services provider; the appliance, onboarding, and ongoing tuning come from the same team that answers the phone." } }
   ]
 }
 </script>
@@ -161,6 +172,8 @@
   footer .shell { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
   footer a { color: var(--marking); text-decoration: none; }
 </style>
+<link rel="preload" as="font" type="font/woff2" href="../assets/fonts/archivo-variable.woff2" crossorigin />
+<link rel="stylesheet" href="../assets/tokens.css" />
 <link rel="stylesheet" href="../assets/marketplace.css" />
 </head>
 <body class="page-landing">
@@ -183,18 +196,18 @@
 <header class="hero">
   <div class="shell">
     <span class="kicker">UniFi Protect · GPU AI · On-Premises</span>
-    <h1>Your cameras already see everything.<br /><em>Now they understand it.</em></h1>
-    <p>Nexus Vision adds GPU-accelerated AI functions to your existing UniFi Protect NVR. Explore 120 modules for fall detection, dock analytics, queue alerts, and liability review—processed locally without replacing your cameras.</p>
+    <h1>Add local video analysis to your UniFi Protect cameras.<br /><em>Keep continuous video on-site.</em></h1>
+    <p>Nexus Vision adds GPU video functions to your existing UniFi Protect NVR. Explore 100 modules for possible-fall review, dock analytics, queue alerts, and operational monitoring without replacing your cameras.</p>
     <div class="hero-cta">
       <a href="#signup" class="btn big">Start a subscription</a>
-      <a href="../storefront/index.html" class="btn big ghost">Browse 120 functions →</a>
+      <a href="../storefront/index.html" class="btn big ghost">Browse 100 functions →</a>
     </div>
     <div class="trust">
-      <div><b>120</b> AI functions</div>
-      <div><b>9</b> business verticals</div>
+      <div><b>100</b> AI functions</div>
+      <div><b>9</b> operational categories</div>
       <div><b>Local</b> video processing</div>
-      <div><b>0</b> biometric identifiers collected</div>
-      <div><b>1</b> GPU appliance per site</div>
+      <div><b>No face</b> recognition</div>
+      <div><b>Site-sized</b> GPU capacity</div>
     </div>
   </div>
 </header>
@@ -203,14 +216,14 @@
   <div class="shell">
     <p class="sec-kicker">The problems on the floor</p>
     <h2 class="sec-title">The incidents you're paying for anyway</h2>
-    <p class="sec-sub">Every function in the catalog exists because a business is already paying for the problem — in fines, claims, walk-aways, or labor. These are a few of the expensive ones.</p>
+    <p class="sec-sub">The catalog focuses on operational problems that create claims exposure, service delays, avoidable labor, or missed activity. These are a few common examples.</p>
     <div class="pain-grid">
-      <div class="pain"><div class="num">01</div><h3>Slip &amp; fall claims without footage</h3><p>The clip expired before anyone thought to save it. Slip &amp; Fall Liability Guard preserves the window the moment it happens.</p></div>
-      <div class="pain"><div class="num">02</div><h3>Fire exit blocked by a pallet</h3><p>Five-figure OSHA fine waiting to happen. Fire Exit Blocked catches it within a minute.</p></div>
-      <div class="pain"><div class="num">03</div><h3>Residents falling at 2am</h3><p>Bed-Exit Prediction flags movement toward the bed edge. Fall Detection preserves common-area clips. Both are biometric-free by design.</p></div>
-      <div class="pain"><div class="num">04</div><h3>Drive-thru times nobody measures</h3><p>Franchise scorecards run on service time. Drive-Thru Timer measures every car, order point to exit.</p></div>
-      <div class="pain"><div class="num">05</div><h3>The trailer that's been in row C for 6 days</h3><p>Yard Dwell tracks every trailer's sitting time from one camera. No five-figure yard management system.</p></div>
-      <div class="pain"><div class="num">06</div><h3>Camera sprayed the night of the theft</h3><p>You found out after. Camera Tamper Detection finds out in seconds.</p></div>
+      <div class="pain"><div class="num">01</div><h3>Possible falls without timely review</h3><p>Possible Fall Review flags a sustained horizontal-pose signature and saves an alert snapshot for human review.</p></div>
+      <div class="pain"><div class="num">02</div><h3>Fire exit blocked by a pallet</h3><p>A persistent obstruction can create safety and code exposure. Fire Exit Blocked watches a defined egress zone for review.</p></div>
+      <div class="pain"><div class="num">03</div><h3>Resident movement near a bed edge</h3><p>Bed-edge movement analysis can flag motion toward the edge. Possible Fall Review can save a common-area alert snapshot. Both require site calibration and human review; neither performs face recognition.</p></div>
+      <div class="pain"><div class="num">04</div><h3>Drive-thru cycle-time review</h3><p>Drive-Thru Timer measures configured vehicle movement from the order point to the exit.</p></div>
+      <div class="pain"><div class="num">05</div><h3>A trailer beyond its yard dwell target</h3><p>Yard Dwell tracks configured trailer dwell from a camera covering the yard.</p></div>
+      <div class="pain"><div class="num">06</div><h3>A camera view changes after hours</h3><p>Camera View Change Alert flags sustained occlusion or view changes for human review.</p></div>
     </div>
   </div>
 </section>
@@ -218,12 +231,12 @@
 <section id="how">
   <div class="shell">
     <p class="sec-kicker">How it works</p>
-    <h2 class="sec-title">Plug in. Pick functions. Working.</h2>
+    <h2 class="sec-title">Connect. Configure functions. Calibrate and verify.</h2>
     <div class="steps">
-      <div class="step"><div class="n">1</div><h3>We size the appliance</h3><p>Jetson-class edge box for small sites, RTX-class server for campuses. It sits next to your NVR — your UniFi setup doesn't change.</p></div>
+      <div class="step"><div class="n">1</div><h3>We size the appliance</h3><p>Compact x86 NVIDIA appliance for small sites, RTX-class server for campuses. It sits next to your NVR without replacing the Protect cameras or console.</p></div>
       <div class="step"><div class="n">2</div><h3>Connect the local appliance</h3><p>A scoped, read-only Protect account lets the on-site connector discover your existing cameras and RTSP streams.</p></div>
       <div class="step"><div class="n">3</div><h3>Pick your functions</h3><p>Browse the marketplace, add the ones that solve your problems, and we generate your subscription config. Zones get mapped on a short onboarding call.</p></div>
-      <div class="step"><div class="n">4</div><h3>Alerts flow to your team</h3><p>Base44 NOC, Slack, Teams, email — your channel, your severity rules. Dedup and quiet hours built in.</p></div>
+      <div class="step"><div class="n">4</div><h3>Alerts flow to your team</h3><p>Base44 NOC or a configured webhook routes event metadata and optional snapshots using your severity rules. Repeated events are deduplicated for the configured window.</p></div>
     </div>
   </div>
 </section>
@@ -240,32 +253,32 @@
         <p class="per">per site · up to 8 streams</p>
         <ul>
           <li>Any 5 starter-tier functions</li>
-          <li>Email + webhook alerts</li>
-          <li>Daily digests</li>
+          <li>Base44 + generic JSON webhook alerts</li>
+          <li>Scheduled summaries on supported functions</li>
           <li>Self-serve config</li>
         </ul>
         <a href="#signup" class="btn ghost" data-tier="starter">Choose Starter</a>
       </div>
       <div class="tier featured">
-        <span class="flag">MOST CHOSEN</span>
+        <span class="flag">PROFESSIONAL</span>
         <h3>Professional</h3>
         <div class="price">$399<span>/mo</span></div>
         <p class="per">per site · up to 24 streams</p>
         <ul>
           <li>Any 12 functions (all tiers)</li>
-          <li>Access-event correlation (tailgating, vendor windows)</li>
+          <li>Access-event correlation for tailgating; configured vendor time-window review</li>
           <li>Natural-language video search</li>
           <li>Priority support + onboarding call</li>
-          <li>Weekly analytics digest</li>
+          <li>Scheduled summaries on supported functions</li>
         </ul>
         <a href="#signup" class="btn" data-tier="professional">Choose Professional</a>
       </div>
       <div class="tier">
         <h3>Enterprise</h3>
         <div class="price">Custom</div>
-        <p class="per">multi-site · unlimited streams · documented response targets</p>
+        <p class="per">multi-site · stream capacity sized per deployment · documented response targets</p>
         <ul>
-          <li>Unlimited functions, all tiers</li>
+          <li>Access to all catalog tiers, subject to deployed capacity</li>
           <li>Multi-site fleet dashboard</li>
           <li>Custom model training (your floors, your uniforms)</li>
           <li>Base44 NOC integration + documented response targets</li>
@@ -285,18 +298,18 @@
       <p class="sec-sub">Tell us about your site and pick your bundle. A Nexus specialist follows up promptly to size hardware and map zones.</p>
       <div class="signup-points">
         <div><span class="ic">→</span><span><b>No rip-and-replace.</b> Works with the UniFi Protect cameras and NVR you already have.</span></div>
-        <div><span class="ic">→</span><span><b>Local by default.</b> Continuous video processing stays on the appliance. The platform collects no biometric identifiers.</span></div>
+        <div><span class="ic">→</span><span><b>Local by default.</b> Continuous video inference stays on the appliance. Configured alert destinations may receive event metadata and snapshots.</span></div>
         <div><span class="ic">→</span><span><b>Cancel-friendly.</b> Monthly subscription, no multi-year lock-in.</span></div>
       </div>
     </div>
     <form class="signup" id="signup-form">
       <div class="frow">
-        <div class="field"><label for="company">Company *</label><input id="company" name="company" required /></div>
-        <div class="field"><label for="contact-name">Contact name *</label><input id="contact-name" name="contactName" required /></div>
+        <div class="field"><label for="company">Company *</label><input id="company" name="company" autocomplete="organization" required /></div>
+        <div class="field"><label for="contact-name">Contact name *</label><input id="contact-name" name="contactName" autocomplete="name" required /></div>
       </div>
       <div class="frow">
-        <div class="field"><label for="work-email">Work email *</label><input id="work-email" name="email" type="email" required /></div>
-        <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" /></div>
+        <div class="field"><label for="work-email">Work email *</label><input id="work-email" name="email" type="email" autocomplete="email" required /></div>
+        <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" /></div>
       </div>
       <div class="frow">
         <div class="field"><label for="industry">Industry *</label>
@@ -338,9 +351,9 @@
   <div class="shell">
     <p class="sec-kicker">FAQ</p>
     <h2 class="sec-title">Straight answers</h2>
-    <details class="faq"><summary>Does this work with my existing UniFi setup?</summary><p>Yes — that's the point. Any UniFi Protect camera with RTSP enabled works. No new cameras, no NVR replacement, no network changes beyond the GPU appliance sitting next to your console.</p></details>
+    <details class="faq"><summary>Does this work with my existing UniFi setup?</summary><p>Compatible UniFi Protect cameras with RTSP enabled can use the local connector. Model, firmware, stream quality, and camera placement are confirmed during site sizing; the design does not require replacing the Protect NVR.</p></details>
     <details class="faq"><summary>Where does the video go?</summary><p>Inference runs on the GPU appliance in your building. Continuous video is not sent to Nexus; alerts can include metadata and, where you allow it, a snapshot.</p></details>
-    <details class="faq"><summary>Is this BIPA-compliant in Illinois?</summary><p>Designed to avoid BIPA applicability: the platform performs no face recognition and collects no biometric identifiers — it analyzes skeletons, objects, plates, and counts. If you ever want biometric features, that requires written consent flows and counsel review, and we'll tell you that plainly.</p></details>
+    <details class="faq"><summary>How does the platform address Illinois biometric privacy concerns?</summary><p>The current design does not use face recognition or biometric identity matching. It processes pose, object, plate, count, and appearance-similarity signals. Those clusters are not intended to establish identity. Review each deployment and policy with privacy counsel.</p></details>
     <details class="faq"><summary>What if a function doesn't fit my site?</summary><p>Functions are swappable monthly. Start with the obvious ones, tune zones on the onboarding call, swap what doesn't earn its keep.</p></details>
     <details class="faq"><summary>Who installs and supports it?</summary><p>Nexus Communications Technology — Schaumburg, IL. We're a UniFi integrator and managed-services provider; the appliance, onboarding, and ongoing tuning come from the same team that answers the phone.</p></details>
   </div>
@@ -357,8 +370,8 @@
 <script>
 // Bundle quick-picks from the catalog's top functions
 const PICKS = [
-  ["fall", "Fall detection"], ["bed_exit", "Bed-exit prediction"],
-  ["fire-exit-blocked", "Fire exit blocked"], ["slip-fall", "Slip & fall clips"],
+  ["fall", "Possible-fall review"], ["bed_exit", "Bed-edge movement analysis"],
+  ["fire-exit-blocked", "Fire exit blocked"], ["slip-fall", "Public-area posture review"],
   ["queue-length", "Queue alerts"], ["drive-thru-timer", "Drive-thru timing"],
   ["truck-turn-time", "Truck turn time"], ["yard-dwell", "Trailer dwell"],
   ["after-hours-activity", "After-hours activity"], ["tailgating", "Tailgating"],
@@ -402,7 +415,12 @@ document.getElementById("signup-form").addEventListener("submit", async (e) => {
     if (!res.ok) throw new Error(json.error || "Submission failed");
     msg.className = "form-msg ok";
     msg.textContent = `Subscription request received — reference ${json.id}. A Nexus specialist will follow up promptly.`;
-    form.reset(); chosen.clear(); document.querySelectorAll(".pk.on").forEach(b => b.classList.remove("on"));
+    form.reset();
+    chosen.clear();
+    document.querySelectorAll(".pk").forEach(button => {
+      button.classList.remove("on");
+      button.setAttribute("aria-pressed", "false");
+    });
   } catch (err) {
     msg.className = "form-msg err";
     msg.textContent = err.message + " — or call (847) 443-9900 and we'll take it by phone.";

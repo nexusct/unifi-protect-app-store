@@ -1,15 +1,14 @@
-"""Vendor Verification — is that really the vendor who was scheduled?
+"""Configured vendor-window arrival review.
 
-Correlates door-zone vehicle/person arrival times against a schedule
-window (from settings or Base44 work orders via webhook). Arrival outside
-the window = unscheduled-visit alert. The front desk's vendor log, automated.
+Compares person or vehicle entry into the configured vendor zone with static
+site hours. It does not identify a vendor or consult work orders/access events.
 """
-from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, ZoneTracker, boxes_of, in_zone
 
 MANIFEST = {
     "id": "vendor-verification",
     "name": "Vendor Arrival Verification",
-    "tagline": "Scheduled 9-11am. Arrived 6:40am. Flagged.",
+    "tagline": "Compares observed arrival time at a configured vendor zone with the selected service window.",
     "category": "Intelligence",
     "tier": "pro",
     "requires_gpu": True,
@@ -35,7 +34,7 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("vendor_entry")
         if not zone:
             return
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         if self.weekdays and tm.tm_wday >= 5:
             return
         in_window = self.ws <= tm.tm_hour < self.we
@@ -46,6 +45,6 @@ class Function(MarketplaceFunction):
             if entered and not in_window:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Unscheduled vendor arrival",
-                    detail=f"Arrival at {_t.strftime('%H:%M', tm)} outside vendor window {self.ws}:00-{self.we}:00 on {camera['name']}.",
+                    title="Arrival outside configured vendor window",
+                    detail=f"Person/vehicle track entered the vendor zone at {_t.strftime('%H:%M', tm)}, outside {self.ws}:00-{self.we}:00 on {camera['name']}; verify the arrival.",
                     frame=frame, meta={"hour": tm.tm_hour})

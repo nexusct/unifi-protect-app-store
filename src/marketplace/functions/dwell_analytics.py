@@ -6,12 +6,12 @@ looked at" and "where do customers stall"). Data — not alerts — is the
 product here; a daily digest alert carries the summary.
 """
 from collections import defaultdict
-from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, ZoneTracker, boxes_of, in_zone
 
 MANIFEST = {
     "id": "dwell-analytics",
     "name": "Zone Dwell Analytics",
-    "tagline": "Which displays get looked at. Which aisles get skipped.",
+    "tagline": "Shows which configured zones receive visits and the observed dwell time.",
     "category": "Retail & QSR",
     "tier": "pro",
     "requires_gpu": True,
@@ -49,8 +49,8 @@ class Function(MarketplaceFunction):
                     self._visitors[name].add(tid)
             self._last_ts[tid] = ts
         import time as _t
-        day = _t.strftime("%Y-%m-%d", _t.gmtime(ts))
-        hour = int(_t.strftime("%H", _t.gmtime(ts)))
+        day = _t.strftime("%Y-%m-%d", site_time(ts, ctx))
+        hour = int(_t.strftime("%H", site_time(ts, ctx)))
         if hour == self.digest_hour and self._last_digest_day != day and self._dwell:
             top = sorted(self._dwell.items(), key=lambda x: x[1], reverse=True)
             lines = [f"{n}: {v/60:.1f} min across {len(self._visitors[n])} visitors" for n, v in top]

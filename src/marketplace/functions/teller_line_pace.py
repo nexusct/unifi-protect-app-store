@@ -4,12 +4,12 @@ Counts the teller line and measures customer dwell from join to counter.
 Credit unions report service-level numbers to their boards — this produces
 them without a queue-management system.
 """
-from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, ZoneTracker, boxes_of, in_zone
 
 MANIFEST = {
     "id": "teller-line-pace",
     "name": "Teller Line Pace",
-    "tagline": "Average branch wait: 4:12 today. The board report writes itself.",
+    "tagline": "Summarizes observed queue dwell in the configured teller-line zone.",
     "category": "Intelligence",
     "tier": "pro",
     "requires_gpu": True,
@@ -45,7 +45,7 @@ class Function(MarketplaceFunction):
             if key[0] == camera["id"] and st["in"] and key[1] not in present and st["since"]:
                 self._waits.append(ts - st["since"])
                 st["in"] = False; st["since"] = None
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         day = _t.strftime("%Y-%m-%d", tm)
         if tm.tm_hour == self.digest_hour and self._last_day != day and self._waits:
             avg = sum(self._waits) / len(self._waits)

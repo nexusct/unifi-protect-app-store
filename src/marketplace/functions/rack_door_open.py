@@ -10,7 +10,7 @@ from marketplace.contract import MarketplaceFunction
 MANIFEST = {
     "id": "rack-door-open",
     "name": "Rack Door Watch",
-    "tagline": "Cabinet 14's door has been open for 20 minutes. The badge log says nobody.",
+    "tagline": "Flags a sustained visual change from the configured rack-door reference; badge-log correlation requires a separate integration.",
     "category": "Security & Access",
     "tier": "pro",
     "requires_gpu": True,

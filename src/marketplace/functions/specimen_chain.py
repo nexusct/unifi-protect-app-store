@@ -1,21 +1,20 @@
-"""Specimen Chain-of-Custody — lab-drop zone handoff verification.
+"""Specimen drop-zone dwell log.
 
-Tracks person approaching the specimen drop zone and staying long enough
-to deposit (dwell ≥ N seconds), logging each handoff with a timestamp.
-Missing expected handoffs = the audit gap labs get cited for.
+Logs when a tracked person remains in the configured drop zone for the
+operator-set dwell period. The signal does not confirm a deposit or custody.
 """
 from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
 
 MANIFEST = {
     "id": "specimen-chain",
-    "name": "Specimen Drop Verification",
-    "tagline": "Every drop logged with a timestamp. Every missing one flagged.",
+    "name": "Specimen Drop-Zone Dwell Log",
+    "tagline": "Logs observed dwell events at a configured specimen-drop zone for staff review; it does not confirm a deposit or detect missing expected specimens.",
     "category": "Healthcare & Senior Living",
     "tier": "enterprise",
     "requires_gpu": True,
     "config_schema": {
         "zone": "polygon — specimen drop area",
-        "min_dwell_seconds": "int — deposit confirmation dwell (default 10)",
+        "min_dwell_seconds": "Minimum observed zone dwell before logging a possible drop event (default: 10 seconds).",
     },
 }
 
@@ -40,8 +39,8 @@ class Function(MarketplaceFunction):
                 self._confirmed.add(key)
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Specimen drop confirmed",
-                    detail=f"Deposit dwell {ts - st['since']:.0f}s at drop zone on {camera['name']}.",
+                    title="Specimen-zone dwell threshold reached",
+                    detail=f"Tracked-person dwell reached {ts - st['since']:.0f}s in the configured drop zone on {camera['name']}; review the event.",
                     frame=frame, meta={"dwell_s": ts - st["since"]})
             if not st["in"]:
                 self._confirmed.discard(key)

@@ -9,7 +9,7 @@ from marketplace.contract import MarketplaceFunction, boxes_of, crossed_line
 MANIFEST = {
     "id": "wrong-way",
     "name": "Wrong-Way Movement",
-    "tagline": "One-way means one-way — even at 2am when nobody's watching.",
+    "tagline": "Flags tracked movement across a configured one-way line in the prohibited direction for human review.",
     "category": "People & Safety",
     "tier": "starter",
     "requires_gpu": True,

@@ -11,7 +11,7 @@ from marketplace.contract import MarketplaceFunction
 MANIFEST = {
     "id": "shelf-stockout",
     "name": "Shelf Stockout Alert",
-    "tagline": "Empty shelf at 2pm = lost sales all afternoon.",
+    "tagline": "Flags a sustained shelf-density drop relative to its baseline for staff review.",
     "category": "Retail & QSR",
     "tier": "enterprise",
     "requires_gpu": True,

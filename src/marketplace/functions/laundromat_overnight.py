@@ -1,14 +1,14 @@
 """Laundromat Overnight — person in the store during closed/unsafe hours.
 
-24-hour laundromats have a vagrancy/safety problem; closed ones have a
-break-in problem. Person presence during the configured window with clip.
+Reports person-class presence during an operator-configured overnight window
+with an optional JPEG review snapshot; it does not infer intent.
 """
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "laundromat-overnight",
     "name": "Laundromat Overnight Watch",
-    "tagline": "Someone's been sitting on the folding table for two hours at 3am.",
+    "tagline": "Flags extended person dwell in configured laundromat zones during selected overnight hours.",
     "category": "Security & Access",
     "tier": "starter",
     "requires_gpu": True,
@@ -30,7 +30,7 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("floor")
         if not zone:
             return
-        hour = int(_t.strftime("%H", _t.gmtime(ts)))
+        hour = int(_t.strftime("%H", site_time(ts, ctx)))
         s, e = int(self.hours[0]), int(self.hours[1])
         if not ((hour >= s or hour < e) if s > e else (s <= hour < e)):
             return

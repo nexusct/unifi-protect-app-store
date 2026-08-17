@@ -1,21 +1,21 @@
-"""Customer Wait Alert — unacknowledged customer detection.
+"""Service-Zone Dwell Alert.
 
-A person standing in a service zone (counter, lobby desk, service bay)
-with no staff nearby for longer than the threshold fires a service alert.
-The metric behind "we didn't even greet them" reviews.
+Reports a tracked person-class detection that remains in a configured service
+zone while no person-class detection appears in a comparison zone. It does not
+determine role, service status, or whether an interaction occurred.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "customer-wait-alert",
-    "name": "Unacknowledged Customer Alert",
-    "tagline": "Nobody greeted them for 3 minutes. Now you know.",
+    "name": "Service-Zone Dwell Alert",
+    "tagline": "Flags tracked person dwell in a service zone when a configured comparison zone has no person detection.",
     "category": "Retail & QSR",
     "tier": "starter",
     "requires_gpu": True,
     "config_schema": {
-        "zone": "polygon — customer service area",
-        "staff_zone": "polygon — where staff are expected",
+        "zone": "polygon — monitored service area",
+        "staff_zone": "polygon — person-presence comparison area",
         "wait_seconds": "int — threshold (default 180)",
     },
 }
@@ -45,7 +45,7 @@ class Function(MarketplaceFunction):
             if waited >= self.wait and not staff_present:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title=f"Customer waiting {waited/60:.1f} min unacknowledged",
-                    detail=f"Service zone on {camera['name']} occupied {waited:.0f}s with no staff present.",
+                    title=f"Service-zone dwell {waited/60:.1f} min",
+                    detail=f"Tracked person detection remained in the service zone on {camera['name']} for {waited:.0f}s with no person detection in the comparison zone.",
                     frame=frame, meta={"wait_seconds": waited})
                 self._waiting.pop(tid)

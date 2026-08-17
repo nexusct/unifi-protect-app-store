@@ -1,21 +1,20 @@
-"""Fire Exit Blocked — object camped in an egress zone.
+"""Egress-Zone Object Dwell — object detection persists in a configured zone.
 
-Any non-person object stationary in a fire-exit zone past the threshold
-fires a code-compliance alert. The single most-cited OSHA/insurance
-violation in warehouses — and the cheapest to prevent.
+An object-class detection that persists in a configured egress zone produces
+a staff review alert. It does not determine code or regulatory compliance.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "fire-exit-blocked",
-    "name": "Fire Exit Blocked",
-    "tagline": "A pallet in front of the fire exit is a five-figure fine. Not anymore.",
+    "name": "Egress-Zone Object Review",
+    "tagline": "Flags a persistent object in a configured egress zone for staff review.",
     "category": "Property & Liability",
     "tier": "starter",
     "requires_gpu": True,
     "config_schema": {
         "zone": "polygon — egress area",
-        "blocked_seconds": "int (default 60)",
+        "blocked_seconds": "Object-dwell review threshold in seconds (default 60)",
     },
 }
 
@@ -32,7 +31,7 @@ class Function(MarketplaceFunction):
             return
         blocking = False
         for (cls, cx, cy, *rest, tid) in boxes_of(frame):
-            if cls != "person" and in_zone(cx, cy, zone):
+            if cls != 0 and in_zone(cx, cy, zone):
                 blocking = True
                 break
         key = camera["id"]
@@ -41,8 +40,8 @@ class Function(MarketplaceFunction):
             if ts - self._since[key] >= self.limit:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Fire exit blocked",
-                    detail=f"Object in egress zone on {camera['name']} for {ts - self._since[key]:.0f}s.",
+                    title="Persistent object in egress zone",
+                    detail=f"Object-class detection persisted in the configured egress zone on {camera['name']} for {ts - self._since[key]:.0f}s; verify clearance manually.",
                     frame=frame, meta={"blocked_s": ts - self._since[key]})
                 self._since[key] = ts
         else:

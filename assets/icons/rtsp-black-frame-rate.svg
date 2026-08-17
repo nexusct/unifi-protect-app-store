@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title">
+  <title id="title">RTSP Black Frame Rate</title>
+  <circle cx="76" cy="20" r="8" fill="#006FFF" opacity=".12"/>
+  <path d="M20 77h56" fill="none" stroke="#01183E" stroke-width="2" stroke-linecap="round" opacity=".18"/>
+  <g transform="translate(12 12) scale(3)" fill="none" stroke="#0559D5" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 21V5l8-3 8 3v16M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2M10 21v-3h4v3"/>
+  </g>
+</svg>

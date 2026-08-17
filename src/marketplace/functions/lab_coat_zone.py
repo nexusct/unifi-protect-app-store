@@ -1,16 +1,15 @@
-"""Lab Coat Zone — non-clinical person in clinical areas.
+"""Clinical-Attire Color Check — torso color-signature review.
 
-Color-band check on torso region for clinical whites/scrubs in restricted
-clinical corridors. Visitor or vendor in a clinical zone without an escort
-gets flagged — HIPAA physical-safeguard evidence, automated.
+Checks the torso region for an operator-configured light-color signature in a
+clinical zone. It cannot determine role, authorization, attire type, or compliance.
 """
 import numpy as np
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import MarketplaceFunction, boxes_of, in_zone, pixel_box
 
 MANIFEST = {
     "id": "lab-coat-zone",
-    "name": "Clinical Zone Access Check",
-    "tagline": "A vendor in the clinical corridor without scrubs. Flagged.",
+    "name": "Clinical-Attire Color Check",
+    "tagline": "Flags people whose torso region lacks the configured clinical-attire color signature; human review required.",
     "category": "Healthcare & Senior Living",
     "tier": "pro",
     "requires_gpu": True,
@@ -39,8 +38,10 @@ class Function(MarketplaceFunction):
         for (cls, cx, cy, x1, y1, x2, y2, tid) in boxes_of(frame, classes=[0]):
             if tid is None or not in_zone(cx, cy, zone) or ts - self._flagged.get(tid, 0) < 300:
                 continue
-            ty1, ty2 = int(y1 + (y2 - y1) * 0.3), int(y1 + (y2 - y1) * 0.7)
-            torso = hsv[ty1:ty2, int(x1):int(x2)]
+            px1, py1, px2, py2 = pixel_box(frame, x1, y1, x2, y2)
+            ty1 = int(py1 + (py2 - py1) * 0.3)
+            ty2 = int(py1 + (py2 - py1) * 0.7)
+            torso = hsv[ty1:ty2, px1:px2]
             if torso.size == 0:
                 continue
             # white/light clinical wear: high value, low saturation
@@ -50,6 +51,6 @@ class Function(MarketplaceFunction):
                 self._flagged[tid] = ts
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Non-clinical person in clinical zone",
-                    detail=f"Person without clinical attire on {camera['name']} (white ratio {ratio:.2f}).",
+                    title="Configured attire color signature not observed",
+                    detail=f"Torso-region light-color ratio was {ratio:.2f} on {camera['name']}, below the configured review threshold; verify attire and authorization manually.",
                     frame=frame, meta={"ratio": round(ratio, 3)})

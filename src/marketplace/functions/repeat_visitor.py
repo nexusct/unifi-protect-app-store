@@ -1,23 +1,22 @@
-"""Repeat Visitor Pattern — track-ID recurrence across days (non-biometric).
+"""Repeat Appearance Pattern — color-signature similarity across observations.
 
-No faces: this uses clothing-color signature + rough size + time patterns
-to flag "the same person has cased the lot three nights this week."
-Casing-pattern detection for retail theft rings and site scouts.
-BIPA-safe: no biometric identification, only appearance clustering.
+No faces or identity matching: this clusters coarse clothing-color histograms
+across hourly observation buckets. Similarity can produce false matches and
+always requires human review.
 """
 from collections import defaultdict
 import numpy as np
-from marketplace.contract import MarketplaceFunction, boxes_of
+from marketplace.contract import MarketplaceFunction, boxes_of, pixel_box
 
 MANIFEST = {
     "id": "repeat-visitor",
-    "name": "Repeat Visitor Pattern",
-    "tagline": "Same jacket, three nights in a row, walking the fence line. Flagged.",
+    "name": "Repeat Appearance Pattern",
+    "tagline": "Clusters similar appearance-color signatures across configured observations for human review; it is not identity matching and may produce false matches.",
     "category": "Intelligence",
     "tier": "enterprise",
     "requires_gpu": True,
     "config_schema": {
-        "visits_threshold": "int — distinct sessions before flag (default 3)",
+        "visits_threshold": "Number of separate sessions with a similar appearance before review (default: 3).",
         "window_days": "int (default 7)",
     },
 }
@@ -33,7 +32,7 @@ class Function(MarketplaceFunction):
     @staticmethod
     def _signature(frame, box):
         import cv2
-        x1, y1, x2, y2 = [int(v) for v in box]
+        x1, y1, x2, y2 = pixel_box(frame, *box)
         crop = frame[y1:y2, x1:x2]
         if crop.size == 0:
             return None
@@ -52,7 +51,7 @@ class Function(MarketplaceFunction):
             if len(distinct_sessions) >= self.threshold:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Repeat visitor pattern",
-                    detail=f"Appearance matched across {len(distinct_sessions)} sessions in {self.window/86400:.0f} days near {camera['name']}.",
+                    title="Repeat appearance-similarity pattern",
+                    detail=f"A color-histogram signature exceeded the similarity threshold across {len(distinct_sessions)} observation buckets in {self.window/86400:.0f} days near {camera['name']}; this is not identity matching.",
                     frame=frame, meta={"sessions": len(distinct_sessions)})
                 self._sigs = [s for s in self._sigs if float(np.dot(sig, s[1])) <= 0.85]

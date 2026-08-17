@@ -10,7 +10,7 @@ from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 MANIFEST = {
     "id": "medspa-room-turn",
     "name": "Treatment Room Turn",
-    "tagline": "Room 2 turns in 6 minutes. Room 4 takes 22. Now scheduling knows.",
+    "tagline": "Measures occupied and idle intervals for configured treatment-room zones.",
     "category": "Intelligence",
     "tier": "pro",
     "requires_gpu": True,

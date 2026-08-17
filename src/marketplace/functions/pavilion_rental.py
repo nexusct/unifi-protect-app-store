@@ -1,16 +1,16 @@
-"""Pavilion Rental Verify — park pavilion occupancy vs rental schedule.
+"""Pavilion Reservation-Window Comparison.
 
-Is the rented pavilion actually in use during its rental window? Is an
-unrented pavilion occupied by a walk-up group? Park districts bill and
-enforce on this.
+Compares an estimated person-detection count in a configured pavilion zone
+with operator-provided reservation windows. Reservation status and permitted
+use require review against the authoritative schedule.
 """
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "pavilion-rental",
     "name": "Pavilion Rental Verification",
-    "tagline": "Pavilion 2 is packed and nobody rented it. Or it's rented and empty. Either way, logged.",
-    "category": "Compliance",
+    "tagline": "Compares estimated pavilion occupancy with configured reservation windows for staff review.",
+    "category": "Intelligence",
     "tier": "starter",
     "requires_gpu": True,
     "config_schema": {
@@ -33,7 +33,7 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("pavilion")
         if not zone:
             return
-        hour = int(_t.strftime("%H", _t.gmtime(ts)))
+        hour = int(_t.strftime("%H", site_time(ts, ctx)))
         rented = any(int(w[0]) <= hour < int(w[1]) for w in self.windows)
         count = sum(1 for (_, cx, cy, *_r) in boxes_of(frame, classes=[0]) if in_zone(cx, cy, zone))
         occupied = count >= self.min_n
@@ -42,6 +42,6 @@ class Function(MarketplaceFunction):
             self._alerted[key] = ts
             ctx.alerts.fire(
                 site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                title="Pavilion occupied without rental",
-                detail=f"{count} people in pavilion outside rental windows on {camera['name']}.",
+                title="Pavilion count outside configured reservation window",
+                detail=f"{count} person-class detections were in the pavilion zone outside configured reservation windows on {camera['name']}; verify against the authoritative schedule.",
                 frame=frame, meta={"persons": count})

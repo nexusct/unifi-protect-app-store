@@ -1,22 +1,17 @@
-"""Site Theft Watch — equipment-zone presence after crew hours.
-
-Construction sites lose tools, copper, and fuel to after-hours visitors.
-Person or vehicle in the laydown yard/equipment zone outside crew hours =
-clip + alert. Builders get this for the insurance discount alone.
-"""
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+"""After-hours person or vehicle presence in an equipment zone."""
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "site-theft-watch",
-    "name": "Construction Site Theft Watch",
-    "tagline": "Copper walks off at midnight. Now it walks off on camera, flagged.",
+    "name": "After-Hours Equipment-Zone Presence",
+    "tagline": "Flags detected people or vehicles in a configured equipment zone outside scheduled crew hours; it does not establish theft.",
     "category": "Security & Access",
     "tier": "starter",
     "requires_gpu": True,
     "config_schema": {
-        "zone": "polygon — laydown yard / equipment",
-        "crew_hours": "[start,end] (default [6,17])",
-        "weekends_active": "bool (default true)",
+        "zone": "Polygon for the laydown yard or equipment area.",
+        "crew_hours": "UTC start and end hours for scheduled crew presence (default [6, 17]).",
+        "weekends_active": "Whether weekday crew hours also apply on weekends (default true).",
     },
 }
 
@@ -33,9 +28,9 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("yard")
         if not zone:
             return
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         s, e = int(self.hours[0]), int(self.hours[1])
-        crew = (s <= tm.tm_hour < e) and (tm.tm_wday < 5 or self.weekends is False)
+        crew = (s <= tm.tm_hour < e) and (tm.tm_wday < 5 or self.weekends is True)
         if crew:
             return
         hits = [b for b in boxes_of(frame, classes=[0, 2, 5, 7]) if in_zone(b[1], b[2], zone)]

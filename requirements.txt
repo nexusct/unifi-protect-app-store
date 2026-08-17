@@ -1,5 +1,5 @@
 # Direct runtime requirements. Transitive PyPI packages are frozen in requirements.lock.
-torch==2.5.1
+torch==2.13.0
 torchvision==0.20.1
 ultralytics==8.4.120
 opencv-python==5.0.0.93

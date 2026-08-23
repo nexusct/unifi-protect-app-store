@@ -9,6 +9,7 @@ from collections import OrderedDict, deque
 from pathlib import Path
 from typing import Optional
 
+<<<<<<< HEAD
 from fastapi import FastAPI, Header, HTTPException, Query, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -17,6 +18,14 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
 from marketplace.api_runtime import APIRuntimeError
+=======
+from fastapi import FastAPI, Query, Header, HTTPException, Request
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+>>>>>>> origin/cursor/security-and-docs-improvements-4ec5
 
 ROOT = Path("/app")
 LANDING = ROOT / "landing"
@@ -27,6 +36,9 @@ ASSETS = ROOT / "assets"
 DOOR_ID_RE = re.compile(r"^[A-Za-z0-9._:-]{1,128}$")
 FUNCTION_ID_RE = r"^[a-z0-9][a-z0-9-]{0,127}$"
 REQUEST_ID_RE = r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+
+# Rate limiter configuration
+limiter = Limiter(key_func=get_remote_address)
 
 
 class ClipExportRequest(BaseModel):
@@ -119,6 +131,7 @@ def detector_status_payload(camera_detectors):
 
 def create_app(pipeline, streams, *, setup_service=None, restart_callback=None):
     app = FastAPI(title="nexus-vision-ai", version="0.2.0")
+<<<<<<< HEAD
     license_service = getattr(pipeline, "license_service", None)
 
     if setup_service is None:
@@ -237,15 +250,27 @@ def create_app(pipeline, streams, *, setup_service=None, restart_callback=None):
             # consumed and gives request validation an empty body.
             request._body = bytes(body)
         return await call_next(request)
+=======
+    
+    # Register rate limiter
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+>>>>>>> origin/cursor/security-and-docs-improvements-4ec5
 
     # ── subscription platform + storefront ──
     from subscriptions import store
     from subscriptions.app import router as sub_router
+    from subscriptions.app import limiter as sub_limiter
     store.init_db()
     app.include_router(sub_router)
+<<<<<<< HEAD
     if ASSETS.exists():
         app.mount("/assets", StaticFiles(directory=str(ASSETS)), name="public-assets")
 
+=======
+    # Register subscription router's limiter
+    app.state.limiter = sub_limiter
+>>>>>>> origin/cursor/security-and-docs-improvements-4ec5
     if LANDING.exists():
 
         @app.get("/", include_in_schema=False)
@@ -329,6 +354,7 @@ def create_app(pipeline, streams, *, setup_service=None, restart_callback=None):
         return detector_status_payload(pipeline.camera_detectors)
 
     @app.get("/search")
+<<<<<<< HEAD
     def search(
         q: str = Query(..., min_length=2, max_length=200),
         limit: int = Query(10, ge=1, le=50),
@@ -341,6 +367,14 @@ def create_app(pipeline, streams, *, setup_service=None, restart_callback=None):
                     status_code=403,
                     detail="Current signed entitlement does not grant video search",
                 )
+=======
+    @limiter.limit("30/minute")
+    def search(request: Request, q: str = Query(..., min_length=2), limit: int = 10):
+        """Natural language video search.
+        
+        Rate limit: 30 requests per minute per IP to prevent resource exhaustion.
+        """
+>>>>>>> origin/cursor/security-and-docs-improvements-4ec5
         from detectors.video_search import search as vs_search
         return {"query": q, "results": vs_search(q, limit=limit)}
 
@@ -433,6 +467,7 @@ def create_app(pipeline, streams, *, setup_service=None, restart_callback=None):
             reject_runtime_error(exc)
 
     @app.post("/unlock/{door_id}")
+<<<<<<< HEAD
     def unlock_door(door_id: str, authorization: str | None = Header(default=None)):
         authorize_control_request(authorization)
         if not DOOR_ID_RE.fullmatch(door_id):
@@ -441,5 +476,25 @@ def create_app(pipeline, streams, *, setup_service=None, restart_callback=None):
             status_code=410,
             detail="Legacy unlock route is disabled; use the audited function request endpoint",
         )
+=======
+    @limiter.limit("5/minute")
+    def unlock_door(request: Request, door_id: str, x_admin_token: str | None = Header(default=None)):
+        """Remote door unlock (requires admin token).
+        
+        Security: This endpoint can trigger physical door unlocks and must be
+        protected. Use network-level access control (firewall, reverse proxy)
+        in addition to token authentication.
+        
+        Rate limit: 5 requests per minute per IP to prevent brute-force attacks
+        and unauthorized unlock attempts.
+        """
+        expected = os.environ.get("VISION_ADMIN_TOKEN", "")
+        if not expected or len(expected) < 16 or "change-me" in expected.lower():
+            raise HTTPException(503, "admin token not configured or insecure (must be 16+ chars, not 'change-me')")
+        if not x_admin_token or x_admin_token != expected:
+            raise HTTPException(401, "invalid admin token")
+        ok = pipeline.access.unlock(door_id) if getattr(pipeline, "access", None) else False
+        return {"door_id": door_id, "unlocked": ok}
+>>>>>>> origin/cursor/security-and-docs-improvements-4ec5
 
     return app

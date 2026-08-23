@@ -148,6 +148,7 @@ class VideoSearchIndexer(Detector):
         self._last[camera["id"]] = ts
         try:
             vec = _embed_image(frame)
+<<<<<<< HEAD
             np.save(_embedding_path(camera["name"], ts), vec)
             if ts - self._last_prune >= 60:
                 prune_embeddings(
@@ -157,5 +158,10 @@ class VideoSearchIndexer(Detector):
                     now=ts,
                 )
                 self._last_prune = ts
+=======
+            # Sanitize camera name to prevent path traversal
+            safe_name = camera['name'].replace(' ', '_').replace('/', '_').replace('\\', '_').replace('..', '_')
+            np.save(EMBED_DIR / f"{safe_name}_{int(ts)}.npy", vec)
+>>>>>>> origin/cursor/security-and-docs-improvements-4ec5
         except Exception as exc:
             log.warning("embed failed on %s: %s", camera["name"], exc)

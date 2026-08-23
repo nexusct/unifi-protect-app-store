@@ -276,7 +276,10 @@ class AlertEngine:
         if frame is None:
             return None
         try:
-            name = f"{detector}_{camera}_{int(time.time())}.jpg".replace(" ", "_")
+            # Sanitize filename components to prevent path traversal
+            safe_detector = detector.replace(" ", "_").replace("/", "_").replace("\\", "_").replace("..", "_")
+            safe_camera = camera.replace(" ", "_").replace("/", "_").replace("\\", "_").replace("..", "_")
+            name = f"{safe_detector}_{safe_camera}_{int(time.time())}.jpg"
             path = self.data_dir / "snapshots" / name
             if not cv2.imwrite(str(path), frame):
                 raise OSError("OpenCV did not write the snapshot")
@@ -348,6 +351,7 @@ class AlertEngine:
             except Exception as exc:
                 log.warning("snapshot payload failed: %s", exc)
 
+<<<<<<< HEAD
         attempts = []
         failures = []
         for destination in due:
@@ -374,6 +378,10 @@ class AlertEngine:
                     attempts.append("base44:error")
                     log.warning("Base44 dispatch failed: %s", exc)
                 continue
+=======
+        delivered = []
+        if self.url and self.token and "change-me" not in self.token.lower():
+>>>>>>> origin/cursor/security-and-docs-improvements-4ec5
             try:
                 response = requests.post(self.extra_webhook, json=payload, timeout=10)
                 attempts.append(f"webhook:{response.status_code}")

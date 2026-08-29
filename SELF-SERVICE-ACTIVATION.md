@@ -9,7 +9,7 @@ Build two bounded components:
 1. A hosted **Nexus Control Plane** for customer identity, organizations, sites, billing state, selected function stacks, enrollment codes, device records, and signed entitlements.
 2. A local **Activation Service** inside the Nexus Vision appliance for device identity, entitlement verification, camera/function mapping, validation, atomic configuration changes, restart, readiness checking, and rollback.
 
-The appliance initiates every Internet connection over outbound HTTPS. The control plane never opens an inbound tunnel, receives UniFi credentials, or receives continuous video. All 100 active function implementations remain inside the versioned container image, and all 271 source/archive contracts remain available for migration and audit; activation changes configuration only. Do not download executable Python plug-ins from the control plane.
+The appliance initiates every Internet connection over outbound HTTPS. The control plane never opens an inbound tunnel, receives UniFi credentials, or receives continuous video. All 105 active function implementations remain inside the versioned container image, and all 301 source/archive contracts remain available for migration and audit; activation changes configuration only. Do not download executable Python plug-ins from the control plane.
 
 This is a subscription and lifecycle boundary, not unbreakable DRM. Because customers control their own host and the current repository contains the implementation, a determined operator can patch enforcement. Signed entitlements still provide the right operational, support, billing, and audit mechanism without fragile hardware locking.
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Regenerate the storefront ItemList JSON-LD from the marketplace catalog.
 
-The storefront renders its 100 functions client-side, so none of the catalog
+The storefront renders its 105 functions client-side, so none of the catalog
 reaches crawlers or AI answer engines as structured data. This emits a
 CollectionPage + ItemList graph describing every catalog entry and splices it
 into the marked region of storefront/index.html.
@@ -65,7 +65,7 @@ def build_item(entry: dict, position: int) -> dict:
         },
     ]
     # provider / operatingSystem / applicationCategory are identical for every
-    # entry, so they are declared once on the ItemList rather than 100 times.
+    # entry, so they are declared once on the ItemList rather than 105 times.
     return {
         "@type": "ListItem",
         "position": position,

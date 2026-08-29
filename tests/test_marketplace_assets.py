@@ -48,7 +48,7 @@ class ManifestContractTests(unittest.TestCase):
             manifests.append(manifest)
 
         ids = [manifest["id"] for manifest in manifests]
-        self.assertEqual(len(manifests), 150)
+        self.assertEqual(len(manifests), 180)
         self.assertEqual(len(ids), len(set(ids)))
 
     def test_manifest_rejects_unsafe_ids_and_multiline_copy(self):
@@ -146,7 +146,7 @@ class GeneratedAssetTests(unittest.TestCase):
 
             self.assertEqual(stat.S_IMODE(path.stat().st_mode), 0o644)
 
-    def test_vendor_art_generator_covers_exact_20_with_unique_transparent_images(self):
+    def test_super_skill_art_generator_covers_exact_30_with_unique_transparent_images(self):
         path = ROOT / "scripts" / "generate_vendor_module_art.py"
         self.assertTrue(path.is_file(), "vendor art generator is missing")
         generator = load_script("vendor_art_generator", path)
@@ -155,7 +155,7 @@ class GeneratedAssetTests(unittest.TestCase):
                 encoding="utf-8"
             )
         )
-        expected = set(selection["vendor_inspired_ids"])
+        expected = set(selection["super_skill_ids"])
         self.assertEqual(set(generator.SCENES), expected)
         hashes = set()
         for module_id in sorted(expected):
@@ -171,7 +171,7 @@ class GeneratedAssetTests(unittest.TestCase):
             )
             self.assertIsNotNone(image.getchannel("A").getbbox())
             hashes.add(hashlib.sha256(image.tobytes()).hexdigest())
-        self.assertEqual(len(hashes), 20)
+        self.assertEqual(len(hashes), 30)
 
     def test_catalog_json_and_javascript_are_identical(self):
         catalog = json.loads((ROOT / "storefront" / "catalog.json").read_text(encoding="utf-8"))
@@ -180,7 +180,7 @@ class GeneratedAssetTests(unittest.TestCase):
         inlined = json.loads(script[assignment:].strip().removesuffix(";"))
 
         self.assertEqual(catalog, inlined)
-        self.assertEqual(len(catalog), 100)
+        self.assertEqual(len(catalog), 105)
         self.assertEqual(catalog, sorted(catalog, key=lambda row: (row["name"].casefold(), row["id"])))
         self.assertTrue(all(row["config_keys"] == sorted(row["config_schema"]) for row in catalog))
         self.assertTrue(all(row["setting_keys"] == sorted(set(row["config_schema"]) - set(row["camera_zones"])) for row in catalog))
@@ -203,8 +203,8 @@ class GeneratedAssetTests(unittest.TestCase):
                 self.assertEqual(catalog[manifest["id"]]["camera_zones"], mapping, path.name)
                 active_geometry_modules += bool(mapping)
 
-        self.assertEqual(source_geometry_modules, 133)
-        self.assertEqual(active_geometry_modules, 55)
+        self.assertEqual(source_geometry_modules, 161)
+        self.assertEqual(active_geometry_modules, 73)
         self.assertEqual(catalog["wrong-way"]["camera_zones"], {"line": "oneway_line"})
         self.assertEqual(
             catalog_builder.camera_zone_map_from_file(

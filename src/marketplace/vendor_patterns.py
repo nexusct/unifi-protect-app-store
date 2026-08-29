@@ -117,50 +117,59 @@ class DomainObserver:
             (settings or {}).get("confidence"), 0.5, 0.05, 0.99
         )
         self._model = None
+        self._load_failed = False
         self._tracker = CentroidTracker()
 
     def observe(self, frame, ts):
-        if not self.weights or not Path(self.weights).is_file():
+        if self._load_failed or not self.weights or not Path(self.weights).is_file():
             return []
         if self._model is None:
-            self._model = detector_base.get_model(self.weights)
-        result = detector_base.run_inference(
-            self._model, frame, conf=self.confidence
-        )
-        names = {
-            int(key): _normalized_label(value)
-            for key, value in (getattr(result, "names", None) or {}).items()
-        }
-        height, width = frame.shape[:2]
-        raw = []
-        boxes = getattr(result, "boxes", None)
-        for box in boxes if boxes is not None else []:
-            class_id = int(box.cls[0])
-            x1, y1, x2, y2 = [float(value) for value in box.xyxy[0].tolist()]
-            x1n = max(0.0, min(1.0, x1 / width))
-            y1n = max(0.0, min(1.0, y1 / height))
-            x2n = max(0.0, min(1.0, x2 / width))
-            y2n = max(0.0, min(1.0, y2 / height))
-            confidence = float(box.conf[0]) if hasattr(box, "conf") else 0.0
-            raw.append(
-                {
-                    "class_id": class_id,
-                    "label": names.get(class_id, f"class-{class_id}"),
-                    "confidence": max(0.0, min(1.0, confidence)),
-                    "cx": (x1n + x2n) / 2,
-                    "cy": (y1n + y2n) / 2,
-                    "x1": x1n,
-                    "y1": y1n,
-                    "x2": x2n,
-                    "y2": y2n,
-                }
+            try:
+                self._model = detector_base.get_model(self.weights)
+            except Exception:
+                self._load_failed = True
+                return []
+        try:
+            result = detector_base.run_inference(
+                self._model, frame, conf=self.confidence
             )
-        track_ids = self._tracker.update(
-            [(item["class_id"], item["cx"], item["cy"]) for item in raw], now=ts
-        )
-        for item, track_id in zip(raw, track_ids):
-            item["track_id"] = track_id
-        return raw
+            names = {
+                int(key): _normalized_label(value)
+                for key, value in (getattr(result, "names", None) or {}).items()
+            }
+            height, width = frame.shape[:2]
+            raw = []
+            boxes = getattr(result, "boxes", None)
+            for box in boxes if boxes is not None else []:
+                class_id = int(box.cls[0])
+                x1, y1, x2, y2 = [float(value) for value in box.xyxy[0].tolist()]
+                x1n = max(0.0, min(1.0, x1 / width))
+                y1n = max(0.0, min(1.0, y1 / height))
+                x2n = max(0.0, min(1.0, x2 / width))
+                y2n = max(0.0, min(1.0, y2 / height))
+                confidence = float(box.conf[0]) if hasattr(box, "conf") else 0.0
+                raw.append(
+                    {
+                        "class_id": class_id,
+                        "label": names.get(class_id, f"class-{class_id}"),
+                        "confidence": max(0.0, min(1.0, confidence)),
+                        "cx": (x1n + x2n) / 2,
+                        "cy": (y1n + y2n) / 2,
+                        "x1": x1n,
+                        "y1": y1n,
+                        "x2": x2n,
+                        "y2": y2n,
+                    }
+                )
+            track_ids = self._tracker.update(
+                [(item["class_id"], item["cx"], item["cy"]) for item in raw],
+                now=ts,
+            )
+            for item, track_id in zip(raw, track_ids):
+                item["track_id"] = track_id
+            return raw
+        except Exception:
+            return []
 
 
 class PlateCandidateReader:
@@ -172,38 +181,52 @@ class PlateCandidateReader:
         )
         self._model = None
         self._reader = None
+        self._load_failed = False
 
     def observe(self, frame):
-        if not self.weights or not Path(self.weights).is_file():
+        if self._load_failed or not self.weights or not Path(self.weights).is_file():
             return []
         if self._model is None:
-            self._model = detector_base.get_model(self.weights)
-            import easyocr
+            try:
+                self._model = detector_base.get_model(self.weights)
+                import easyocr
 
-            self._reader = easyocr.Reader(
-                ["en"], gpu=os.environ.get("VISION_DEVICE", "cuda") == "cuda"
+                self._reader = easyocr.Reader(
+                    ["en"],
+                    gpu=os.environ.get("VISION_DEVICE", "cuda") == "cuda",
+                )
+            except Exception:
+                self._load_failed = True
+                self._model = None
+                self._reader = None
+                return []
+        try:
+            result = detector_base.run_inference(
+                self._model, frame, conf=self.confidence
             )
-        result = detector_base.run_inference(
-            self._model, frame, conf=self.confidence
-        )
-        candidates = []
-        boxes = getattr(result, "boxes", None)
-        for box in list(boxes if boxes is not None else [])[:8]:
-            x1, y1, x2, y2 = [int(value) for value in box.xyxy[0].tolist()]
-            crop = frame[max(0, y1):max(0, y2), max(0, x1):max(0, x2)]
-            if getattr(crop, "size", 0) == 0:
-                continue
-            text = _normalize_plate("".join(self._reader.readtext(crop, detail=0)))
-            match = _PLATE_TEXT.search(text)
-            if not match:
-                continue
-            candidates.append(
-                {
-                    "text": match.group(0),
-                    "confidence": float(box.conf[0]) if hasattr(box, "conf") else 0.0,
-                }
-            )
-        return candidates
+            reader = self._reader
+            if reader is None:
+                return []
+            candidates = []
+            boxes = getattr(result, "boxes", None)
+            for box in list(boxes if boxes is not None else [])[:8]:
+                x1, y1, x2, y2 = [int(value) for value in box.xyxy[0].tolist()]
+                crop = frame[max(0, y1):max(0, y2), max(0, x1):max(0, x2)]
+                if getattr(crop, "size", 0) == 0:
+                    continue
+                text = _normalize_plate("".join(reader.readtext(crop, detail=0)))
+                match = _PLATE_TEXT.search(text)
+                if not match:
+                    continue
+                candidates.append(
+                    {
+                        "text": match.group(0),
+                        "confidence": float(box.conf[0]) if hasattr(box, "conf") else 0.0,
+                    }
+                )
+            return candidates
+        except Exception:
+            return []
 
 
 class PlateWatchlistFunction(VendorFunction):

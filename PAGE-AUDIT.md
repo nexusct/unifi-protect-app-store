@@ -266,3 +266,66 @@ Status: **⚠️ FINAL INDEPENDENT REVIEW PENDING**
   entitlement signing keys, appliance physical-control authority, or test fixtures are
   part of the hosted release. Missing production public verification keys intentionally
   keep paid analytics unlicensed and fail-closed.
+
+## 2026-08-29 — Audited 105-function super-skill portfolio release
+
+- **Publication arithmetic:** `src/marketplace/active-function-ids.json` is the strict
+  publication authority for exactly **105 active functions**: 75 retained contracts plus
+  30 independently implemented executable super skills. The audited operation is exactly
+  `100 - 25 + 30 = 105`; retirement changes active-manifest membership only.
+- **Compatibility inventory:** `load_all(include_archived=True)` preserves exactly **301
+  source/archive contracts**: 180 literal Python contracts plus 121 declarative contracts.
+  The 25 retired implementations remain loadable. The active-ID set SHA-256 is
+  `94535391ab182ac824e8533359c742925ba2ab7ce86102af0253e723337a6aa9`.
+- **Portfolio evidence:** `docs/super-skill-portfolio.json` records the exact retirement
+  set, exact 30 additions, commercial rationale, category/tier assignment, workflow
+  binding, and first-party evidence from Axis, Avigilon, Hanwha Vision, Genetec, and
+  Verkada. The original 100-ID fixed point is hash-anchored so arbitrary archived IDs
+  cannot silently replace the audited retained set.
+- **Runtime and privacy gate:** the 30 public modules are thin literal contracts backed by
+  bounded shared state in `src/marketplace/super_skills.py`. Missing or unreadable custom
+  weights fail closed; a configured custom obstruction model never falls back to generic
+  detections; camera-level skeleton privacy cannot be overridden by function settings;
+  ordered sequences require every stage; timeout resets clear per-cycle latches; and
+  person/vehicle conflict consideration is deterministically bounded. No face recognition,
+  biometric identification, cross-camera re-identification, or autonomous door, vehicle,
+  machine, clinical, legal, or life-safety determination is introduced.
+- **Artwork gate:** the active directory contains exactly **105** transparent 320×320 WebPs
+  totaling **1,437,306 bytes**; the largest is `forklift-speed.webp` at 35,884 bytes. Its
+  aggregate SHA-256 is
+  `862757fabd1458936003a924c19a881d25109302a57800be6ba2f84f7a49c893`.
+  The archive contains exactly **196** WebPs totaling **2,960,900 bytes**, aggregate
+  SHA-256 `7bbfebbd56b0819510ed7588021d6c761220bfd996cdd68f6bfea35588b27fa8`.
+  All 30 new scenes were reviewed at 96 px, 48 px, and full resolution; OCR candidates were
+  visually cleared as vector-shape false positives, with no real text, digits, logos,
+  marks, clipping, opaque tiles, or release-blocking semantic duplicates found.
+- **Deterministic generation:** two complete catalog, icon, module-art, and SEO generation
+  passes produced an identical 416-file aggregate SHA-256 of
+  `bd3a2ab7df9a264516b1e5fd845367ba02888dd62058682bf71f1eb47284dc06`.
+  `storefront/catalog.json` contains 105 entries and has SHA-256
+  `fa285fc86604d6ac23476151f98b884e1d88bad753be6415bd8d388f5f98cf08`.
+- **Container gate:** the final Linux/amd64 build completed as manifest
+  `sha256:cc872e1a7df36ca8982553f3d351cb81da0f7b68663a44b652deb57d2980ba2f`,
+  config `sha256:d71ed8a23ef684eb0a71fde9b8702e416037d527a0ba23db101732ec52460278`,
+  and image/manifest-list
+  `sha256:126d3c7eb70ef361b7de82150d4df0bc951ac042f769aa73fedc9370fe6955d9`.
+  A container created from that exact image reported healthy; in-image loader verification
+  returned 105 active and 301 archived contracts with zero errors.
+- **Browser gate:** Chromium exercised landing, storefront, and guide from the final image
+  at 1440×900, 390×844, and 320×700. Storefront checks found 105 unique catalog IDs, 105
+  unique manifest IDs, exact set equality, 105 decoded 320×320 WebPs, 115 successfully
+  rendered artwork instances, working search and details dialog, transparent contained art,
+  zero decode failures, zero failed requests, zero console/page errors, and zero document
+  overflow at every viewport. The responsive landing header was visually rechecked after
+  its mobile CTA repair.
+- **Review and regression gate:** independent specification and engineering reviews found
+  custom-model, exact-retirement, privacy precedence, ordered-sequence, timeout-latch, and
+  conflict-state edge cases. Every finding was resolved with focused regression coverage.
+  Final mounted-image discovery passed **272/272 tests** in 6.601 seconds. Dedicated security
+  configuration and preflight reliability suites passed **8/8 + 8/8** tests; dependency
+  audit reported no known vulnerabilities. Python compilation and `git diff --check` also
+  passed. A redacted Gitleaks staged-diff scan found no leaks.
+- **Scope hygiene:** `.hallmark/`, `.playwright-cli/`, `output/`, and `test-results/` are
+  local review artifacts, excluded from the Docker context and release commit. Retired
+  active artwork was moved into `assets/module-art/archive/webp/`; no compatibility
+  contracts were deleted.

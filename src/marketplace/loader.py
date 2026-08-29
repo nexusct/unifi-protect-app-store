@@ -16,25 +16,25 @@ REGISTRY = {}   # id -> {"manifest": dict, "cls": class}
 
 
 def load_active_function_ids(path: Path, available_ids: set[str]) -> tuple[str, ...]:
-    """Load the exact 80 retained + 20 new commercial catalog selection."""
+    """Load the exact 75 retained + 30 super-skill commercial selection."""
     try:
         if not path.is_file() or path.stat().st_size > 64 * 1024:
             raise ValueError("active selection is missing or oversized")
         document = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         raise ValueError("active selection is invalid") from exc
-    expected = {"schema", "retained_existing_ids", "vendor_inspired_ids"}
+    expected = {"schema", "retained_active_ids", "super_skill_ids"}
     if not isinstance(document, dict) or set(document) != expected:
         raise ValueError("active selection has invalid fields")
-    if document.get("schema") != "nexus.marketplace-selection/v1":
+    if document.get("schema") != "nexus.marketplace-selection/v2":
         raise ValueError("active selection has unsupported schema")
-    retained = document.get("retained_existing_ids")
-    vendor = document.get("vendor_inspired_ids")
-    if not isinstance(retained, list) or len(retained) != 80:
-        raise ValueError("active selection requires exactly 80 retained IDs")
-    if not isinstance(vendor, list) or len(vendor) != 20:
-        raise ValueError("active selection requires exactly 20 vendor-inspired IDs")
-    selected = retained + vendor
+    retained = document.get("retained_active_ids")
+    super_skills = document.get("super_skill_ids")
+    if not isinstance(retained, list) or len(retained) != 75:
+        raise ValueError("active selection requires exactly 75 retained IDs")
+    if not isinstance(super_skills, list) or len(super_skills) != 30:
+        raise ValueError("active selection requires exactly 30 super-skill IDs")
+    selected = retained + super_skills
     if any(
         not isinstance(function_id, str)
         or len(function_id) > 80
@@ -51,7 +51,7 @@ def load_active_function_ids(path: Path, available_ids: set[str]) -> tuple[str, 
 
 
 def load_all(*, include_archived=False):
-    """Load executable contracts, publishing only the explicit active 100 by default.
+    """Load executable contracts, publishing only the explicit active 105 by default.
 
     ``include_archived=True`` is an audit/migration interface. Archived contracts
     remain importable source but cannot be instantiated through the default

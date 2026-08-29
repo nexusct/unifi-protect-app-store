@@ -171,8 +171,8 @@ class SubscriptionLicensingTests(unittest.TestCase):
         self.assertNotIn(token, json.dumps(status))
         self.assertNotIn("private", json.dumps(status).lower())
 
-    def test_entitlement_can_grant_complete_100_catalog_plus_10_core_set(self):
-        function_ids = [f"function-{index:03d}" for index in range(110)]
+    def test_entitlement_can_grant_complete_105_catalog_plus_10_core_set(self):
+        function_ids = [f"function-{index:03d}" for index in range(115)]
         catalog = [{"id": function_id, "tier": "enterprise"} for function_id in function_ids]
         catalog_hash = catalog_sha256(catalog)
         service = LicenseService(
@@ -186,15 +186,15 @@ class SubscriptionLicensingTests(unittest.TestCase):
         claims = self.claims(
             license_id="lic-full-catalog",
             plan="enterprise",
-            limits={"sites": 1, "streams": 110, "distinct_functions": 110},
+            limits={"sites": 1, "streams": 115, "distinct_functions": 115},
             function_ids=function_ids,
             catalog_sha256=catalog_hash,
             device_public_key_sha256=registration["public_key_sha256"],
         )
         installed = service.install_entitlement(_sign(self.signing_key, claims))
-        self.assertEqual(installed["function_grant_count"], 110)
+        self.assertEqual(installed["function_grant_count"], 115)
 
-    def test_signup_accepts_complete_100_but_rejects_101_function_selections(self):
+    def test_signup_accepts_complete_105_but_rejects_106_function_selections(self):
         from pydantic import ValidationError
         from subscriptions.app import SignupRequest
 
@@ -203,16 +203,16 @@ class SubscriptionLicensingTests(unittest.TestCase):
             email="buyer@example.test",
             company="Test Company",
             tier="enterprise",
-            functions=[f"function-{index:03d}" for index in range(100)],
+            functions=[f"function-{index:03d}" for index in range(105)],
         )
-        self.assertEqual(len(request.functions), 100)
+        self.assertEqual(len(request.functions), 105)
         with self.assertRaises(ValidationError):
             SignupRequest(
                 contactName="Test Buyer",
                 email="buyer@example.test",
                 company="Test Company",
                 tier="enterprise",
-                functions=[f"function-{index:03d}" for index in range(101)],
+                functions=[f"function-{index:03d}" for index in range(106)],
             )
 
     def test_altered_payload_unknown_key_and_wrong_signature_are_rejected(self):

@@ -65,17 +65,29 @@
     "signal": "Directional crossing arrow, spacing arc, and observation halo show the verification factors",
     "composition": "Door line across the lower middle, paired people crossing, vehicle behind"
   },
-  "aggression-posture": {
-    "subject": "Person with raised arms and energetic upper-body motion",
-    "context": "Open supervised common area",
-    "signal": "High-motion arcs around the arms trigger a review halo without depicting contact",
-    "composition": "Single figure centered in a dynamic pose with clear space around it"
+  "after-hours-multi-camera-corroboration": {
+    "subject": "Two camera silhouettes observing the same anonymous after-hours event",
+    "context": "A configured site where independent camera observations corroborate activity",
+    "signal": "Matching blue pulses from both cameras converge on one review marker",
+    "composition": "Cameras anchor opposite corners with a person silhouette between them"
   },
-  "assembly-stage-order-review": {
-    "subject": "Three distinct mechanical stage pieces connected by directional arcs",
-    "context": "A station-specific model sequence requiring operator verification",
-    "signal": "An amber exception arc skips the expected middle stage",
-    "composition": "Three stage pieces progress left to right across the center"
+  "aisle-blockage-duration-review": {
+    "subject": "A warehouse aisle occupied by one stationary pallet-like object",
+    "context": "A configured circulation aisle monitored for sustained obstruction",
+    "signal": "An amber dwell clock and red blocked-path segment mark persistence",
+    "composition": "Aisle lines recede behind the centered obstacle with clock upper right"
+  },
+  "anonymous-space-utilization-percentiles": {
+    "subject": "Anonymous occupancy groups beside a compact percentile distribution",
+    "context": "A configured space sampled locally over a bounded reporting interval",
+    "signal": "Three slate bars and one blue percentile marker summarize utilization",
+    "composition": "People cluster left while the ordered percentile bars rise on the right"
+  },
+  "anonymous-zone-funnel": {
+    "subject": "Anonymous visitors progressing through approach, entry, engage, and convert zones",
+    "context": "A configured retail journey measured with local track transitions",
+    "signal": "Four narrowing blue funnel stages show bounded progression rates",
+    "composition": "Wide approach group at left narrows toward one mint completion marker"
   },
   "atm-vestibule-watch": {
     "subject": "Two overlapping people crowded around a cash terminal alcove",
@@ -95,23 +107,17 @@
     "signal": "Broken alignment corners and collapsing edge lines mark the change",
     "composition": "Camera foreground left, skewed view panel filling the opposite side"
   },
-  "child-safety-zone": {
-    "subject": "Small person silhouette inside a restricted equipment area",
-    "context": "Calibrated industrial or utility zone",
-    "signal": "Height bracket and immediate alert halo distinguish the small figure",
-    "composition": "Small figure centered beneath large surrounding equipment shapes and boundary"
+  "care-area-occupancy-imbalance": {
+    "subject": "Two anonymous occupancy groups separated by a directional threshold line",
+    "context": "A configured care-unit boundary measured with local person counts",
+    "signal": "Opposing blue arrows show entries and exits resolving to a net delta",
+    "composition": "Small groups flank the center line with count tokens below"
   },
   "clip-export-checksum-manifest": {
     "subject": "A sealed local film strip beside a shield, clock, or storage gauge",
     "context": "On-appliance Protect clip retention, integrity, and export governance",
     "signal": "A distinct cyan geometric pulse marks the bounded checksum manifest observation without words or numerals",
     "composition": "Primary device fills the center with the bounded signal nested in a smaller upper corner"
-  },
-  "clip-export-daily-manifest": {
-    "subject": "A sealed local film strip beside a shield, clock, or storage gauge",
-    "context": "On-appliance Protect clip retention, integrity, and export governance",
-    "signal": "A distinct amber geometric pulse marks the bounded daily manifest observation without words or numerals",
-    "composition": "Two physical objects balance across the centerline with the observed signal bridging them"
   },
   "clip-export-index": {
     "subject": "A sealed local film strip beside a shield, clock, or storage gauge",
@@ -125,11 +131,11 @@
     "signal": "A distinct mint geometric pulse marks the bounded integrity probe observation without words or numerals",
     "composition": "Concentric device and signal forms create a compact centered emblem without a containing tile"
   },
-  "clip-export-queue": {
-    "subject": "A sealed local film strip beside a shield, clock, or storage gauge",
-    "context": "On-appliance Protect clip retention, integrity, and export governance",
-    "signal": "A distinct cyan geometric pulse marks the bounded queue observation without words or numerals",
-    "composition": "Primary device fills the center with the bounded signal nested in a smaller upper corner"
+  "controlled-room-two-person-review": {
+    "subject": "An access badge pulse at a controlled doorway beside two anonymous occupants",
+    "context": "A room-entry review combining normalized Access events with local person counts",
+    "signal": "A blue credential pulse connects the door to the occupancy count change",
+    "composition": "Door anchors left while the anonymous room group balances the right"
   },
   "conveyor-jam": {
     "subject": "Package stalled on a moving conveyor belt",
@@ -149,11 +155,11 @@
     "signal": "Density heat cloud intensifies at the crowded center",
     "composition": "Circular crowd cluster fills the tile with a glowing floor contour beneath"
   },
-  "curbside-arrival": {
-    "subject": "Car pulling into a dedicated curbside pickup bay",
-    "context": "Storefront curb with a sheltered handoff point",
-    "signal": "Arrival ripple spreads from the front wheels inside the bay",
-    "composition": "Car enters from lower corner toward a compact storefront backdrop"
+  "curbside-handoff-timer": {
+    "subject": "A vehicle arrival, anonymous handoff figure, and departure path",
+    "context": "A configured curbside workflow observed without plate or face identity",
+    "signal": "Three blue nodes mark arrival, handoff, and completed departure",
+    "composition": "Vehicle anchors lower left while the route bends through center to upper right"
   },
   "customer-wait-alert": {
     "subject": "Customer waiting alone at a service counter while staff area is empty",
@@ -161,11 +167,35 @@
     "signal": "Long dwell ring surrounds the customer and a hollow halo marks the empty staff area",
     "composition": "Counter divides occupied foreground from visibly empty background"
   },
+  "cycle-step-timer": {
+    "subject": "Three machine-stage shapes connected in an expected production sequence",
+    "context": "A domain-model workcell review requiring operator verification",
+    "signal": "An amber exception arc shows a missing or reordered stage",
+    "composition": "Three stage pieces progress left to right with exception arc below"
+  },
   "denied-access-escalation": {
     "subject": "Person repeatedly presenting a credential at a locked door",
     "context": "Door approach zone with the person lingering nearby",
     "signal": "Several rejected pulse rings stack at the reader while a long dwell arc circles the person",
     "composition": "Door and reader on one side, person centered in the approach contour"
+  },
+  "dock-apron-conflict-review": {
+    "subject": "An anonymous pedestrian and vehicle on converging image-plane paths",
+    "context": "A configured shared movement zone using track velocity and proximity",
+    "signal": "An amber predicted-gap arc marks a sustained review candidate",
+    "composition": "Pedestrian and vehicle face across open center space with paths converging"
+  },
+  "dock-stage-turnaround": {
+    "subject": "A truck moving through arrival, staging, dock, and departure zones",
+    "context": "A configured dock-door cycle measured as one bounded operational timeline",
+    "signal": "Four blue nodes and a compact clock show stage durations",
+    "composition": "Truck anchors center while timeline nodes arc from lower left to upper right"
+  },
+  "door-alarm-observed-response-timer": {
+    "subject": "A forced-door alert, responder silhouette, and closed-door state on one timeline",
+    "context": "A normalized Access alarm correlated with local visual response",
+    "signal": "Amber-to-blue timeline nodes show alarm, arrival, and restoration",
+    "composition": "Horizontal timeline spans the center with door on the right"
   },
   "door-alarm-verification": {
     "subject": "Forced-open door with people, a vehicle, and a lingering object nearby",
@@ -184,6 +214,12 @@
     "context": "Quiet interior corridor",
     "signal": "Persistent difference glow fills the wedge between current and reference positions",
     "composition": "Doorway centered with open leaf angled toward the viewer and ghost leaf behind"
+  },
+  "drive-thru-lane-balance": {
+    "subject": "Two parallel vehicle queues with visibly different sustained lengths",
+    "context": "A paired drive-thru approach compared with anonymous vehicle counts",
+    "signal": "An amber balance bar highlights the persistent lane difference",
+    "composition": "Two lanes run upward in parallel with the shorter queue on the right"
   },
   "drive-thru-timer": {
     "subject": "Car traveling from an order speaker to a pickup-window exit",
@@ -209,17 +245,17 @@
     "signal": "A distinct blue geometric pulse marks the bounded pre post roll observation without words or numerals",
     "composition": "Primary device fills the center with the bounded signal nested in a smaller upper corner"
   },
+  "exception-evidence-casebook": {
+    "subject": "A shielded evidence folder containing blank redacted image panels",
+    "context": "A bounded local casebook assembled from correlated alerts and access events",
+    "signal": "Blue chain links and solid redaction bars show integrity without readable content",
+    "composition": "Folder fills the center with shield above and chain-link markers below"
+  },
   "fire-exit-blocked": {
     "subject": "Carton and cleaning trolley obstructing an emergency egress path",
     "context": "Doorway with a clear floor corridor intended for exit",
     "signal": "Persistent object halo overlaps the glowing egress corridor",
     "composition": "Door centered at top, corridor runs forward, obstruction sits across it"
-  },
-  "floor-water-change-review": {
-    "subject": "A bounded floor zone with a reflective blue puddle-like shape and review lens",
-    "context": "A local appearance-change metric rather than confirmed water detection",
-    "signal": "Concentric ripples and a review halo mark a sustained visual change",
-    "composition": "Floor plane fills the lower half while the lens hovers above the changed region"
   },
   "footfall-counter": {
     "subject": "People crossing an entrance line in opposite directions",
@@ -227,17 +263,17 @@
     "signal": "Directional trails feed a central occupancy glow beyond the threshold",
     "composition": "Doorway spans middle, crossing line beneath feet, interior crowd behind"
   },
-  "forecourt-loiter": {
-    "subject": "Person lingering between fuel-pump islands",
-    "context": "Quiet forecourt during late hours",
-    "signal": "Long looping dwell trail circles the stationary figure",
-    "composition": "Pump islands frame both sides while person occupies the open center"
-  },
   "forklift-pedestrian-proximity": {
     "subject": "A compact forklift and anonymous pedestrian in a warehouse aisle",
     "context": "A domain-model industrial proximity review zone",
     "signal": "A red-orange distance arc highlights close image-plane tracks",
     "composition": "Forklift anchors lower left and pedestrian stands right with open space between"
+  },
+  "forklift-route-deviation-review": {
+    "subject": "A compact forklift leaving a configured warehouse travel corridor",
+    "context": "A domain-model industrial route review with no automated machine control",
+    "signal": "A red deviation arc breaks away from the blue permitted path",
+    "composition": "Permitted route runs diagonally while forklift turns toward the lower edge"
   },
   "forklift-speed": {
     "subject": "Forklift moving quickly through a lane shared with pedestrians",
@@ -251,29 +287,23 @@
     "signal": "Second vehicle carries a bright trailing pulse immediately behind the first",
     "composition": "Gate line centered, first vehicle beyond it and second vehicle crossing"
   },
-  "hallway-overnight": {
-    "subject": "Person detected in a dark interior corridor",
-    "context": "Building hallway illuminated only by sparse night lights",
-    "signal": "Crescent-moon glow and detection brackets isolate the figure",
-    "composition": "Long corridor vanishes behind the centered person, moon tucked into upper corner"
-  },
   "hardhat-visibility-review": {
     "subject": "A worker silhouette beneath a separate protective hardhat shape",
     "context": "A bounded industrial safety zone observed by a local camera",
     "signal": "A blue review halo marks the visual relationship between head and hardhat without declaring compliance",
     "composition": "Worker centered low with the hardhat and review halo clearly separated above"
   },
+  "high-traffic-service-trigger": {
+    "subject": "Vehicles crossing a directional threshold beside a quality-review trigger",
+    "context": "A configured traffic line that opens review only after enough observations",
+    "signal": "Blue crossing pulses accumulate into one amber trigger marker",
+    "composition": "Directional line cuts the center with vehicles distributed along the route"
+  },
   "high-visibility-vest-review": {
     "subject": "A worker torso wearing a bright geometric safety vest",
     "context": "A warehouse aisle represented by two restrained vertical forms",
     "signal": "A blue outline marks a model-provided vest candidate for human review",
     "composition": "Torso fills the center with the vest as the dominant contrasting object"
-  },
-  "laundromat-overnight": {
-    "subject": "Person lingering among rows of washing machines late at night",
-    "context": "Dim self-service laundry floor",
-    "signal": "Crescent glow and prolonged dwell ring overlap around the figure",
-    "composition": "Washer circles line both sides; person and laundry basket center the aisle"
   },
   "lighting-outage": {
     "subject": "One dark pool beneath an unlit overhead fixture among lit neighbors",
@@ -293,41 +323,35 @@
     "signal": "Fill heat spreads across occupied spaces and peaks near the remaining gap",
     "composition": "Dense vehicle grid fills the tile with one high-contrast empty slot"
   },
-  "machine-monopoly": {
-    "subject": "Person remaining beside one machine in a long machine row",
-    "context": "Arcade or gaming floor with repeated cabinets",
-    "signal": "Extended dwell spiral anchors the person to a single station",
-    "composition": "Cabinet row recedes diagonally while person occupies the nearest machine"
-  },
-  "magnet-crane-exclusion": {
-    "subject": "Person beneath a suspended circular lifting magnet and crane rail",
-    "context": "Scrap-handling floor inside the magnet travel path",
-    "signal": "Glowing exclusion corridor follows the magnet path around the person",
-    "composition": "Magnet dominates upper center, person below, scrap shapes at the edges"
-  },
-  "mandated-camera-check": {
-    "subject": "Camera viewing a calibrated scene panel with crisp and faded edges",
-    "context": "Required monitored region compared against a stable baseline",
-    "signal": "Edge fragments disappear from one side of the panel under a warning pulse",
-    "composition": "Camera in upper corner aimed at a large central before-and-after split panel"
-  },
   "manual-bounded-clip-export": {
     "subject": "A security camera feeding a short film strip into a sealed evidence capsule",
     "context": "Bounded local Protect clip export with explicit evidence limits",
     "signal": "A distinct amber geometric pulse marks the bounded manual bounded observation without words or numerals",
     "composition": "Two physical objects balance across the centerline with the observed signal bridging them"
   },
-  "motion-event-clip-export": {
-    "subject": "A security camera joining one event pulse to a short sealed film strip",
-    "context": "Event-scoped local Protect evidence export with bounded pre-roll and post-roll",
-    "signal": "A distinct mint geometric pulse marks the bounded motion observation without words or numerals",
-    "composition": "Primary device sits high and the local evidence or event artifact rests securely below"
+  "mobility-aid-egress-obstruction": {
+    "subject": "A mobility-aid route intersected by one stationary geometric obstacle",
+    "context": "A bounded care-facility circulation path with no person identity",
+    "signal": "An amber dwell clock and red overlap arc mark the persistent obstruction candidate",
+    "composition": "Clear route arrow runs behind the obstacle with the clock at upper right"
   },
   "multi-camera-incident-clip-bundle": {
     "subject": "A security camera feeding a short film strip into a sealed evidence capsule",
     "context": "Bounded local Protect clip export with explicit evidence limits",
     "signal": "A distinct amber geometric pulse marks the bounded multi incident bundle observation without words or numerals",
     "composition": "Primary device sits high and the local evidence or event artifact rests securely below"
+  },
+  "multi-class-flow-ledger": {
+    "subject": "Anonymous people and vehicles crossing one directional line",
+    "context": "A configured boundary producing separate class and direction counts",
+    "signal": "Opposing blue arrows and distinct count tokens separate the flow classes",
+    "composition": "Crossing line fills the center with people left and vehicles right"
+  },
+  "multi-zone-intrusion-progression": {
+    "subject": "An anonymous track moving through three nested security zones",
+    "context": "A local perimeter progression from outer approach to protected interior",
+    "signal": "Three increasingly strong route pulses mark ordered zone penetration",
+    "composition": "Concentric open zones recede toward the upper right along one track"
   },
   "object-removal-review": {
     "subject": "A solid package beside its dashed empty-position outline on a pedestal",
@@ -353,6 +377,12 @@
     "signal": "Crescent-shaped time halo encloses the occupied bays",
     "composition": "Cars sit in diagonal bays, one bright zone outline framing the group"
   },
+  "package-room-chain-review": {
+    "subject": "A sealed package moving between receipt, secure hold, and release zones",
+    "context": "A local package workflow correlated with normalized door-access events",
+    "signal": "Three blue custody nodes and one credential pulse form a bounded timeline",
+    "composition": "Package appears at center with receipt and release markers on either side"
+  },
   "parking-violation-dwell": {
     "subject": "A parked vehicle inside a clearly bounded zone beside a clock",
     "context": "A customer-configured restricted parking review area",
@@ -371,6 +401,12 @@
     "signal": "Raised arms and a blue boundary halo mark a sustained climbing-pose candidate",
     "composition": "Fence occupies the right third while the pose rises through the center"
   },
+  "perimeter-event-verifier": {
+    "subject": "An anonymous person inside a bounded perimeter beside a patrol shield",
+    "context": "A configured perimeter zone correlated with recent patrol evidence",
+    "signal": "An amber dwell ring and blue verification pulse identify the review sequence",
+    "composition": "Boundary fills the center with person low and patrol shield high right"
+  },
   "plate-watchlist-review": {
     "subject": "A front-facing vehicle with a blank plate shape inside a shield ring",
     "context": "A locally authorized vehicle-list review lane",
@@ -383,35 +419,11 @@
     "signal": "Sustained occupancy heat halo spans both water and deck",
     "composition": "Pool rectangle centered, people distributed densely inside and around it"
   },
-  "protect-camera-discovery-failure-log": {
-    "subject": "A compact UniFi security camera beside a small fleet of camera silhouettes",
-    "context": "Local Protect camera inventory represented as physical devices rather than a software screen",
-    "signal": "A distinct mint geometric pulse marks the bounded discovery failure log observation without words or numerals",
-    "composition": "Camera or doorway anchors the lower left while the measured signal rises toward the upper right"
-  },
   "protect-camera-offline-watch": {
     "subject": "A compact UniFi security camera beside a small fleet of camera silhouettes",
     "context": "Local Protect camera inventory represented as physical devices rather than a software screen",
     "signal": "A distinct mint geometric pulse marks the bounded offline watch observation without words or numerals",
     "composition": "Two physical objects balance across the centerline with the observed signal bridging them"
-  },
-  "protect-camera-unnamed-records": {
-    "subject": "A compact UniFi security camera beside a small fleet of camera silhouettes",
-    "context": "Local Protect camera inventory represented as physical devices rather than a software screen",
-    "signal": "A distinct blue geometric pulse marks the bounded unnamed records observation without words or numerals",
-    "composition": "A diagonal device-to-signal flow fills the square while preserving generous transparent margins"
-  },
-  "protect-event-camera-reference-audit": {
-    "subject": "A UniFi security camera projecting one bounded event pulse into a local record capsule",
-    "context": "Protect event activity contained on the on-premises appliance",
-    "signal": "A distinct mint geometric pulse marks the bounded reference audit observation without words or numerals",
-    "composition": "Concentric device and signal forms create a compact centered emblem without a containing tile"
-  },
-  "protect-event-poll-health": {
-    "subject": "A UniFi security camera projecting one bounded event pulse into a local record capsule",
-    "context": "Protect event activity contained on the on-premises appliance",
-    "signal": "A distinct blue geometric pulse marks the bounded poll health observation without words or numerals",
-    "composition": "Concentric device and signal forms create a compact centered emblem without a containing tile"
   },
   "queue-abandonment-review": {
     "subject": "A short queue of anonymous people with one figure following an exit path",
@@ -424,6 +436,24 @@
     "context": "Retail counter approach without a specific industry cue",
     "signal": "Sustained queue contour exceeds a glowing threshold boundary",
     "composition": "Figures snake from lower corner toward a small counter at top"
+  },
+  "queue-service-rate-digest": {
+    "subject": "A customer queue facing one active service position and one empty position",
+    "context": "A configured service area comparing sustained demand with visible capacity",
+    "signal": "An amber gap arc links the long queue to the unstaffed service marker",
+    "composition": "Queue occupies the left with paired service positions on the right"
+  },
+  "room-exit-sequence-review": {
+    "subject": "A privacy-preserving skeleton moving from a room zone through a doorway into a hall",
+    "context": "A configured resident-room path rendered only as pose geometry",
+    "signal": "Three connected keypoint poses show room-to-door-to-hall progression",
+    "composition": "Sparse skeleton sequence moves left to right across three open zones"
+  },
+  "route-completion-ledger": {
+    "subject": "An anonymous tracked route from start through checkpoint and dropoff to exit",
+    "context": "A configured operational journey measured without identity persistence",
+    "signal": "Four blue nodes show completion while an amber branch marks a skipped checkpoint",
+    "composition": "Route sweeps across the center with dropoff package at the third node"
   },
   "rtsp-black-frame-rate": {
     "subject": "A security camera lens inspecting a framed scene with a calibrated visual signal",
@@ -443,35 +473,29 @@
     "signal": "A distinct amber geometric pulse marks the bounded connectivity probe observation without words or numerals",
     "composition": "Primary device fills the center with the bounded signal nested in a smaller upper corner"
   },
-  "rtsp-decode-error-rate": {
-    "subject": "A security camera lens aimed through a clean rectangular video frame and signal trace",
-    "context": "Locally decoded RTSP video quality inspection",
-    "signal": "A distinct cyan geometric pulse marks the bounded decode error rate observation without words or numerals",
-    "composition": "A diagonal device-to-signal flow fills the square while preserving generous transparent margins"
-  },
-  "rtsp-frame-gap-watch": {
-    "subject": "A security camera lens aimed through a clean rectangular video frame and signal trace",
-    "context": "Locally decoded RTSP video quality inspection",
-    "signal": "A distinct amber geometric pulse marks the bounded frame gap watch observation without words or numerals",
-    "composition": "Primary device fills the center with the bounded signal nested in a smaller upper corner"
-  },
   "rtsp-freeze-watch": {
     "subject": "A security camera lens aimed through a clean rectangular video frame and signal trace",
     "context": "Locally decoded RTSP video quality inspection",
     "signal": "A distinct blue geometric pulse marks the bounded freeze watch observation without words or numerals",
     "composition": "Primary device fills the center with the bounded signal nested in a smaller upper corner"
   },
-  "rtsp-rolling-quality-digest": {
-    "subject": "A security camera lens aimed through a clean rectangular video frame and signal trace",
-    "context": "Locally decoded RTSP video quality inspection",
-    "signal": "A distinct mint geometric pulse marks the bounded rolling quality digest observation without words or numerals",
-    "composition": "Camera or doorway anchors the lower left while the measured signal rises toward the upper right"
-  },
   "safety-zone-breach": {
     "subject": "Person standing inside a restricted industrial machine zone",
     "context": "Factory cell with guarded equipment",
     "signal": "Sustained red boundary glow surrounds the person and separates them from machinery",
     "composition": "Person center foreground, machine mass behind, polygon filling floor"
+  },
+  "secured-exit-approach-review": {
+    "subject": "An anonymous resident silhouette moving through an approach area toward a secured exit line",
+    "context": "A configured care-facility exit route observed locally without identity recognition",
+    "signal": "Three blue route nodes show the sustained approach sequence before a review boundary",
+    "composition": "Person and route occupy the center with a restrained door boundary on the right"
+  },
+  "shift-change-flow-review": {
+    "subject": "Anonymous people crossing a boundary during one highlighted shift window",
+    "context": "A configured shift schedule summarized with local directional counts",
+    "signal": "A blue flow arrow narrows at an amber bottleneck marker",
+    "composition": "Clock sits upper left while crossing silhouettes span the center"
   },
   "shipping-label-presence-review": {
     "subject": "A sealed package with one blank label panel and a review lens",
@@ -503,18 +527,6 @@
     "signal": "An amber pulse connects the camera to the candidate plume without replacing life-safety sensors",
     "composition": "Camera anchors the lower left while plume and flame rise at upper right"
   },
-  "snapshot-last-good-frame": {
-    "subject": "A security camera placing one still frame into a sealed local snapshot tray",
-    "context": "Scheduled or operator-requested local snapshot capture",
-    "signal": "A distinct blue geometric pulse marks the bounded last good frame observation without words or numerals",
-    "composition": "Primary device fills the center with the bounded signal nested in a smaller upper corner"
-  },
-  "splash-pad-capacity": {
-    "subject": "Crowded splash pad with people among water jets",
-    "context": "Open recreation surface bounded as one capacity zone",
-    "signal": "Occupancy heat halo spreads across the wet play area",
-    "composition": "Water jets create a radial center with figures distributed around them"
-  },
   "stopped-vehicle-lane": {
     "subject": "A vehicle resting between two lane lines with a compact clock",
     "context": "A traffic lane observed for low image-plane movement",
@@ -526,6 +538,12 @@
     "context": "Fenced supply corner outside work hours",
     "signal": "A bright polygon hugs the material stack while a snapshot frame catches the entrant",
     "composition": "Crates form a central pyramid with the person entering from the lower edge"
+  },
+  "table-reset-delay-review": {
+    "subject": "An empty dining table beside a reset clock and service-approach marker",
+    "context": "A configured table zone reviewed after guests depart",
+    "signal": "A blue readiness halo appears after the sustained empty interval",
+    "composition": "Table fills the center with clock upper right and approach arrow below"
   },
   "tailgating-correlation": {
     "subject": "Single credential tap followed by two people crossing a doorway line",
@@ -557,18 +575,6 @@
     "signal": "One elevated blue dot contrasts with the compact median group",
     "composition": "Person anchors left while clock and baseline dots balance the right side"
   },
-  "unusual-motion-baseline": {
-    "subject": "An anonymous moving figure with two offset motion silhouettes",
-    "context": "A locally learned frame-to-frame motion-energy baseline",
-    "signal": "A rising blue waveform marks sustained motion energy above the median",
-    "composition": "Figure occupies center left and waveform sweeps upward on the right"
-  },
-  "vehicle-attribute-log": {
-    "subject": "A compact vehicle beside three model-classification color tokens",
-    "context": "Local vehicle appearance candidate logging without identity inference",
-    "signal": "Three bounded geometric tokens represent unverified model attributes",
-    "composition": "Vehicle sits left of center with attribute tokens stacked on the right"
-  },
   "vehicle-wrong-way": {
     "subject": "A vehicle crossing a directional line opposite a large route arrow",
     "context": "A configured one-way vehicle crossing review",
@@ -581,11 +587,23 @@
     "signal": "All observations converge into a single consolidated record tile",
     "composition": "Doorway left, event-to-observation path across center, record tile on right"
   },
+  "vision-estate-health": {
+    "subject": "Three camera silhouettes beside one consolidated health shield",
+    "context": "A multi-camera estate reviewed for image and connection health",
+    "signal": "Blue, amber, and slate status pulses converge into one digest shield",
+    "composition": "Camera row spans the lower half with the shield centered above"
+  },
   "visitor-entry-review": {
     "subject": "Visitor at a doorbell carrying a parcel with a vehicle behind",
     "context": "Exterior entry awaiting operator review",
     "signal": "Doorbell pulse opens a camera observation halo around people, item, and vehicle",
     "composition": "Visitor and parcel foreground center, door at side, vehicle small in background"
+  },
+  "waiting-room-flow-ledger": {
+    "subject": "A compact anonymous waiting group progressing toward one service point",
+    "context": "A configured waiting-room path from arrival through service and exit",
+    "signal": "A four-node blue route shows arrivals, waiting, service, and departures",
+    "composition": "Waiting group fills the left while the service marker and exit open to the right"
   },
   "waiting-room-overflow": {
     "subject": "Packed healthcare waiting room with every chair occupied and people standing",
@@ -598,5 +616,17 @@
     "context": "Directional road or aisle",
     "signal": "Bold opposing motion arrow and tracked trail conflict with the lane flow",
     "composition": "Lane runs bottom to top while vehicle cuts against the dominant flow"
+  },
+  "yard-queue-bottleneck-digest": {
+    "subject": "A compact vehicle queue between yard arrival and release boundaries",
+    "context": "A configured logistics yard measured for sustained congestion",
+    "signal": "An amber bottleneck ring surrounds the densest queue segment",
+    "composition": "Vehicles recede toward the upper right between two boundary lines"
+  },
+  "zone-activity-schedule-baseline": {
+    "subject": "An anonymous activity count beside a clock divided into schedule windows",
+    "context": "A local baseline comparing activity only with matching time slots",
+    "signal": "One blue count rises above a compact slate baseline group",
+    "composition": "Clock anchors left while baseline dots and exception marker fill the right"
   }
 }

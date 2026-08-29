@@ -5,7 +5,7 @@ local Protect account, pick the GPU-accelerated functions your business
 needs, and process continuous video on your own premises. Configured alerts can
 send metadata or snapshots; no new cameras or per-camera AI hardware required.
 
-**100 functions across 9 business categories**, plus 10 safety-oriented core
+**105 functions across 9 business categories**, plus 10 safety-oriented core
 detectors. Built and maintained by [Nexus Communications Technology](https://nexusct.com),
 Schaumburg, IL.
 
@@ -13,8 +13,8 @@ Schaumburg, IL.
 
 | Path | What it is |
 |---|---|
-| `storefront/` | The marketplace UI — 100 active module cards with image artwork, filters, add-to-stack controls, and subscription YAML generation. Serve from the repository root so shared assets resolve. |
-| `assets/icons/` | 100 repository-owned SVG module images, a deterministic image fallback, and an icon manifest. |
+| `storefront/` | The marketplace UI — 105 active module cards with image artwork, filters, add-to-stack controls, and subscription YAML generation. Serve from the repository root so shared assets resolve. |
+| `assets/icons/` | 105 repository-owned SVG module images, a deterministic image fallback, and an icon manifest. |
 | `scripts/build_marketplace_catalog.py` | Validates literal manifests and regenerates `catalog.json` plus the static `catalog.js` data layer. |
 | `scripts/generate_marketplace_icons.py` | Regenerates the complete icon set from the validated marketplace catalog. |
 | `landing/` | The subscription landing page — pricing tiers, problem/solution, signup form. Served at `/` by the container. |
@@ -100,7 +100,7 @@ none of them send an unlock command; door control stays on the authenticated
 | Visitor Entry Review Context | doorbell / entry request | person, carried item, vehicle |
 | Door Operation Verification | unlock command | doorway crossing, door-zone change |
 
-**100 marketplace functions total**: the 80 highest-scoring existing functions plus 20 independently implemented vendor-pattern plugins. Retired implementations remain available only through the explicit source-archive loader for migration and audit.
+**105 marketplace functions total**: 75 retained functions from the prior active portfolio plus 30 independently implemented, audited super skills. Retired implementations remain available only through the explicit source-archive loader for migration and audit.
 
 ## Turnkey Unraid deployment
 

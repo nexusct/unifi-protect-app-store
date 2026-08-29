@@ -53,12 +53,12 @@ class APIFunctionInventoryTests(unittest.TestCase):
 
         archive, errors = loader.load_all(include_archived=True)
         self.assertEqual(errors, {})
-        self.assertEqual(len(archive), 271)
+        self.assertEqual(len(archive), 301)
         self.assertTrue(baseline.issubset(archive))
         self.assertTrue(added_ids.issubset(archive))
 
         catalog = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
-        self.assertEqual(len(catalog), 100)
+        self.assertEqual(len(catalog), 105)
         self.assertEqual({row["id"] for row in catalog}, set(loader.load_all()[0]))
 
     def test_every_api_contract_is_valid_bounded_and_honestly_bound(self):
@@ -88,13 +88,13 @@ class APIFunctionInventoryTests(unittest.TestCase):
             self.assertLessEqual(len(binding.get("event_types", [])), 16)
             self.assertLessEqual(len(binding.get("smart_types", [])), 16)
 
-    def test_loader_registers_100_active_and_271_archived_without_collisions(self):
+    def test_loader_registers_105_active_and_301_archived_without_collisions(self):
         registry, errors = loader.load_all()
         self.assertEqual(errors, {})
-        self.assertEqual(len(registry), 100)
+        self.assertEqual(len(registry), 105)
         archive, archive_errors = loader.load_all(include_archived=True)
         self.assertEqual(archive_errors, {})
-        self.assertEqual(len(archive), 271)
+        self.assertEqual(len(archive), 301)
         for manifest in load_api_function_manifests(API_FUNCTIONS_PATH):
             entry = archive[manifest["id"]]
             self.assertEqual(entry["manifest"], manifest)

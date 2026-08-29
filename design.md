@@ -107,7 +107,7 @@ values.
 - Silent success. No celebratory toasts.
 - Hover reveals nothing load-bearing; everything reachable by keyboard.
 - Cards do not lift on hover — the rule and a paper shift carry the state change.
-  Lifting 100 active catalogue rows on hover is noise, not feedback.
+  Lifting 105 active catalogue rows on hover is noise, not feedback.
 - All eight states styled on interactive elements: default, hover, focus-visible,
   active, disabled, loading, error, success.
 
@@ -122,7 +122,7 @@ values.
 ## Per-page allowances
 
 - Marketing pages MAY use enrichment. Currently: the existing hero photograph only.
-- Catalogue pages MUST NOT use enrichment — the 100 active module artworks are the content.
+- Catalogue pages MUST NOT use enrichment — the 105 active module artworks are the content.
 - Content pages: typography only.
 
 ## What pages MUST share
@@ -144,7 +144,7 @@ values.
 
 This system does not license copy changes. All audited copy, BIPA and
 claims-bank phrasing, and observable-signal wording in `PAGE-AUDIT.md` stand as
-written. No invented metrics, testimonials, logos, or counts. The "100" figure
+written. No invented metrics, testimonials, logos, or counts. The "105" figure
 must continue to match `storefront/catalog.json` — `scripts/generate_seo_schema.py`
 fails closed if the catalog drifts.
 
@@ -152,7 +152,7 @@ fails closed if the catalog drifts.
 
 Every page carries JSON-LD that must survive redesign untouched:
 landing `SoftwareApplication` + `FAQPage`; storefront `CollectionPage` +
-`SoftwareApplication` + `ItemList` (100 entries, generated); guide `TechArticle` +
+`SoftwareApplication` + `ItemList` (105 entries, generated); guide `TechArticle` +
 `HowTo` (8 steps). Regenerate the storefront block with
 `python3 scripts/generate_seo_schema.py` after any catalog change.
 

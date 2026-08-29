@@ -935,6 +935,15 @@ body.page-storefront .modal-backdrop.open .modal { transform: none; }
   body.page-landing nav a,
   body.page-storefront .topbar nav a,
   body.page-guide .topbar a { margin-left: var(--space-xs); }
+  body.page-landing > nav .shell { gap: var(--space-xs); overflow: hidden; }
+  body.page-landing > nav .brand { flex: 0 0 auto; }
+  body.page-landing nav .shell > div:last-child { flex: 1 1 0; min-width: 0; justify-content: flex-end; overflow: visible; }
+  body.page-landing nav .shell > div:last-child a { display: none; }
+  body.page-landing nav .shell > div:last-child a:last-child {
+    display: inline-flex;
+    margin-left: 0 !important;
+    padding: 8px 14px !important;
+  }
 
   body.page-landing .hero { min-height: 560px; background-position: 64% center; }
   body.page-landing .hero .shell { min-height: 560px; padding: var(--space-2xl) var(--space-md) var(--space-lg); }

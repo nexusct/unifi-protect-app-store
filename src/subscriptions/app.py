@@ -24,7 +24,7 @@ class SignupRequest(BaseModel):
     tier: str
     sites: int | None = Field(default=1, ge=1, le=1000)
     cameras: int | None = Field(default=None, ge=1, le=100000)
-    functions: list[FunctionId] = Field(default_factory=list, max_length=100)
+    functions: list[FunctionId] = Field(default_factory=list, max_length=105)
     notes: str | None = Field(default=None, max_length=2000)
 
 

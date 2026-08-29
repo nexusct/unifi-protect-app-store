@@ -36,6 +36,7 @@ APPROVED_FUNCTION_BASES = {
     "ObjectRemovalFunction",
     "AssemblySequenceFunction",
     "PackageLabelFunction",
+    "SuperSkillFunction",
 }
 
 GEOMETRY_DESCRIPTION = re.compile(

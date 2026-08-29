@@ -2,15 +2,20 @@ from __future__ import annotations
 
 import importlib
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
+
+import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
 from marketplace.contract import MarketplaceFunction, validate_manifest
+from marketplace.vendor_patterns import PlateCandidateReader
 
 
 PLUGIN_MODULES = [
@@ -108,6 +113,22 @@ class VendorInspiredInventoryTests(unittest.TestCase):
 
 
 class VendorInspiredBehaviorTests(unittest.TestCase):
+    def test_plate_reader_fails_closed_and_latches_unreadable_weights(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            weights = Path(temporary) / "unreadable.pt"
+            weights.write_bytes(b"not a model")
+            reader = PlateCandidateReader({"weights": str(weights)})
+            frame = np.zeros((4, 4, 3), dtype=np.uint8)
+
+            with patch(
+                "marketplace.vendor_patterns.detector_base.get_model",
+                side_effect=TypeError("unreadable weights"),
+            ) as get_model:
+                self.assertEqual(reader.observe(frame), [])
+                self.assertEqual(reader.observe(frame), [])
+
+            get_model.assert_called_once_with(str(weights))
+
     def test_plate_watchlist_matches_normalized_candidate_and_redacts_plate(self):
         function = _module("plate_watchlist_review").Function(
             {"watchlist": ["ABC-123"], "min_confidence": 0.8}

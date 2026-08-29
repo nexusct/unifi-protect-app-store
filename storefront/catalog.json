@@ -149,6 +149,34 @@
   ]
  },
  {
+  "id": "after-hours-multi-camera-corroboration",
+  "name": "After-Hours Multi-Camera Corroboration",
+  "tagline": "Corroborates anonymous after-hours person or vehicle classes on two cameras without re-identification.",
+  "category": "Security & Access",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "classes",
+   "closed_hours",
+   "corroboration_seconds",
+   "monitored_zone"
+  ],
+  "config_schema": {
+   "monitored_zone": "polygon \u2014 optional after-hours observation area",
+   "closed_hours": "time range \u2014 local closed interval such as 22:00-06:00",
+   "corroboration_seconds": "float \u2014 cross-camera time window (default 45)",
+   "classes": "list \u2014 COCO person and vehicle class IDs"
+  },
+  "camera_zones": {
+   "monitored_zone": "after_hours_corroboration"
+  },
+  "setting_keys": [
+   "classes",
+   "closed_hours",
+   "corroboration_seconds"
+  ]
+ },
+ {
   "id": "supply-theft-watch",
   "name": "After-Hours Supply-Zone Activity",
   "tagline": "Flags person presence in the configured supply zone outside work hours and saves a local alert snapshot.",
@@ -212,27 +240,90 @@
   "api_control": false
  },
  {
-  "id": "assembly-stage-order-review",
-  "name": "Assembly Stage Order Review",
-  "tagline": "Uses independent station-specific weights to compare observed stage candidates with a configured sequence; all exceptions require operator verification.",
+  "id": "aisle-blockage-duration-review",
+  "name": "Aisle Blockage Duration Review",
+  "tagline": "Flags non-person objects that persist in configured aisle or emergency-access polygons.",
   "category": "Manufacturing & Warehouse",
-  "tier": "enterprise",
+  "tier": "pro",
   "requires_gpu": true,
   "config_keys": [
+   "aisle_zone",
    "confidence",
-   "expected_sequence",
+   "emergency_access_zone",
+   "hold_seconds",
    "weights"
   ],
   "config_schema": {
-   "weights": "path \u2014 independently supplied station-stage model weights",
-   "expected_sequence": "list \u2014 ordered normalized stage labels, maximum 32",
-   "confidence": "float \u2014 minimum model confidence (default 0.50)"
+   "aisle_zone": "polygon \u2014 protected aisle area",
+   "emergency_access_zone": "polygon \u2014 emergency-access area",
+   "weights": "path \u2014 optional customer-supplied obstruction model weights",
+   "confidence": "float \u2014 minimum model confidence (default 0.45)",
+   "hold_seconds": "float \u2014 persistence before review (default 45)"
   },
-  "camera_zones": {},
+  "camera_zones": {
+   "aisle_zone": "aisle_blockage_area",
+   "emergency_access_zone": "emergency_access_area"
+  },
   "setting_keys": [
    "confidence",
-   "expected_sequence",
+   "hold_seconds",
    "weights"
+  ]
+ },
+ {
+  "id": "anonymous-space-utilization-percentiles",
+  "name": "Anonymous Space Utilization Percentiles",
+  "tagline": "Reports anonymous occupancy percentiles and peak utilization for a configured space.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "digest_seconds",
+   "sample_seconds",
+   "space_zone"
+  ],
+  "config_schema": {
+   "space_zone": "polygon \u2014 anonymous occupancy area",
+   "sample_seconds": "int \u2014 sample interval (default 5)",
+   "digest_seconds": "int \u2014 percentile digest interval (default 900)"
+  },
+  "camera_zones": {
+   "space_zone": "space_utilization"
+  },
+  "setting_keys": [
+   "digest_seconds",
+   "sample_seconds"
+  ]
+ },
+ {
+  "id": "anonymous-zone-funnel",
+  "name": "Anonymous Zone Funnel",
+  "tagline": "Builds an anonymous entrance-to-display-to-product-to-checkout progression ledger without demographic inference.",
+  "category": "Retail & QSR",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "checkout_zone",
+   "digest_seconds",
+   "display_zone",
+   "entrance_zone",
+   "product_zone"
+  ],
+  "config_schema": {
+   "entrance_zone": "polygon \u2014 funnel entrance stage",
+   "display_zone": "polygon \u2014 display-engagement stage",
+   "product_zone": "polygon \u2014 product-area stage",
+   "checkout_zone": "polygon \u2014 checkout stage",
+   "digest_seconds": "int \u2014 digest interval (default 300)"
+  },
+  "camera_zones": {
+   "entrance_zone": "funnel_entrance",
+   "display_zone": "funnel_display",
+   "product_zone": "funnel_product",
+   "checkout_zone": "funnel_checkout"
+  },
+  "setting_keys": [
+   "digest_seconds"
   ]
  },
  {
@@ -349,31 +440,6 @@
   ]
  },
  {
-  "id": "mandated-camera-check",
-  "name": "Camera View Baseline Check",
-  "tagline": "Flags a configured view region when edge structure drops below its learned baseline; camera movement, obstruction, and lighting changes can produce alerts.",
-  "category": "Compliance",
-  "tier": "pro",
-  "requires_gpu": true,
-  "config_keys": [
-   "check_hour",
-   "edge_drop_ratio",
-   "zone"
-  ],
-  "config_schema": {
-   "zone": "Polygon for the view region to compare with its learned baseline.",
-   "edge_drop_ratio": "Fractional edge-structure drop that triggers review (default 0.5).",
-   "check_hour": "UTC hour for the daily baseline comparison (default 6)."
-  },
-  "camera_zones": {
-   "zone": "mandated"
-  },
-  "setting_keys": [
-   "check_hour",
-   "edge_drop_ratio"
-  ]
- },
- {
   "id": "camera-tamper",
   "name": "Camera View Change Alert",
   "tagline": "Flags substantial edge-density loss or frame change from the learned reference; confirm detection and delivery timing during commissioning.",
@@ -392,6 +458,37 @@
   "setting_keys": [
    "diff_ratio",
    "edge_drop_ratio"
+  ]
+ },
+ {
+  "id": "care-area-occupancy-imbalance",
+  "name": "Care-Area Occupancy Imbalance",
+  "tagline": "Compares anonymous counts in two configured care areas and flags sustained staffing or occupancy imbalance for review.",
+  "category": "Healthcare & Senior Living",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "hold_seconds",
+   "imbalance_threshold",
+   "privacy_mode",
+   "zone_a",
+   "zone_b"
+  ],
+  "config_schema": {
+   "zone_a": "polygon \u2014 first care-area count zone",
+   "zone_b": "polygon \u2014 second care-area count zone",
+   "imbalance_threshold": "int \u2014 count difference requiring review (default 4)",
+   "hold_seconds": "float \u2014 sustained imbalance duration (default 30)",
+   "privacy_mode": "enum \u2014 skeleton suppresses alert snapshots"
+  },
+  "camera_zones": {
+   "zone_a": "care_zone_a",
+   "zone_b": "care_zone_b"
+  },
+  "setting_keys": [
+   "hold_seconds",
+   "imbalance_threshold",
+   "privacy_mode"
   ]
  },
  {
@@ -440,97 +537,10 @@
   "api_control": false
  },
  {
-  "id": "clip-export-daily-manifest",
-  "name": "Clip Export Daily Manifest",
-  "tagline": "Daily manifest of requested and completed exports, including failures, intervals, paths, sizes, and checksums.",
-  "category": "Compliance",
-  "tier": "enterprise",
-  "requires_gpu": false,
-  "config_keys": [
-   "digest_seconds",
-   "max_clip_bytes",
-   "post_seconds",
-   "pre_seconds",
-   "retention_days"
-  ],
-  "config_schema": {
-   "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
-   "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
-   "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
-   "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
-   "retention_days": "Maximum local evidence retention days (default 30)."
-  },
-  "camera_zones": {},
-  "setting_keys": [
-   "digest_seconds",
-   "max_clip_bytes",
-   "post_seconds",
-   "pre_seconds",
-   "retention_days"
-  ],
-  "api": {
-   "surface": "protect",
-   "primitive": "clip_export",
-   "runner": "protect_evidence",
-   "control": false,
-   "profile": "clip_governance",
-   "mode": "digest",
-   "event_types": [],
-   "smart_types": [],
-   "event_kinds": []
-  },
-  "api_surface": "protect",
-  "api_primitive": "clip_export",
-  "api_runner": "protect_evidence",
-  "api_control": false
- },
- {
   "id": "clip-export-integrity-probe",
   "name": "Clip Export Integrity Probe",
   "tagline": "Downloaded-file presence, nonzero size, and optional ffprobe container/duration results; it does not certify evidentiary authenticity.",
   "category": "Compliance",
-  "tier": "enterprise",
-  "requires_gpu": false,
-  "config_keys": [
-   "max_clip_bytes",
-   "post_seconds",
-   "pre_seconds",
-   "retention_days"
-  ],
-  "config_schema": {
-   "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
-   "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
-   "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
-   "retention_days": "Maximum local evidence retention days (default 30)."
-  },
-  "camera_zones": {},
-  "setting_keys": [
-   "max_clip_bytes",
-   "post_seconds",
-   "pre_seconds",
-   "retention_days"
-  ],
-  "api": {
-   "surface": "protect",
-   "primitive": "clip_export",
-   "runner": "protect_evidence",
-   "control": false,
-   "profile": "clip_governance",
-   "mode": "event",
-   "event_types": [],
-   "smart_types": [],
-   "event_kinds": []
-  },
-  "api_surface": "protect",
-  "api_primitive": "clip_export",
-  "api_runner": "protect_evidence",
-  "api_control": false
- },
- {
-  "id": "clip-export-queue",
-  "name": "Clip Export Queue",
-  "tagline": "Pending, running, completed, and failed states for bounded clip-export jobs.",
-  "category": "Intelligence",
   "tier": "enterprise",
   "requires_gpu": false,
   "config_keys": [
@@ -645,6 +655,34 @@
   ]
  },
  {
+  "id": "controlled-room-two-person-review",
+  "name": "Controlled-Room Person-Count Review",
+  "tagline": "Correlates a configured door grant with an anonymous visual count and reports whether the observed count matched policy.",
+  "category": "Healthcare & Senior Living",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "door_id",
+   "door_zone",
+   "expected_persons",
+   "observe_seconds"
+  ],
+  "config_schema": {
+   "door_zone": "polygon \u2014 controlled-room doorway observation area",
+   "door_id": "string \u2014 UniFi Access door ID",
+   "observe_seconds": "float \u2014 visual correlation window (default 15)",
+   "expected_persons": "int \u2014 configured review count (default 2)"
+  },
+  "camera_zones": {
+   "door_zone": "controlled_room_door"
+  },
+  "setting_keys": [
+   "door_id",
+   "expected_persons",
+   "observe_seconds"
+  ]
+ },
+ {
   "id": "conveyor-jam",
   "name": "Conveyor Stalled-Object Review",
   "tagline": "Flags a tracked non-person object that remains nearly stationary in the belt zone beyond the configured threshold; operators verify a jam.",
@@ -751,22 +789,63 @@
   ]
  },
  {
-  "id": "curbside-arrival",
-  "name": "Curbside Pickup Arrival",
-  "tagline": "Flags a vehicle entering the configured curbside zone; notification timing depends on processing and routing.",
-  "category": "Automotive & Parking",
-  "tier": "starter",
+  "id": "curbside-handoff-timer",
+  "name": "Curbside Handoff Timer",
+  "tagline": "Correlates anonymous vehicle arrival, person handoff overlap, departure, and excessive curbside wait.",
+  "category": "Retail & QSR",
+  "tier": "pro",
   "requires_gpu": true,
   "config_keys": [
-   "zone"
+   "arrival_zone",
+   "departure_line",
+   "handoff_zone",
+   "max_wait_seconds"
   ],
   "config_schema": {
-   "zone": "polygon \u2014 curbside lane"
+   "arrival_zone": "polygon \u2014 curbside vehicle arrival area",
+   "handoff_zone": "polygon \u2014 handoff interaction area",
+   "departure_line": "two-point line \u2014 curbside departure threshold",
+   "max_wait_seconds": "float \u2014 maximum curbside wait (default 300)"
   },
   "camera_zones": {
-   "zone": "curbside"
+   "arrival_zone": "curbside_arrival",
+   "handoff_zone": "curbside_handoff",
+   "departure_line": "curbside_departure_line"
   },
-  "setting_keys": []
+  "setting_keys": [
+   "max_wait_seconds"
+  ]
+ },
+ {
+  "id": "cycle-step-timer",
+  "name": "Cycle Step Timer",
+  "tagline": "Uses customer-model stage labels to time workcell cycles and review skipped or overdue steps.",
+  "category": "Manufacturing & Warehouse",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "confidence",
+   "expected_sequence",
+   "max_step_seconds",
+   "weights",
+   "workcell_zone"
+  ],
+  "config_schema": {
+   "workcell_zone": "polygon \u2014 workcell observation area",
+   "weights": "path \u2014 customer-supplied stage model weights",
+   "confidence": "float \u2014 minimum custom-model confidence (default 0.45)",
+   "expected_sequence": "list \u2014 ordered customer-model stage labels",
+   "max_step_seconds": "float \u2014 maximum step duration (default 120)"
+  },
+  "camera_zones": {
+   "workcell_zone": "cycle_workcell"
+  },
+  "setting_keys": [
+   "confidence",
+   "expected_sequence",
+   "max_step_seconds",
+   "weights"
+  ]
  },
  {
   "id": "denied-access-escalation",
@@ -803,6 +882,65 @@
    "min_denials",
    "person_confidence",
    "window_seconds"
+  ]
+ },
+ {
+  "id": "dock-apron-conflict-review",
+  "name": "Dock Apron Conflict Review",
+  "tagline": "Flags anonymous person and vehicle tracks that remain close and converging in a configured dock apron.",
+  "category": "Manufacturing & Warehouse",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "apron_zone",
+   "conflict_distance_ratio",
+   "hold_seconds"
+  ],
+  "config_schema": {
+   "apron_zone": "polygon \u2014 dock conflict-review area",
+   "conflict_distance_ratio": "float \u2014 normalized proximity threshold (default 0.14)",
+   "hold_seconds": "float \u2014 sustained converging condition (default 1.5)"
+  },
+  "camera_zones": {
+   "apron_zone": "dock_apron"
+  },
+  "setting_keys": [
+   "conflict_distance_ratio",
+   "hold_seconds"
+  ]
+ },
+ {
+  "id": "dock-stage-turnaround",
+  "name": "Dock Stage Turnaround",
+  "tagline": "Times anonymous vehicle progression through arrival, staging, dock, and departure with stage-delay review.",
+  "category": "Manufacturing & Warehouse",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "arrival_zone",
+   "departure_zone",
+   "dock_zone",
+   "stage_timeout_seconds",
+   "staging_zone",
+   "turnaround_seconds"
+  ],
+  "config_schema": {
+   "arrival_zone": "polygon \u2014 dock arrival stage",
+   "staging_zone": "polygon \u2014 staging stage",
+   "dock_zone": "polygon \u2014 dock stage",
+   "departure_zone": "polygon \u2014 departure stage",
+   "turnaround_seconds": "float \u2014 maximum whole-route window (default 7200)",
+   "stage_timeout_seconds": "float \u2014 maximum stage duration (default 1800)"
+  },
+  "camera_zones": {
+   "arrival_zone": "dock_arrival",
+   "staging_zone": "dock_staging",
+   "dock_zone": "dock_bay",
+   "departure_zone": "dock_departure"
+  },
+  "setting_keys": [
+   "stage_timeout_seconds",
+   "turnaround_seconds"
   ]
  },
  {
@@ -847,6 +985,31 @@
   "api_primitive": "developer_logs",
   "api_runner": "access_event",
   "api_control": false
+ },
+ {
+  "id": "door-alarm-observed-response-timer",
+  "name": "Door Alarm Observed Response Timer",
+  "tagline": "Times anonymous observed response and door-close state after configured forced-open or held-open events.",
+  "category": "Security & Access",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "door_id",
+   "response_timeout_seconds",
+   "response_zone"
+  ],
+  "config_schema": {
+   "response_zone": "polygon \u2014 area where response is observed",
+   "door_id": "string \u2014 UniFi Access door ID",
+   "response_timeout_seconds": "float \u2014 review timeout (default 180)"
+  },
+  "camera_zones": {
+   "response_zone": "door_response_zone"
+  },
+  "setting_keys": [
+   "door_id",
+   "response_timeout_seconds"
+  ]
  },
  {
   "id": "access-door-alarm-recurrence",
@@ -999,6 +1162,34 @@
   ]
  },
  {
+  "id": "drive-thru-lane-balance",
+  "name": "Drive-Thru Lane Balance",
+  "tagline": "Compares anonymous vehicle occupancy between two drive-thru lanes and flags sustained imbalance.",
+  "category": "Retail & QSR",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "imbalance_count",
+   "imbalance_seconds",
+   "lane_a_zone",
+   "lane_b_zone"
+  ],
+  "config_schema": {
+   "lane_a_zone": "polygon \u2014 first drive-thru lane",
+   "lane_b_zone": "polygon \u2014 second drive-thru lane",
+   "imbalance_count": "int \u2014 count difference requiring review (default 2)",
+   "imbalance_seconds": "float \u2014 sustained imbalance duration (default 60)"
+  },
+  "camera_zones": {
+   "lane_a_zone": "drive_thru_lane_a",
+   "lane_b_zone": "drive_thru_lane_b"
+  },
+  "setting_keys": [
+   "imbalance_count",
+   "imbalance_seconds"
+  ]
+ },
+ {
   "id": "drive-thru-timer",
   "name": "Drive-Thru Service Timer",
   "tagline": "Measures observed vehicle time between configured order-point and exit zones.",
@@ -1110,31 +1301,33 @@
   "api_control": false
  },
  {
-  "id": "floor-water-change-review",
-  "name": "Floor Appearance Change Review",
-  "tagline": "Flags sustained changes in a bounded floor-zone appearance metric for inspection; it does not confirm water or a leak.",
-  "category": "Property & Liability",
-  "tier": "pro",
+  "id": "exception-evidence-casebook",
+  "name": "Exception Evidence Casebook",
+  "tagline": "Writes a bounded local redacted case package linking Access, Protect, and anonymous visual context.",
+  "category": "Intelligence",
+  "tier": "enterprise",
   "requires_gpu": true,
   "config_keys": [
-   "change_threshold",
-   "hold_seconds",
-   "min_samples",
-   "zone"
+   "collect_seconds",
+   "door_id",
+   "max_cases",
+   "privacy_mode",
+   "retention_days"
   ],
   "config_schema": {
-   "zone": "camera zone named floor_review \u2014 normalized polygon",
-   "min_samples": "int \u2014 local baseline samples (default 20)",
-   "change_threshold": "float \u2014 absolute metric change (default 0.20)",
-   "hold_seconds": "float \u2014 sustained change duration (default 5)"
+   "door_id": "string \u2014 optional UniFi Access door ID",
+   "collect_seconds": "int \u2014 evidence collection window (default 20)",
+   "retention_days": "int \u2014 local package retention (default 30)",
+   "max_cases": "int \u2014 maximum retained packages (default 500)",
+   "privacy_mode": "enum \u2014 skeleton suppresses alert snapshots"
   },
-  "camera_zones": {
-   "zone": "floor_review"
-  },
+  "camera_zones": {},
   "setting_keys": [
-   "change_threshold",
-   "hold_seconds",
-   "min_samples"
+   "collect_seconds",
+   "door_id",
+   "max_cases",
+   "privacy_mode",
+   "retention_days"
   ]
  },
  {
@@ -1191,28 +1384,40 @@
   ]
  },
  {
-  "id": "forecourt-loiter",
-  "name": "Forecourt Dwell Watch",
-  "tagline": "Flags extended person dwell in configured forecourt zones during selected hours.",
-  "category": "Security & Access",
-  "tier": "starter",
+  "id": "forklift-route-deviation-review",
+  "name": "Forklift Route Deviation Review",
+  "tagline": "Uses customer-supplied forklift weights to flag corridor departure or forbidden line-crossing direction.",
+  "category": "Manufacturing & Warehouse",
+  "tier": "enterprise",
   "requires_gpu": true,
   "config_keys": [
-   "after_hours",
-   "loiter_minutes",
-   "zone"
+   "allowed_corridor",
+   "confidence",
+   "direction_line",
+   "forbidden_direction",
+   "labels",
+   "off_route_seconds",
+   "weights"
   ],
   "config_schema": {
-   "zone": "polygon \u2014 forecourt",
-   "after_hours": "[start,end] (default [23,5])",
-   "loiter_minutes": "int (default 10)"
+   "allowed_corridor": "polygon \u2014 permitted forklift corridor",
+   "direction_line": "two-point line \u2014 direction review threshold",
+   "weights": "path \u2014 customer-supplied forklift model weights",
+   "labels": "list \u2014 forklift labels to observe",
+   "confidence": "float \u2014 minimum custom-model confidence (default 0.45)",
+   "forbidden_direction": "enum \u2014 positive or negative crossing direction",
+   "off_route_seconds": "float \u2014 corridor departure hold (default 4)"
   },
   "camera_zones": {
-   "zone": "forecourt"
+   "allowed_corridor": "forklift_allowed_corridor",
+   "direction_line": "forklift_direction_line"
   },
   "setting_keys": [
-   "after_hours",
-   "loiter_minutes"
+   "confidence",
+   "forbidden_direction",
+   "labels",
+   "off_route_seconds",
+   "weights"
   ]
  },
  {
@@ -1243,28 +1448,6 @@
   ]
  },
  {
-  "id": "hallway-overnight",
-  "name": "Hallway Overnight Presence",
-  "tagline": "Flags person detections in configured building areas during selected after-hours for staff review.",
-  "category": "Security & Access",
-  "tier": "starter",
-  "requires_gpu": true,
-  "config_keys": [
-   "after_hours",
-   "zone"
-  ],
-  "config_schema": {
-   "zone": "polygon \u2014 interior hallway",
-   "after_hours": "[start,end] (default [21,6])"
-  },
-  "camera_zones": {
-   "zone": "hallway"
-  },
-  "setting_keys": [
-   "after_hours"
-  ]
- },
- {
   "id": "hardhat-visibility-review",
   "name": "Hardhat Visibility Review",
   "tagline": "Flags person boxes where the configured PPE model did not observe a hardhat candidate; requires visual verification and does not determine compliance.",
@@ -1286,6 +1469,37 @@
   ]
  },
  {
+  "id": "high-traffic-service-trigger",
+  "name": "High-Traffic Service Trigger",
+  "tagline": "Raises a service-review trigger when anonymous crossings exceed a configured rolling traffic threshold.",
+  "category": "Retail & QSR",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "classes",
+   "event_threshold",
+   "service_zone",
+   "traffic_line",
+   "window_seconds"
+  ],
+  "config_schema": {
+   "service_zone": "polygon \u2014 service area associated with the trigger",
+   "traffic_line": "two-point line \u2014 traffic counting threshold",
+   "event_threshold": "int \u2014 crossings required (default 20)",
+   "window_seconds": "float \u2014 rolling count window (default 300)",
+   "classes": "list \u2014 COCO classes to count"
+  },
+  "camera_zones": {
+   "service_zone": "high_traffic_service",
+   "traffic_line": "high_traffic_line"
+  },
+  "setting_keys": [
+   "classes",
+   "event_threshold",
+   "window_seconds"
+  ]
+ },
+ {
   "id": "high-visibility-vest-review",
   "name": "High-Visibility Vest Review",
   "tagline": "Flags person boxes where the configured PPE model did not observe a high-visibility vest candidate; requires visual verification and does not determine compliance.",
@@ -1304,64 +1518,6 @@
   "setting_keys": [
    "confidence",
    "weights"
-  ]
- },
- {
-  "id": "snapshot-last-good-frame",
-  "name": "Last Good Frame Snapshot",
-  "tagline": "After a stream-health failure, the most recent successfully decoded frame is retained only when privacy and retention settings allow.",
-  "category": "Security & Access",
-  "tier": "pro",
-  "requires_gpu": true,
-  "config_keys": [
-   "alert_threshold",
-   "sample_interval_seconds"
-  ],
-  "config_schema": {
-   "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
-   "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
-  },
-  "camera_zones": {},
-  "setting_keys": [
-   "alert_threshold",
-   "sample_interval_seconds"
-  ],
-  "api": {
-   "surface": "protect",
-   "primitive": "rtsp_stream",
-   "runner": "protect_stream",
-   "control": false,
-   "profile": "snapshot_capture",
-   "mode": "event",
-   "event_types": [],
-   "smart_types": [],
-   "event_kinds": []
-  },
-  "api_surface": "protect",
-  "api_primitive": "rtsp_stream",
-  "api_runner": "protect_stream",
-  "api_control": false
- },
- {
-  "id": "laundromat-overnight",
-  "name": "Laundromat Overnight Watch",
-  "tagline": "Flags extended person dwell in configured laundromat zones during selected overnight hours.",
-  "category": "Security & Access",
-  "tier": "starter",
-  "requires_gpu": true,
-  "config_keys": [
-   "watch_hours",
-   "zone"
-  ],
-  "config_schema": {
-   "zone": "polygon \u2014 store floor",
-   "watch_hours": "[start,end] (default [1,5])"
-  },
-  "camera_zones": {
-   "zone": "floor"
-  },
-  "setting_keys": [
-   "watch_hours"
   ]
  },
  {
@@ -1415,50 +1571,6 @@
   ]
  },
  {
-  "id": "machine-monopoly",
-  "name": "Machine-Row Dwell Watch",
-  "tagline": "Flags a person-class track remaining in a configured machine-row zone beyond the dwell threshold.",
-  "category": "Retail & QSR",
-  "tier": "starter",
-  "requires_gpu": true,
-  "config_keys": [
-   "dwell_minutes",
-   "zone"
-  ],
-  "config_schema": {
-   "zone": "polygon \u2014 machine row approach",
-   "dwell_minutes": "int (default 40)"
-  },
-  "camera_zones": {
-   "zone": "machine_row"
-  },
-  "setting_keys": [
-   "dwell_minutes"
-  ]
- },
- {
-  "id": "magnet-crane-exclusion",
-  "name": "Magnet-Crane Exclusion-Zone Alert",
-  "tagline": "Flags a person detected in a configured magnet-crane exclusion zone; verify operating state and alert routing through site procedures.",
-  "category": "People & Safety",
-  "tier": "enterprise",
-  "requires_gpu": true,
-  "config_keys": [
-   "hold_ms",
-   "zone"
-  ],
-  "config_schema": {
-   "zone": "polygon \u2014 exclusion area under crane/magnet path",
-   "hold_ms": "int (default 400)"
-  },
-  "camera_zones": {
-   "zone": "exclusion"
-  },
-  "setting_keys": [
-   "hold_ms"
-  ]
- },
- {
   "id": "manual-bounded-clip-export",
   "name": "Manual Bounded Clip Export",
   "tagline": "A user-requested camera/time range exported with mandatory start, end, and maximum-duration checks.",
@@ -1501,48 +1613,35 @@
   "api_control": false
  },
  {
-  "id": "motion-event-clip-export",
-  "name": "Motion Event Clip Export",
-  "tagline": "A bounded clip around a polled motion event, labeled as motion only and not as an incident.",
-  "category": "Security & Access",
-  "tier": "enterprise",
-  "requires_gpu": false,
+  "id": "mobility-aid-egress-obstruction",
+  "name": "Mobility-Aid Egress Obstruction Review",
+  "tagline": "Uses customer-supplied object weights to flag mobility aids that persist in a configured egress polygon.",
+  "category": "Healthcare & Senior Living",
+  "tier": "pro",
+  "requires_gpu": true,
   "config_keys": [
-   "max_clip_bytes",
-   "post_seconds",
-   "pre_seconds",
-   "retention_days"
+   "confidence",
+   "egress_zone",
+   "hold_seconds",
+   "labels",
+   "weights"
   ],
   "config_schema": {
-   "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
-   "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
-   "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
-   "retention_days": "Maximum local evidence retention days (default 30)."
+   "egress_zone": "polygon \u2014 egress area that must remain passable",
+   "weights": "path \u2014 customer-supplied mobility-aid model weights",
+   "labels": "list \u2014 mobility-aid labels to observe",
+   "confidence": "float \u2014 minimum custom-model confidence (default 0.45)",
+   "hold_seconds": "float \u2014 persistence before review (default 20)"
   },
-  "camera_zones": {},
+  "camera_zones": {
+   "egress_zone": "mobility_egress"
+  },
   "setting_keys": [
-   "max_clip_bytes",
-   "post_seconds",
-   "pre_seconds",
-   "retention_days"
-  ],
-  "api": {
-   "surface": "protect",
-   "primitive": "clip_export",
-   "runner": "protect_evidence",
-   "control": false,
-   "profile": "event_clip",
-   "mode": "event",
-   "event_types": [
-    "motion"
-   ],
-   "smart_types": [],
-   "event_kinds": []
-  },
-  "api_surface": "protect",
-  "api_primitive": "clip_export",
-  "api_runner": "protect_evidence",
-  "api_control": false
+   "confidence",
+   "hold_seconds",
+   "labels",
+   "weights"
+  ]
  },
  {
   "id": "multi-camera-incident-clip-bundle",
@@ -1585,6 +1684,62 @@
   "api_primitive": "clip_export",
   "api_runner": "protect_evidence",
   "api_control": false
+ },
+ {
+  "id": "multi-class-flow-ledger",
+  "name": "Multi-Class Flow Ledger",
+  "tagline": "Produces directional anonymous line-crossing counts by configured person and vehicle object classes.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "classes",
+   "crossing_line",
+   "digest_seconds"
+  ],
+  "config_schema": {
+   "crossing_line": "two-point line \u2014 flow counting threshold",
+   "classes": "list \u2014 COCO class IDs to include",
+   "digest_seconds": "int \u2014 digest interval (default 300)"
+  },
+  "camera_zones": {
+   "crossing_line": "multi_class_flow_line"
+  },
+  "setting_keys": [
+   "classes",
+   "digest_seconds"
+  ]
+ },
+ {
+  "id": "multi-zone-intrusion-progression",
+  "name": "Multi-Zone Intrusion Progression Review",
+  "tagline": "Flags one anonymous track progressing through configured perimeter, yard, and doorway zones within a bounded window.",
+  "category": "Security & Access",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "classes",
+   "doorway_zone",
+   "perimeter_zone",
+   "progression_seconds",
+   "yard_zone"
+  ],
+  "config_schema": {
+   "perimeter_zone": "polygon \u2014 outer perimeter stage",
+   "yard_zone": "polygon \u2014 intermediate yard stage",
+   "doorway_zone": "polygon \u2014 protected-door stage",
+   "progression_seconds": "float \u2014 maximum progression window (default 120)",
+   "classes": "list \u2014 COCO person and vehicle class IDs"
+  },
+  "camera_zones": {
+   "perimeter_zone": "intrusion_perimeter",
+   "yard_zone": "intrusion_yard",
+   "doorway_zone": "intrusion_doorway"
+  },
+  "setting_keys": [
+   "classes",
+   "progression_seconds"
+  ]
  },
  {
   "id": "occupancy-flow-anomaly",
@@ -1662,6 +1817,43 @@
   },
   "setting_keys": [
    "closed_hours"
+  ]
+ },
+ {
+  "id": "package-room-chain-review",
+  "name": "Package-Room Chain Review",
+  "tagline": "Correlates customer-model package-count changes with nearby door events to review deposit and pickup chains.",
+  "category": "Security & Access",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "access_window_seconds",
+   "confidence",
+   "door_id",
+   "labels",
+   "package_zone",
+   "require_access_event",
+   "weights"
+  ],
+  "config_schema": {
+   "package_zone": "polygon \u2014 package observation area",
+   "weights": "path \u2014 customer-supplied package model weights",
+   "labels": "list \u2014 package labels to count",
+   "confidence": "float \u2014 minimum custom-model confidence (default 0.45)",
+   "door_id": "string \u2014 optional UniFi Access door ID",
+   "access_window_seconds": "float \u2014 access correlation window (default 45)",
+   "require_access_event": "bool \u2014 require a nearby door event (default true)"
+  },
+  "camera_zones": {
+   "package_zone": "package_room_zone"
+  },
+  "setting_keys": [
+   "access_window_seconds",
+   "confidence",
+   "door_id",
+   "labels",
+   "require_access_event",
+   "weights"
   ]
  },
  {
@@ -1751,6 +1943,40 @@
   ]
  },
  {
+  "id": "perimeter-event-verifier",
+  "name": "Perimeter Event Verifier",
+  "tagline": "Correlates anonymous perimeter crossing or dwell with available Protect event context before raising a review.",
+  "category": "Security & Access",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "boundary_line",
+   "classes",
+   "hold_seconds",
+   "perimeter_zone",
+   "protect_window_seconds",
+   "require_protect_event"
+  ],
+  "config_schema": {
+   "perimeter_zone": "polygon \u2014 restricted perimeter area",
+   "boundary_line": "two-point line \u2014 configured perimeter threshold",
+   "hold_seconds": "float \u2014 in-zone dwell before verification (default 4)",
+   "protect_window_seconds": "float \u2014 Protect event correlation window (default 30)",
+   "require_protect_event": "bool \u2014 require Protect metadata as well as vision",
+   "classes": "list \u2014 COCO person and vehicle class IDs"
+  },
+  "camera_zones": {
+   "perimeter_zone": "perimeter_verify_zone",
+   "boundary_line": "perimeter_verify_line"
+  },
+  "setting_keys": [
+   "classes",
+   "hold_seconds",
+   "protect_window_seconds",
+   "require_protect_event"
+  ]
+ },
+ {
   "id": "abandoned-object",
   "name": "Persistent Object Review",
   "tagline": "Flags a stationary object after the configured dwell threshold for human review; detection and delivery latency vary by deployment.",
@@ -1822,45 +2048,6 @@
   ]
  },
  {
-  "id": "protect-camera-discovery-failure-log",
-  "name": "Protect Camera Discovery Failure Log",
-  "tagline": "Timestamped login, transport, HTTP, or parsing failures encountered during camera discovery.",
-  "category": "Security & Access",
-  "tier": "pro",
-  "requires_gpu": false,
-  "config_keys": [
-   "event_threshold",
-   "inventory_poll_seconds",
-   "threshold_window_seconds"
-  ],
-  "config_schema": {
-   "event_threshold": "Number of matching observations required in the bounded window (default 3).",
-   "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
-   "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
-  },
-  "camera_zones": {},
-  "setting_keys": [
-   "event_threshold",
-   "inventory_poll_seconds",
-   "threshold_window_seconds"
-  ],
-  "api": {
-   "surface": "protect",
-   "primitive": "camera_inventory",
-   "runner": "protect_inventory",
-   "control": false,
-   "profile": "camera_inventory",
-   "mode": "threshold",
-   "event_types": [],
-   "smart_types": [],
-   "event_kinds": []
-  },
-  "api_surface": "protect",
-  "api_primitive": "camera_inventory",
-  "api_runner": "protect_inventory",
-  "api_control": false
- },
- {
   "id": "protect-camera-offline-watch",
   "name": "Protect Camera Offline Watch",
   "tagline": "A camera state returned as anything other than CONNECTED, recorded for operator review.",
@@ -1890,105 +2077,6 @@
    "control": false,
    "profile": "camera_inventory",
    "mode": "threshold",
-   "event_types": [],
-   "smart_types": [],
-   "event_kinds": []
-  },
-  "api_surface": "protect",
-  "api_primitive": "camera_inventory",
-  "api_runner": "protect_inventory",
-  "api_control": false
- },
- {
-  "id": "protect-event-camera-reference-audit",
-  "name": "Protect Event Camera Reference Audit",
-  "tagline": "Event camera references that are blank or do not match the latest discovered camera IDs.",
-  "category": "Compliance",
-  "tier": "pro",
-  "requires_gpu": false,
-  "config_keys": [
-   "event_window_seconds"
-  ],
-  "config_schema": {
-   "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300)."
-  },
-  "camera_zones": {},
-  "setting_keys": [
-   "event_window_seconds"
-  ],
-  "api": {
-   "surface": "protect",
-   "primitive": "events",
-   "runner": "protect_event",
-   "control": false,
-   "profile": "event_metrics",
-   "mode": "event",
-   "event_types": [],
-   "smart_types": [],
-   "event_kinds": []
-  },
-  "api_surface": "protect",
-  "api_primitive": "events",
-  "api_runner": "protect_event",
-  "api_control": false
- },
- {
-  "id": "protect-event-poll-health",
-  "name": "Protect Event Poll Health",
-  "tagline": "Poll success, HTTP status, returned row count, and request duration.",
-  "category": "Security & Access",
-  "tier": "pro",
-  "requires_gpu": false,
-  "config_keys": [
-   "event_window_seconds"
-  ],
-  "config_schema": {
-   "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300)."
-  },
-  "camera_zones": {},
-  "setting_keys": [
-   "event_window_seconds"
-  ],
-  "api": {
-   "surface": "protect",
-   "primitive": "events",
-   "runner": "protect_event",
-   "control": false,
-   "profile": "event_metrics",
-   "mode": "event",
-   "event_types": [],
-   "smart_types": [],
-   "event_kinds": []
-  },
-  "api_surface": "protect",
-  "api_primitive": "events",
-  "api_runner": "protect_event",
-  "api_control": false
- },
- {
-  "id": "protect-camera-unnamed-records",
-  "name": "Protect Unnamed Camera Records",
-  "tagline": "Discovered camera records with a blank or missing name.",
-  "category": "Compliance",
-  "tier": "starter",
-  "requires_gpu": false,
-  "config_keys": [
-   "inventory_poll_seconds"
-  ],
-  "config_schema": {
-   "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
-  },
-  "camera_zones": {},
-  "setting_keys": [
-   "inventory_poll_seconds"
-  ],
-  "api": {
-   "surface": "protect",
-   "primitive": "camera_inventory",
-   "runner": "protect_inventory",
-   "control": false,
-   "profile": "camera_inventory",
-   "mode": "event",
    "event_types": [],
    "smart_types": [],
    "event_kinds": []
@@ -2052,24 +2140,34 @@
   ]
  },
  {
-  "id": "aggression-posture",
-  "name": "Raised-Arm Motion Review",
-  "tagline": "Flags a sustained raised-arm, high-motion pose signature for calibrated staff review; it does not predict violence.",
-  "category": "People & Safety",
-  "tier": "enterprise",
+  "id": "queue-service-rate-digest",
+  "name": "Queue Service Rate Digest",
+  "tagline": "Summarizes anonymous queue arrivals, service starts, wait percentiles, and abandonment candidates.",
+  "category": "Retail & QSR",
+  "tier": "pro",
   "requires_gpu": true,
   "config_keys": [
-   "confidence",
-   "sustain_seconds"
+   "arrival_line",
+   "digest_seconds",
+   "exit_line",
+   "queue_zone",
+   "service_zone"
   ],
   "config_schema": {
-   "confidence": "float (default 0.5)",
-   "sustain_seconds": "float (default 2.5)"
+   "arrival_line": "two-point line \u2014 queue-arrival threshold",
+   "queue_zone": "polygon \u2014 queue area",
+   "service_zone": "polygon \u2014 service area",
+   "exit_line": "two-point line \u2014 queue-exit threshold",
+   "digest_seconds": "int \u2014 digest interval (default 300)"
   },
-  "camera_zones": {},
+  "camera_zones": {
+   "arrival_line": "queue_arrival_line",
+   "queue_zone": "queue_service_area",
+   "service_zone": "queue_service_point",
+   "exit_line": "queue_exit_line"
+  },
   "setting_keys": [
-   "confidence",
-   "sustain_seconds"
+   "digest_seconds"
   ]
  },
  {
@@ -2177,6 +2275,74 @@
   },
   "setting_keys": [
    "hold_ms"
+  ]
+ },
+ {
+  "id": "room-exit-sequence-review",
+  "name": "Room Exit Sequence Review",
+  "tagline": "Reviews anonymous bed-area, transition, and doorway progression without identifying residents or making a clinical determination.",
+  "category": "Healthcare & Senior Living",
+  "tier": "enterprise",
+  "requires_gpu": true,
+  "config_keys": [
+   "bed_zone",
+   "doorway_zone",
+   "privacy_mode",
+   "sequence_window_seconds",
+   "transition_zone"
+  ],
+  "config_schema": {
+   "bed_zone": "polygon \u2014 anonymous room origin area",
+   "transition_zone": "polygon \u2014 intermediate movement area",
+   "doorway_zone": "polygon \u2014 room doorway area",
+   "sequence_window_seconds": "float \u2014 maximum sequence duration (default 90)",
+   "privacy_mode": "enum \u2014 skeleton suppresses alert snapshots"
+  },
+  "camera_zones": {
+   "bed_zone": "room_bed_area",
+   "transition_zone": "room_transition",
+   "doorway_zone": "room_doorway"
+  },
+  "setting_keys": [
+   "privacy_mode",
+   "sequence_window_seconds"
+  ]
+ },
+ {
+  "id": "route-completion-ledger",
+  "name": "Route Completion Ledger",
+  "tagline": "Summarizes anonymous ordered checkpoint starts, completions, skipped-zone candidates, and completion time.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "checkpoint_a",
+   "checkpoint_b",
+   "checkpoint_c",
+   "checkpoint_d",
+   "classes",
+   "digest_seconds",
+   "route_window_seconds"
+  ],
+  "config_schema": {
+   "checkpoint_a": "polygon \u2014 route checkpoint A",
+   "checkpoint_b": "polygon \u2014 route checkpoint B",
+   "checkpoint_c": "polygon \u2014 route checkpoint C",
+   "checkpoint_d": "polygon \u2014 route checkpoint D",
+   "route_window_seconds": "float \u2014 maximum route duration (default 600)",
+   "digest_seconds": "int \u2014 digest interval (default 600)",
+   "classes": "list \u2014 COCO classes to include"
+  },
+  "camera_zones": {
+   "checkpoint_a": "route_checkpoint_a",
+   "checkpoint_b": "route_checkpoint_b",
+   "checkpoint_c": "route_checkpoint_c",
+   "checkpoint_d": "route_checkpoint_d"
+  },
+  "setting_keys": [
+   "classes",
+   "digest_seconds",
+   "route_window_seconds"
   ]
  },
  {
@@ -2294,90 +2460,6 @@
   "api_control": false
  },
  {
-  "id": "rtsp-decode-error-rate",
-  "name": "RTSP Decode Error Rate",
-  "tagline": "Failed frame reads divided by attempted reads, with transport errors kept separate.",
-  "category": "Security & Access",
-  "tier": "pro",
-  "requires_gpu": true,
-  "config_keys": [
-   "alert_threshold",
-   "event_threshold",
-   "sample_interval_seconds",
-   "threshold_window_seconds"
-  ],
-  "config_schema": {
-   "event_threshold": "Number of matching observations required in the bounded window (default 3).",
-   "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
-   "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
-   "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
-  },
-  "camera_zones": {},
-  "setting_keys": [
-   "alert_threshold",
-   "event_threshold",
-   "sample_interval_seconds",
-   "threshold_window_seconds"
-  ],
-  "api": {
-   "surface": "protect",
-   "primitive": "rtsp_stream",
-   "runner": "protect_stream",
-   "control": false,
-   "profile": "stream_quality",
-   "mode": "threshold",
-   "event_types": [],
-   "smart_types": [],
-   "event_kinds": []
-  },
-  "api_surface": "protect",
-  "api_primitive": "rtsp_stream",
-  "api_runner": "protect_stream",
-  "api_control": false
- },
- {
-  "id": "rtsp-frame-gap-watch",
-  "name": "RTSP Frame Gap Watch",
-  "tagline": "Observed local time gaps between successfully decoded frames above a configured threshold.",
-  "category": "Security & Access",
-  "tier": "pro",
-  "requires_gpu": true,
-  "config_keys": [
-   "alert_threshold",
-   "event_threshold",
-   "sample_interval_seconds",
-   "threshold_window_seconds"
-  ],
-  "config_schema": {
-   "event_threshold": "Number of matching observations required in the bounded window (default 3).",
-   "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
-   "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
-   "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
-  },
-  "camera_zones": {},
-  "setting_keys": [
-   "alert_threshold",
-   "event_threshold",
-   "sample_interval_seconds",
-   "threshold_window_seconds"
-  ],
-  "api": {
-   "surface": "protect",
-   "primitive": "rtsp_stream",
-   "runner": "protect_stream",
-   "control": false,
-   "profile": "stream_quality",
-   "mode": "threshold",
-   "event_types": [],
-   "smart_types": [],
-   "event_kinds": []
-  },
-  "api_surface": "protect",
-  "api_primitive": "rtsp_stream",
-  "api_runner": "protect_stream",
-  "api_control": false
- },
- {
   "id": "rtsp-freeze-watch",
   "name": "RTSP Freeze Watch",
   "tagline": "A run of nearly identical decoded frames based on frame hashes; static scenes can also trigger review.",
@@ -2420,43 +2502,38 @@
   "api_control": false
  },
  {
-  "id": "rtsp-rolling-quality-digest",
-  "name": "RTSP Rolling Quality Digest",
-  "tagline": "Time-bucket summary of decode health, frame gaps, effective FPS, luminance, contrast, and sharpness metrics.",
-  "category": "Intelligence",
+  "id": "secured-exit-approach-review",
+  "name": "Secured Exit Approach Review",
+  "tagline": "Flags anonymous approach or crossing patterns at configured secured exits and attaches nearby door-event context for human review.",
+  "category": "Healthcare & Senior Living",
   "tier": "pro",
   "requires_gpu": true,
   "config_keys": [
-   "alert_threshold",
-   "digest_seconds",
-   "sample_interval_seconds"
+   "approach_seconds",
+   "approach_zone",
+   "direction",
+   "door_id",
+   "exit_line",
+   "privacy_mode"
   ],
   "config_schema": {
-   "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
-   "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
-   "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+   "approach_zone": "polygon \u2014 secured-exit approach area",
+   "exit_line": "two-point line \u2014 configured exit threshold",
+   "approach_seconds": "float \u2014 continuous approach dwell before review (default 8)",
+   "direction": "enum \u2014 any, positive, or negative line direction",
+   "door_id": "string \u2014 optional UniFi Access door ID",
+   "privacy_mode": "enum \u2014 skeleton suppresses alert snapshots"
   },
-  "camera_zones": {},
+  "camera_zones": {
+   "approach_zone": "secured_exit_approach",
+   "exit_line": "secured_exit_line"
+  },
   "setting_keys": [
-   "alert_threshold",
-   "digest_seconds",
-   "sample_interval_seconds"
-  ],
-  "api": {
-   "surface": "protect",
-   "primitive": "rtsp_stream",
-   "runner": "protect_stream",
-   "control": false,
-   "profile": "stream_quality",
-   "mode": "digest",
-   "event_types": [],
-   "smart_types": [],
-   "event_kinds": []
-  },
-  "api_surface": "protect",
-  "api_primitive": "rtsp_stream",
-  "api_runner": "protect_stream",
-  "api_control": false
+   "approach_seconds",
+   "direction",
+   "door_id",
+   "privacy_mode"
+  ]
  },
  {
   "id": "customer-wait-alert",
@@ -2506,6 +2583,37 @@
   ]
  },
  {
+  "id": "shift-change-flow-review",
+  "name": "Shift Change Flow Review",
+  "tagline": "Summarizes anonymous ingress, egress, and person-vehicle overlap during configured shift-change windows.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "digest_seconds",
+   "ingress_line",
+   "overlap_distance_ratio",
+   "shift_windows",
+   "shift_zone"
+  ],
+  "config_schema": {
+   "shift_zone": "polygon \u2014 shift-change review area",
+   "ingress_line": "two-point line \u2014 directional flow threshold",
+   "shift_windows": "list \u2014 local time ranges such as 06:30-08:30",
+   "digest_seconds": "int \u2014 digest interval (default 300)",
+   "overlap_distance_ratio": "float \u2014 normalized person-vehicle proximity (default 0.12)"
+  },
+  "camera_zones": {
+   "shift_zone": "shift_change_area",
+   "ingress_line": "shift_ingress_line"
+  },
+  "setting_keys": [
+   "digest_seconds",
+   "overlap_distance_ratio",
+   "shift_windows"
+  ]
+ },
+ {
   "id": "shipping-label-presence-review",
   "name": "Shipping Label Presence Review",
   "tagline": "Uses independent package/label weights to flag a sustained package box without an associated label center for verification.",
@@ -2527,28 +2635,6 @@
    "confidence",
    "hold_seconds",
    "weights"
-  ]
- },
- {
-  "id": "child-safety-zone",
-  "name": "Small-Person Restricted-Zone Alert",
-  "tagline": "Flags a person detection below a calibrated image-height threshold in a restricted zone for immediate human review; it does not determine age.",
-  "category": "People & Safety",
-  "tier": "pro",
-  "requires_gpu": true,
-  "config_keys": [
-   "max_height_ratio",
-   "zone"
-  ],
-  "config_schema": {
-   "zone": "polygon \u2014 restricted area",
-   "max_height_ratio": "float \u2014 calibrated image-height threshold (default 0.35); not an age estimate"
-  },
-  "camera_zones": {
-   "zone": "restricted"
-  },
-  "setting_keys": [
-   "max_height_ratio"
   ]
  },
  {
@@ -2617,31 +2703,6 @@
   ]
  },
  {
-  "id": "splash-pad-capacity",
-  "name": "Splash Pad Capacity",
-  "tagline": "Flags estimated occupancy above the configured splash-pad capacity threshold for supervisor review.",
-  "category": "People & Safety",
-  "tier": "starter",
-  "requires_gpu": true,
-  "config_keys": [
-   "hold_seconds",
-   "max_persons",
-   "zone"
-  ],
-  "config_schema": {
-   "zone": "polygon \u2014 splash pad",
-   "max_persons": "int (default 40)",
-   "hold_seconds": "int (default 60)"
-  },
-  "camera_zones": {
-   "zone": "pad"
-  },
-  "setting_keys": [
-   "hold_seconds",
-   "max_persons"
-  ]
- },
- {
   "id": "stopped-vehicle-lane",
   "name": "Stopped Vehicle Lane Review",
   "tagline": "Flags a vehicle-class track with sustained low image-plane movement inside a configured lane; it does not measure physical speed.",
@@ -2664,6 +2725,34 @@
   "setting_keys": [
    "hold_seconds",
    "movement_threshold"
+  ]
+ },
+ {
+  "id": "table-reset-delay-review",
+  "name": "Table Reset Delay Review",
+  "tagline": "Reviews prolonged vacant-table periods without the expected service approach and visible scene-change pattern.",
+  "category": "Retail & QSR",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "reset_seconds",
+   "scene_change_threshold",
+   "service_approach_zone",
+   "table_zone"
+  ],
+  "config_schema": {
+   "table_zone": "polygon \u2014 table occupancy and reset area",
+   "service_approach_zone": "polygon \u2014 staff approach area",
+   "reset_seconds": "float \u2014 maximum vacant delay (default 180)",
+   "scene_change_threshold": "float \u2014 normalized reset-change threshold (default 0.08)"
+  },
+  "camera_zones": {
+   "table_zone": "table_reset_area",
+   "service_approach_zone": "table_service_approach"
+  },
+  "setting_keys": [
+   "reset_seconds",
+   "scene_change_threshold"
   ]
  },
  {
@@ -2742,54 +2831,6 @@
   ]
  },
  {
-  "id": "unusual-motion-baseline",
-  "name": "Unusual Motion Baseline Review",
-  "tagline": "Learns local frame-to-frame motion energy and flags sustained increases above the rolling median for visual review.",
-  "category": "Security & Access",
-  "tier": "pro",
-  "requires_gpu": true,
-  "config_keys": [
-   "anomaly_factor",
-   "hold_seconds",
-   "min_samples"
-  ],
-  "config_schema": {
-   "min_samples": "int \u2014 local baseline samples (default 20)",
-   "anomaly_factor": "float \u2014 multiplier over median motion energy (default 3)",
-   "hold_seconds": "float \u2014 sustained anomaly duration (default 5)"
-  },
-  "camera_zones": {},
-  "setting_keys": [
-   "anomaly_factor",
-   "hold_seconds",
-   "min_samples"
-  ]
- },
- {
-  "id": "vehicle-attribute-log",
-  "name": "Vehicle Attribute Candidate Log",
-  "tagline": "Records bounded, model-provided vehicle class or appearance candidates for review; attributes are not identity and require domain weights.",
-  "category": "Automotive & Parking",
-  "tier": "pro",
-  "requires_gpu": true,
-  "config_keys": [
-   "confidence",
-   "cooldown_seconds",
-   "weights"
-  ],
-  "config_schema": {
-   "weights": "path \u2014 independently supplied vehicle-attribute model weights",
-   "confidence": "float \u2014 minimum model confidence (default 0.50)",
-   "cooldown_seconds": "int \u2014 repeat suppression per track/classification (default 60)"
-  },
-  "camera_zones": {},
-  "setting_keys": [
-   "confidence",
-   "cooldown_seconds",
-   "weights"
-  ]
- },
- {
   "id": "vehicle-wrong-way",
   "name": "Vehicle Wrong-Way Crossing Review",
   "tagline": "Flags vehicle-class tracks crossing a configured line opposite its allowed direction; physical speed is not inferred.",
@@ -2849,6 +2890,39 @@
   ]
  },
  {
+  "id": "vision-estate-health",
+  "name": "Vision Estate Health",
+  "tagline": "Consolidates fleet frame, source, naming, freeze, blur, darkness, and detector-health exceptions into one review.",
+  "category": "Security & Access",
+  "tier": "enterprise",
+  "requires_gpu": false,
+  "config_keys": [
+   "black_ratio",
+   "blur_threshold",
+   "digest_seconds",
+   "freeze_seconds",
+   "offline_seconds",
+   "startup_grace_seconds"
+  ],
+  "config_schema": {
+   "digest_seconds": "int \u2014 estate-health review interval (default 120)",
+   "startup_grace_seconds": "int \u2014 startup grace before offline review (default 60)",
+   "offline_seconds": "int \u2014 last-frame threshold (default 90)",
+   "freeze_seconds": "int \u2014 unchanged-frame threshold (default 30)",
+   "black_ratio": "float \u2014 dark-pixel ratio threshold (default 0.98)",
+   "blur_threshold": "float \u2014 minimum Laplacian variance (default 15)"
+  },
+  "camera_zones": {},
+  "setting_keys": [
+   "black_ratio",
+   "blur_threshold",
+   "digest_seconds",
+   "freeze_seconds",
+   "offline_seconds",
+   "startup_grace_seconds"
+  ]
+ },
+ {
   "id": "visitor-entry-review",
   "name": "Visitor Entry Review Context",
   "tagline": "Collects the people, carried-item classes, and vehicles observed after a doorbell or access-request event and emits one operator review record; it never unlocks a door.",
@@ -2905,6 +2979,40 @@
   ]
  },
  {
+  "id": "waiting-room-flow-ledger",
+  "name": "Waiting-Room Flow Ledger",
+  "tagline": "Summarizes anonymous arrivals, waiting transitions, service starts, exits, and abandonment candidates.",
+  "category": "Healthcare & Senior Living",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "abandonment_seconds",
+   "arrival_zone",
+   "digest_seconds",
+   "exit_zone",
+   "service_zone",
+   "waiting_zone"
+  ],
+  "config_schema": {
+   "arrival_zone": "polygon \u2014 waiting-room arrival area",
+   "waiting_zone": "polygon \u2014 waiting area",
+   "service_zone": "polygon \u2014 service-entry area",
+   "exit_zone": "polygon \u2014 exit area",
+   "digest_seconds": "int \u2014 digest interval (default 300)",
+   "abandonment_seconds": "int \u2014 stale waiting track threshold (default 900)"
+  },
+  "camera_zones": {
+   "arrival_zone": "waiting_arrival",
+   "waiting_zone": "waiting_area",
+   "service_zone": "waiting_service",
+   "exit_zone": "waiting_exit"
+  },
+  "setting_keys": [
+   "abandonment_seconds",
+   "digest_seconds"
+  ]
+ },
+ {
   "id": "wrong-way",
   "name": "Wrong-Way Movement",
   "tagline": "Flags tracked movement across a configured one-way line in the prohibited direction for human review.",
@@ -2924,6 +3032,68 @@
   },
   "setting_keys": [
    "forbidden"
+  ]
+ },
+ {
+  "id": "yard-queue-bottleneck-digest",
+  "name": "Yard Queue Bottleneck Digest",
+  "tagline": "Summarizes anonymous vehicle counts across yard queue, staging, and dock zones with spillback candidates.",
+  "category": "Manufacturing & Warehouse",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "digest_seconds",
+   "dock_zone",
+   "queue_zone",
+   "spillback_threshold",
+   "staging_zone"
+  ],
+  "config_schema": {
+   "queue_zone": "polygon \u2014 yard queue area",
+   "staging_zone": "polygon \u2014 yard staging area",
+   "dock_zone": "polygon \u2014 dock-service area",
+   "digest_seconds": "int \u2014 digest interval (default 300)",
+   "spillback_threshold": "int \u2014 queue count requiring review (default 6)"
+  },
+  "camera_zones": {
+   "queue_zone": "yard_queue",
+   "staging_zone": "yard_staging",
+   "dock_zone": "yard_dock"
+  },
+  "setting_keys": [
+   "digest_seconds",
+   "spillback_threshold"
+  ]
+ },
+ {
+  "id": "zone-activity-schedule-baseline",
+  "name": "Zone Activity Schedule Baseline",
+  "tagline": "Learns anonymous hour-of-week activity counts and flags sustained deviations for contextual review.",
+  "category": "Intelligence",
+  "tier": "pro",
+  "requires_gpu": true,
+  "config_keys": [
+   "activity_zone",
+   "change_threshold",
+   "classes",
+   "hold_seconds",
+   "min_samples"
+  ],
+  "config_schema": {
+   "activity_zone": "polygon \u2014 area used for schedule baseline",
+   "classes": "list \u2014 COCO classes to include",
+   "min_samples": "int \u2014 samples required per hour-of-week slot (default 12)",
+   "change_threshold": "float \u2014 absolute count deviation (default 2.5)",
+   "hold_seconds": "float \u2014 sustained deviation duration (default 30)"
+  },
+  "camera_zones": {
+   "activity_zone": "schedule_activity"
+  },
+  "setting_keys": [
+   "change_threshold",
+   "classes",
+   "hold_seconds",
+   "min_samples"
   ]
  },
  {

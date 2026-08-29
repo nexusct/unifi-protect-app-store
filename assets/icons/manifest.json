@@ -54,14 +54,24 @@
     "motif": "door",
     "style": "transparent-line"
   },
-  "aggression-posture": {
-    "file": "aggression-posture.svg",
-    "motif": "person",
+  "after-hours-multi-camera-corroboration": {
+    "file": "after-hours-multi-camera-corroboration.svg",
+    "motif": "camera",
     "style": "transparent-line"
   },
-  "assembly-stage-order-review": {
-    "file": "assembly-stage-order-review.svg",
-    "motif": "check",
+  "aisle-blockage-duration-review": {
+    "file": "aisle-blockage-duration-review.svg",
+    "motif": "door",
+    "style": "transparent-line"
+  },
+  "anonymous-space-utilization-percentiles": {
+    "file": "anonymous-space-utilization-percentiles.svg",
+    "motif": "people",
+    "style": "transparent-line"
+  },
+  "anonymous-zone-funnel": {
+    "file": "anonymous-zone-funnel.svg",
+    "motif": "cart",
     "style": "transparent-line"
   },
   "atm-vestibule-watch": {
@@ -79,19 +89,14 @@
     "motif": "camera",
     "style": "transparent-line"
   },
-  "child-safety-zone": {
-    "file": "child-safety-zone.svg",
-    "motif": "alert",
+  "care-area-occupancy-imbalance": {
+    "file": "care-area-occupancy-imbalance.svg",
+    "motif": "people",
     "style": "transparent-line"
   },
   "clip-export-checksum-manifest": {
     "file": "clip-export-checksum-manifest.svg",
     "motif": "camera",
-    "style": "transparent-line"
-  },
-  "clip-export-daily-manifest": {
-    "file": "clip-export-daily-manifest.svg",
-    "motif": "check",
     "style": "transparent-line"
   },
   "clip-export-index": {
@@ -104,9 +109,9 @@
     "motif": "check",
     "style": "transparent-line"
   },
-  "clip-export-queue": {
-    "file": "clip-export-queue.svg",
-    "motif": "people",
+  "controlled-room-two-person-review": {
+    "file": "controlled-room-two-person-review.svg",
+    "motif": "door",
     "style": "transparent-line"
   },
   "conveyor-jam": {
@@ -124,8 +129,8 @@
     "motif": "alert",
     "style": "transparent-line"
   },
-  "curbside-arrival": {
-    "file": "curbside-arrival.svg",
+  "curbside-handoff-timer": {
+    "file": "curbside-handoff-timer.svg",
     "motif": "route",
     "style": "transparent-line"
   },
@@ -134,8 +139,28 @@
     "motif": "clock",
     "style": "transparent-line"
   },
+  "cycle-step-timer": {
+    "file": "cycle-step-timer.svg",
+    "motif": "clock",
+    "style": "transparent-line"
+  },
   "denied-access-escalation": {
     "file": "denied-access-escalation.svg",
+    "motif": "door",
+    "style": "transparent-line"
+  },
+  "dock-apron-conflict-review": {
+    "file": "dock-apron-conflict-review.svg",
+    "motif": "truck",
+    "style": "transparent-line"
+  },
+  "dock-stage-turnaround": {
+    "file": "dock-stage-turnaround.svg",
+    "motif": "truck",
+    "style": "transparent-line"
+  },
+  "door-alarm-observed-response-timer": {
+    "file": "door-alarm-observed-response-timer.svg",
     "motif": "door",
     "style": "transparent-line"
   },
@@ -152,6 +177,11 @@
   "door-propped": {
     "file": "door-propped.svg",
     "motif": "door",
+    "style": "transparent-line"
+  },
+  "drive-thru-lane-balance": {
+    "file": "drive-thru-lane-balance.svg",
+    "motif": "car",
     "style": "transparent-line"
   },
   "drive-thru-timer": {
@@ -174,14 +204,14 @@
     "motif": "shield",
     "style": "transparent-line"
   },
+  "exception-evidence-casebook": {
+    "file": "exception-evidence-casebook.svg",
+    "motif": "door",
+    "style": "transparent-line"
+  },
   "fire-exit-blocked": {
     "file": "fire-exit-blocked.svg",
     "motif": "package",
-    "style": "transparent-line"
-  },
-  "floor-water-change-review": {
-    "file": "floor-water-change-review.svg",
-    "motif": "waves",
     "style": "transparent-line"
   },
   "footfall-counter": {
@@ -189,13 +219,13 @@
     "motif": "camera",
     "style": "transparent-line"
   },
-  "forecourt-loiter": {
-    "file": "forecourt-loiter.svg",
-    "motif": "clock",
-    "style": "transparent-line"
-  },
   "forklift-pedestrian-proximity": {
     "file": "forklift-pedestrian-proximity.svg",
+    "motif": "truck",
+    "style": "transparent-line"
+  },
+  "forklift-route-deviation-review": {
+    "file": "forklift-route-deviation-review.svg",
     "motif": "truck",
     "style": "transparent-line"
   },
@@ -209,24 +239,19 @@
     "motif": "door",
     "style": "transparent-line"
   },
-  "hallway-overnight": {
-    "file": "hallway-overnight.svg",
-    "motif": "clock",
-    "style": "transparent-line"
-  },
   "hardhat-visibility-review": {
     "file": "hardhat-visibility-review.svg",
     "motif": "check",
     "style": "transparent-line"
   },
+  "high-traffic-service-trigger": {
+    "file": "high-traffic-service-trigger.svg",
+    "motif": "cart",
+    "style": "transparent-line"
+  },
   "high-visibility-vest-review": {
     "file": "high-visibility-vest-review.svg",
     "motif": "check",
-    "style": "transparent-line"
-  },
-  "laundromat-overnight": {
-    "file": "laundromat-overnight.svg",
-    "motif": "clock",
     "style": "transparent-line"
   },
   "lighting-outage": {
@@ -244,34 +269,29 @@
     "motif": "car",
     "style": "transparent-line"
   },
-  "machine-monopoly": {
-    "file": "machine-monopoly.svg",
-    "motif": "gear",
-    "style": "transparent-line"
-  },
-  "magnet-crane-exclusion": {
-    "file": "magnet-crane-exclusion.svg",
-    "motif": "alert",
-    "style": "transparent-line"
-  },
-  "mandated-camera-check": {
-    "file": "mandated-camera-check.svg",
-    "motif": "camera",
-    "style": "transparent-line"
-  },
   "manual-bounded-clip-export": {
     "file": "manual-bounded-clip-export.svg",
     "motif": "camera",
     "style": "transparent-line"
   },
-  "motion-event-clip-export": {
-    "file": "motion-event-clip-export.svg",
-    "motif": "shield",
+  "mobility-aid-egress-obstruction": {
+    "file": "mobility-aid-egress-obstruction.svg",
+    "motif": "package",
     "style": "transparent-line"
   },
   "multi-camera-incident-clip-bundle": {
     "file": "multi-camera-incident-clip-bundle.svg",
     "motif": "camera",
+    "style": "transparent-line"
+  },
+  "multi-class-flow-ledger": {
+    "file": "multi-class-flow-ledger.svg",
+    "motif": "package",
+    "style": "transparent-line"
+  },
+  "multi-zone-intrusion-progression": {
+    "file": "multi-zone-intrusion-progression.svg",
+    "motif": "shield",
     "style": "transparent-line"
   },
   "object-removal-review": {
@@ -294,6 +314,11 @@
     "motif": "clock",
     "style": "transparent-line"
   },
+  "package-room-chain-review": {
+    "file": "package-room-chain-review.svg",
+    "motif": "door",
+    "style": "transparent-line"
+  },
   "parking-violation-dwell": {
     "file": "parking-violation-dwell.svg",
     "motif": "clock",
@@ -309,6 +334,11 @@
     "motif": "check",
     "style": "transparent-line"
   },
+  "perimeter-event-verifier": {
+    "file": "perimeter-event-verifier.svg",
+    "motif": "clock",
+    "style": "transparent-line"
+  },
   "plate-watchlist-review": {
     "file": "plate-watchlist-review.svg",
     "motif": "plate",
@@ -319,29 +349,9 @@
     "motif": "waves",
     "style": "transparent-line"
   },
-  "protect-camera-discovery-failure-log": {
-    "file": "protect-camera-discovery-failure-log.svg",
-    "motif": "camera",
-    "style": "transparent-line"
-  },
   "protect-camera-offline-watch": {
     "file": "protect-camera-offline-watch.svg",
     "motif": "camera",
-    "style": "transparent-line"
-  },
-  "protect-camera-unnamed-records": {
-    "file": "protect-camera-unnamed-records.svg",
-    "motif": "camera",
-    "style": "transparent-line"
-  },
-  "protect-event-camera-reference-audit": {
-    "file": "protect-event-camera-reference-audit.svg",
-    "motif": "camera",
-    "style": "transparent-line"
-  },
-  "protect-event-poll-health": {
-    "file": "protect-event-poll-health.svg",
-    "motif": "people",
     "style": "transparent-line"
   },
   "queue-abandonment-review": {
@@ -352,6 +362,21 @@
   "queue-length": {
     "file": "queue-length.svg",
     "motif": "people",
+    "style": "transparent-line"
+  },
+  "queue-service-rate-digest": {
+    "file": "queue-service-rate-digest.svg",
+    "motif": "people",
+    "style": "transparent-line"
+  },
+  "room-exit-sequence-review": {
+    "file": "room-exit-sequence-review.svg",
+    "motif": "medical",
+    "style": "transparent-line"
+  },
+  "route-completion-ledger": {
+    "file": "route-completion-ledger.svg",
+    "motif": "route",
     "style": "transparent-line"
   },
   "rtsp-black-frame-rate": {
@@ -369,29 +394,24 @@
     "motif": "shield",
     "style": "transparent-line"
   },
-  "rtsp-decode-error-rate": {
-    "file": "rtsp-decode-error-rate.svg",
-    "motif": "shield",
-    "style": "transparent-line"
-  },
-  "rtsp-frame-gap-watch": {
-    "file": "rtsp-frame-gap-watch.svg",
-    "motif": "clock",
-    "style": "transparent-line"
-  },
   "rtsp-freeze-watch": {
     "file": "rtsp-freeze-watch.svg",
     "motif": "eye",
     "style": "transparent-line"
   },
-  "rtsp-rolling-quality-digest": {
-    "file": "rtsp-rolling-quality-digest.svg",
-    "motif": "clock",
-    "style": "transparent-line"
-  },
   "safety-zone-breach": {
     "file": "safety-zone-breach.svg",
     "motif": "camera",
+    "style": "transparent-line"
+  },
+  "secured-exit-approach-review": {
+    "file": "secured-exit-approach-review.svg",
+    "motif": "door",
+    "style": "transparent-line"
+  },
+  "shift-change-flow-review": {
+    "file": "shift-change-flow-review.svg",
+    "motif": "car",
     "style": "transparent-line"
   },
   "shipping-label-presence-review": {
@@ -419,16 +439,6 @@
     "motif": "flame",
     "style": "transparent-line"
   },
-  "snapshot-last-good-frame": {
-    "file": "snapshot-last-good-frame.svg",
-    "motif": "eye",
-    "style": "transparent-line"
-  },
-  "splash-pad-capacity": {
-    "file": "splash-pad-capacity.svg",
-    "motif": "waves",
-    "style": "transparent-line"
-  },
   "stopped-vehicle-lane": {
     "file": "stopped-vehicle-lane.svg",
     "motif": "car",
@@ -437,6 +447,11 @@
   "supply-theft-watch": {
     "file": "supply-theft-watch.svg",
     "motif": "clock",
+    "style": "transparent-line"
+  },
+  "table-reset-delay-review": {
+    "file": "table-reset-delay-review.svg",
+    "motif": "cart",
     "style": "transparent-line"
   },
   "tailgating-correlation": {
@@ -464,16 +479,6 @@
     "motif": "clock",
     "style": "transparent-line"
   },
-  "unusual-motion-baseline": {
-    "file": "unusual-motion-baseline.svg",
-    "motif": "eye",
-    "style": "transparent-line"
-  },
-  "vehicle-attribute-log": {
-    "file": "vehicle-attribute-log.svg",
-    "motif": "check",
-    "style": "transparent-line"
-  },
   "vehicle-wrong-way": {
     "file": "vehicle-wrong-way.svg",
     "motif": "route",
@@ -484,9 +489,19 @@
     "motif": "camera",
     "style": "transparent-line"
   },
+  "vision-estate-health": {
+    "file": "vision-estate-health.svg",
+    "motif": "shield",
+    "style": "transparent-line"
+  },
   "visitor-entry-review": {
     "file": "visitor-entry-review.svg",
     "motif": "door",
+    "style": "transparent-line"
+  },
+  "waiting-room-flow-ledger": {
+    "file": "waiting-room-flow-ledger.svg",
+    "motif": "people",
     "style": "transparent-line"
   },
   "waiting-room-overflow": {
@@ -497,6 +512,16 @@
   "wrong-way": {
     "file": "wrong-way.svg",
     "motif": "route",
+    "style": "transparent-line"
+  },
+  "yard-queue-bottleneck-digest": {
+    "file": "yard-queue-bottleneck-digest.svg",
+    "motif": "truck",
+    "style": "transparent-line"
+  },
+  "zone-activity-schedule-baseline": {
+    "file": "zone-activity-schedule-baseline.svg",
+    "motif": "scan",
     "style": "transparent-line"
   }
 }

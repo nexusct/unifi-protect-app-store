@@ -5,18 +5,18 @@ detected in the magnet-room approach zone outside staffed hours or without
 escort pattern fires an immediate alert. Ferromagnetic incidents are
 catastrophic; this is the cheap tripwire.
 """
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "mri-zone-safety",
-    "name": "MRI Zone IV Safety",
-    "tagline": "Someone is approaching the magnet room unescorted. Right now.",
+    "name": "MRI Approach Presence Alert",
+    "tagline": "Flags a person in a configured MRI approach zone outside selected hours for trained-staff review; it does not determine escort status or detect ferromagnetic objects.",
     "category": "Healthcare & Senior Living",
     "tier": "enterprise",
     "requires_gpu": True,
     "config_schema": {
         "zone": "polygon — Zone III/IV approach",
-        "staffed_hours": "[start,end] — suppress during staffed hours (optional)",
+        "staffed_hours": "Optional hours during which alerts are suppressed; configure according to site protocol.",
     },
 }
 
@@ -33,7 +33,7 @@ class Function(MarketplaceFunction):
             return
         if self.staffed:
             import time as _t
-            hour = int(_t.strftime("%H", _t.gmtime(ts)))
+            hour = int(_t.strftime("%H", site_time(ts, ctx)))
             s, e = int(self.staffed[0]), int(self.staffed[1])
             if s <= hour < e:
                 return

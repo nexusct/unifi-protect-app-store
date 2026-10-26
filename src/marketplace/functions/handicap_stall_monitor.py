@@ -1,8 +1,7 @@
 """Accessible Stall Monitor — usage log + rapid-turnover flag.
 
-Logs every use of accessible stalls with timestamps, and flags rapid
-back-to-back non-disabled-pattern turnover (park-walk-in-fast) for
-property managers to review. The log itself is the compliance artifact.
+Logs visually estimated accessible-stall occupancy and flags rapid turnover
+for property-manager review. It does not infer disability status or compliance.
 """
 from collections import defaultdict
 from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
@@ -10,7 +9,7 @@ from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_
 MANIFEST = {
     "id": "handicap-stall-monitor",
     "name": "Accessible Stall Usage Log",
-    "tagline": "Every use of the accessible stalls, logged — plus the suspiciously fast ones.",
+    "tagline": "Logs observed accessible-stall occupancy and flags unusually short visits for property-manager review.",
     "category": "Automotive & Parking",
     "tier": "starter",
     "requires_gpu": True,

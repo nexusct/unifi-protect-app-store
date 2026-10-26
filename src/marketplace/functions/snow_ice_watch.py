@@ -1,22 +1,21 @@
-"""Snow & Ice Watch — entrance coverage detection.
+"""Bright, low-saturation walkway-coverage watch.
 
-Bright/white coverage ratio at entrances and walks over threshold = snow
-accumulation needing clearing. Slip-fall claims start at the front walk;
-so does the documentation that you maintained it.
+Flags a sustained pixel-coverage proxy for inspection. It does not identify
+snow or ice and does not document maintenance activity.
 """
 import numpy as np
 from marketplace.contract import MarketplaceFunction
 
 MANIFEST = {
     "id": "snow-ice-watch",
-    "name": "Snow & Ice Watch",
-    "tagline": "White walk at 6am, crew dispatched by 6:05. Documentation included.",
+    "name": "White-Coverage Walkway Watch",
+    "tagline": "Flags sustained bright, low-saturation coverage in a configured walkway zone for inspection; it does not confirm ice or crew dispatch.",
     "category": "Property & Liability",
     "tier": "starter",
     "requires_gpu": True,
     "config_schema": {
         "zone": "polygon — walk/entrance",
-        "white_ratio": "float (default 0.45)",
+        "white_ratio": "Bright/white pixel-coverage threshold; this is a visual proxy and does not identify ice.",
     },
 }
 
@@ -46,8 +45,8 @@ class Function(MarketplaceFunction):
             if ts - self._since[key] >= 300:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Snow/ice accumulation at entrance",
-                    detail=f"White coverage {ratio:.0%} on {camera['name']} for 5+ minutes.",
+                    title="Sustained bright walkway coverage",
+                    detail=f"Bright, low-saturation coverage measured {ratio:.0%} on {camera['name']} for 5+ minutes; inspect the area to determine the cause.",
                     frame=frame, meta={"coverage": round(ratio, 3)})
                 self._since[key] = ts
         else:

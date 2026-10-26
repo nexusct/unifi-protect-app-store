@@ -9,7 +9,7 @@ from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_
 MANIFEST = {
     "id": "yard-dwell",
     "name": "Trailer Yard Dwell",
-    "tagline": "That trailer's been in row C for 6 days. The camera noticed on day one.",
+    "tagline": "Flags a trailer that remains in a configured yard row beyond the selected dwell threshold for review.",
     "category": "Manufacturing & Warehouse",
     "tier": "pro",
     "requires_gpu": True,

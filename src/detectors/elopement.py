@@ -1,27 +1,12 @@
-"""Detector 6: elopement/pacing prediction (memory care).
+"""Detector 6: repeated exit-zone approach pattern (memory care).
 
-Tracks persons and counts approaches to exit-door zones: entering the zone,
-leaving, re-entering = approach events. `approaches` within `window_seconds`
-fires a WARNING — minutes before the door sensor would ever trip.
+Tracks person detections and counts approaches to configured exit-door zones.
+The observable pattern does not infer intent or predict an elopement.
 """
-from detectors.base import Detector, get_model, register
+import os
 
-
-def in_zone(cx, cy, polygon):
-    """Ray-casting point-in-polygon; polygon in normalized coords, cx/cy pixels."""
-    if not polygon:
-        return False
-    # normalize point
-    n = len(polygon)
-    inside = False
-    j = n - 1
-    for i in range(n):
-        xi, yi = polygon[i]
-        xj, yj = polygon[j]
-        if ((yi > cy) != (yj > cy)) and (cx < (xj - xi) * (cy - yi) / (yj - yi) + xi):
-            inside = not inside
-        j = i
-    return inside
+from detectors.base import Detector, register
+from marketplace.contract import boxes_of, in_zone
 
 
 @register
@@ -32,37 +17,59 @@ class ElopementDetector(Detector):
         super().__init__(settings)
         self.approaches_needed = int(self.settings.get("approaches", 3))
         self.window = float(self.settings.get("window_seconds", 300))
-        self._model = None
-        self._tracks = {}  # (camera, track_id) -> {"in_zone": bool, "approaches": [ts...]}
+        interval = float(os.environ.get("VISION_FRAME_INTERVAL", "1"))
+        self.max_gap = float(self.settings.get("max_track_gap_seconds", max(3.0, interval * 3.0)))
+        self._tracks = {}
 
     def process(self, camera, frame, ts, ctx):
         zone = (camera.get("zones") or {}).get("exit_doors")
         if not zone:
             return
-        if self._model is None:
-            self._model = get_model("yolov8n.pt")
-        res = self._model.track(frame, verbose=False, conf=0.45, persist=True,
-                                classes=[0], tracker="bytetrack.yaml")[0]
-        h, w = frame.shape[:2]
-        for box in res.boxes or []:
-            if box.id is None:
-                continue
-            track_id = int(box.id[0])
-            x1, y1, x2, y2 = box.xyxy[0].tolist()
-            cx, cy = (x1 + x2) / 2 / w, (y1 + y2) / 2 / h
-            key = (camera["id"], track_id)
-            st = self._tracks.setdefault(key, {"in_zone": False, "approaches": []})
+
+        camera_id = camera["id"]
+        seen = set()
+        for _cls, cx, cy, _x1, _y1, _x2, _y2, track_id in boxes_of(
+            frame,
+            classes=[0],
+            conf=0.45,
+            tracking_scope=(camera_id, self.name),
+        ):
+            key = (camera_id, track_id)
+            seen.add(key)
+            state = self._tracks.get(key)
+            if state is None or ts - state.get("last_seen", ts) > self.max_gap:
+                state = {"in_zone": False, "approaches": [], "last_seen": ts}
+                self._tracks[key] = state
             now_in = in_zone(cx, cy, zone)
-            if now_in and not st["in_zone"]:
-                st["approaches"] = [t for t in st["approaches"] if ts - t <= self.window]
-                st["approaches"].append(ts)
-                if len(st["approaches"]) >= self.approaches_needed:
-                    ctx.alerts.fire(
-                        site=ctx.site, camera=camera, detector=self.name,
+            if now_in and not state["in_zone"]:
+                state["approaches"] = [
+                    observed for observed in state["approaches"]
+                    if ts - observed <= self.window
+                ]
+                state["approaches"].append(ts)
+                if len(state["approaches"]) >= self.approaches_needed:
+                    delivered = ctx.alerts.fire(
+                        site=ctx.site,
+                        camera=camera,
+                        detector=self.name,
                         title="Repeated exit-zone approaches",
-                        detail=f"{len(st['approaches'])} approaches to exit zone within {self.window/60:.0f} min on {camera['name']}.",
+                        detail=(
+                            f"One tracked person detection entered the exit zone "
+                            f"{len(state['approaches'])} times within {self.window / 60:.0f} "
+                            f"minutes on {camera['name']}; review required."
+                        ),
                         frame=None if camera.get("privacy_mode") == "skeleton" else frame,
-                        meta={"approaches": len(st["approaches"]), "window_seconds": self.window},
+                        meta={
+                            "track": track_id,
+                            "approaches": len(state["approaches"]),
+                            "window_seconds": self.window,
+                        },
                     )
-                    st["approaches"] = []
-            st["in_zone"] = now_in
+                    if delivered:
+                        state["approaches"] = []
+            state["in_zone"] = now_in
+            state["last_seen"] = ts
+
+        for key, state in list(self._tracks.items()):
+            if key[0] == camera_id and key not in seen and ts - state["last_seen"] > self.max_gap:
+                self._tracks.pop(key, None)

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title">
+  <title id="title">EV Charger Blocked</title>
+  <circle cx="76" cy="20" r="8" fill="#006FFF" opacity=".12"/>
+  <path d="M20 77h56" fill="none" stroke="#01183E" stroke-width="2" stroke-linecap="round" opacity=".18"/>
+  <g transform="translate(12 12) scale(3)" fill="none" stroke="#0559D5" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3 2.5 20h19Z"/><path d="M12 9v5M12 17.5v.5"/>
+  </g>
+</svg>

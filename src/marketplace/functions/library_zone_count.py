@@ -5,12 +5,12 @@ areas. Libraries justify budgets with door counts and zone usage — this
 produces both without patron-tracking privacy issues (counts only).
 """
 from collections import defaultdict
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "library-zone-count",
     "name": "Library Zone Counts",
-    "tagline": "The kids' room peaks at 4pm on school days. The budget narrative just got data.",
+    "tagline": "Summarizes estimated occupancy by configured library zone and time window.",
     "category": "Intelligence",
     "tier": "starter",
     "requires_gpu": True,
@@ -39,7 +39,7 @@ class Function(MarketplaceFunction):
             for name, poly in zones.items():
                 if in_zone(cx, cy, poly):
                     self._visits[name].add(tid)
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         day = _t.strftime("%Y-%m-%d", tm)
         if tm.tm_hour == self.digest_hour and self._last_day != day and self._visits:
             ctx.alerts.fire(

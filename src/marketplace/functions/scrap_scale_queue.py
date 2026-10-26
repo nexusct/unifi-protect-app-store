@@ -10,7 +10,7 @@ from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_
 MANIFEST = {
     "id": "scrap-scale-queue",
     "name": "Scale House Queue",
-    "tagline": "Six trucks at the scale and one working it. Dispatch knows before the drivers call.",
+    "tagline": "Flags queue estimates above the configured threshold at a scale zone for dispatch review.",
     "category": "Manufacturing & Warehouse",
     "tier": "pro",
     "requires_gpu": True,

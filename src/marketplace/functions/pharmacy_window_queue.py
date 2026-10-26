@@ -1,16 +1,16 @@
-"""Pharmacy Window Queue — pickup-line length + service pace.
+"""Pharmacy Pickup-Zone Queue Estimate.
 
-Counts the line at the pharmacy pickup window and times each person's
-dwell from join to leave. Long-line alerts and daily service-time stats —
-the outpatient-experience metric PBMs and clinics report on.
+Counts concurrent person-class detections in a configured pickup zone and
+estimates dwell for tracker IDs while observed. It does not identify people,
+determine service state, or guarantee continuous tracking.
 """
 from collections import defaultdict
 from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
 
 MANIFEST = {
     "id": "pharmacy-window-queue",
-    "name": "Pharmacy Window Queue",
-    "tagline": "Pickup line length and per-person wait, measured continuously.",
+    "name": "Pharmacy Pickup-Zone Queue Estimate",
+    "tagline": "Estimates pickup-zone person count and observed tracker dwell for operational review.",
     "category": "Healthcare & Senior Living",
     "tier": "starter",
     "requires_gpu": True,
@@ -46,14 +46,14 @@ class Function(MarketplaceFunction):
                     self._alerted.add(tid)
                     ctx.alerts.fire(
                         site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                        title=f"Patient waiting {(ts - st['since'])/60:.0f} min",
-                        detail=f"Pickup line wait past {self.wait_alert/60:.0f} min on {camera['name']}.",
+                        title=f"Pickup-zone track dwell {(ts - st['since'])/60:.0f} min",
+                        detail=f"A person-class track remained in the pickup zone past the {self.wait_alert/60:.0f} min review threshold on {camera['name']}.",
                         frame=frame, meta={"wait_min": (ts - st['since']) / 60})
             elif tid in self._alerted:
                 self._alerted.discard(tid)
         if len(present) > self.max_line:
             ctx.alerts.fire(
                 site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                title=f"Pickup line at {len(present)}",
-                detail=f"Line length {len(present)} exceeds {self.max_line} on {camera['name']}.",
+                title=f"Pickup-zone count at {len(present)}",
+                detail=f"Observed person-track count {len(present)} exceeds the configured threshold {self.max_line} on {camera['name']}.",
                 frame=frame, meta={"line": len(present)})

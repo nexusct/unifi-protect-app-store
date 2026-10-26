@@ -1,21 +1,20 @@
-"""Forklift Speed Governor — speed estimation in pedestrian zones.
+"""Shared-Lane Vehicle Motion Alert — normalized image-space motion review.
 
-Pixel displacement per second across a calibrated pedestrian-shared zone.
-Over the threshold = speed alert with the track. The cheapest forklift
-safety program a warehouse can buy — no telematics retrofit required.
+Compares normalized tracked-object displacement with a camera-specific review
+threshold. It does not measure physical speed without a separate calibration.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "forklift-speed",
-    "name": "Forklift Speed Governor",
-    "tagline": "Speeding forklifts in pedestrian aisles, caught on camera you already own.",
+    "name": "Shared-Lane Vehicle Motion Alert",
+    "tagline": "Flags tracked vehicle motion above a camera-calibrated image-space threshold in a configured shared lane; human review required.",
     "category": "Manufacturing & Warehouse",
     "tier": "pro",
     "requires_gpu": True,
     "config_schema": {
         "zone": "polygon — pedestrian-shared lane",
-        "max_px_per_sec": "float — calibrated speed proxy (default 0.15 normalized/s)",
+        "max_px_per_sec": "Number — calibrated normalized image-space motion threshold per second.",
     },
 }
 
@@ -43,7 +42,7 @@ class Function(MarketplaceFunction):
                 if speed > self.max_speed:
                     ctx.alerts.fire(
                         site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                        title="Forklift speeding in shared lane",
-                        detail=f"Vehicle moving at {speed:.2f} norm/s (limit {self.max_speed}) on {camera['name']}.",
+                        title="Shared-lane vehicle motion above review threshold",
+                        detail=f"Normalized image-space motion was {speed:.2f}/s versus the configured threshold {self.max_speed} on {camera['name']}; review the event rather than treating this as a physical speed measurement.",
                         frame=frame, meta={"speed": round(speed, 3), "track": tid})
             self._prev[tid] = (cx, cy, ts)

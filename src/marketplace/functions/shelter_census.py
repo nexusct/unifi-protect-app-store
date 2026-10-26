@@ -4,12 +4,12 @@ Quiet-hours person count in the bunk zone at the census hour. Shelters
 report overnight census to funders daily; this automates it without
 identifying anyone.
 """
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "shelter-census",
-    "name": "Shelter Overnight Census",
-    "tagline": "Tuesday census: 47. Reported to the funder automatically.",
+    "name": "Shelter Bunk-Area Count Estimate",
+    "tagline": "Emits a scheduled person-count estimate for the configured bunk area; funder reporting requires separate review and delivery configuration.",
     "category": "Intelligence",
     "tier": "starter",
     "requires_gpu": True,
@@ -31,7 +31,7 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("bunks")
         if not zone:
             return
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         if tm.tm_hour != self.census_hour:
             return
         day = _t.strftime("%Y-%m-%d", tm)

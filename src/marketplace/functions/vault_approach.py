@@ -1,15 +1,14 @@
-"""Vault Approach — person near the vault/safe zone without dual presence.
+"""Solo person detection near a configured vault/safe zone.
 
-Cannabis vaults and back-office safes typically require two-person
-presence. One person at the vault zone without a second person in frame =
-compliance alert. Dispensary license audits ask for exactly this.
+Flags sustained single-person presence in the configured zone when no second
+person detection appears in the frame. It does not determine policy compliance.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "vault-approach",
-    "name": "Vault Two-Person Rule",
-    "tagline": "One person at the vault, alone, for 90 seconds. Compliance has the clip.",
+    "name": "Solo Vault-Zone Dwell Alert",
+    "tagline": "Flags a single detected person who remains in the configured vault zone beyond the review threshold; saves a local alert snapshot for review.",
     "category": "Compliance",
     "tier": "enterprise",
     "requires_gpu": True,

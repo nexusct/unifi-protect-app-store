@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title">
+  <title id="title">RTSP Connectivity Probe</title>
+  <circle cx="76" cy="20" r="8" fill="#006FFF" opacity=".12"/>
+  <path d="M20 77h56" fill="none" stroke="#01183E" stroke-width="2" stroke-linecap="round" opacity=".18"/>
+  <g transform="translate(12 12) scale(3)" fill="none" stroke="#0559D5" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3 20 6v5c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V6Z"/><path d="m8.5 12 2.3 2.3 4.8-5"/>
+  </g>
+</svg>

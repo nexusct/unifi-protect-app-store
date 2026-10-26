@@ -5,12 +5,12 @@ state: obvious missed spots (foam residue, heavy dirt contrast) flag a
 re-touch before delivery. Express-detail operators protect reviews this way.
 """
 import numpy as np
-from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
+from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone, pixel_box
 
 MANIFEST = {
     "id": "detail-qc-walk",
-    "name": "Detail QC Flag",
-    "tagline": "Foam still on the rear quarter at delivery. Flagged before the customer saw it.",
+    "name": "Bright-Patch QC Review",
+    "tagline": "Flags a bright-patch ratio above the configured threshold on a vehicle entering the QC zone; human review determines whether residue is present.",
     "category": "Automotive & Parking",
     "tier": "pro",
     "requires_gpu": True,
@@ -42,7 +42,8 @@ class Function(MarketplaceFunction):
             if not entered or tid in self._checked:
                 continue
             self._checked.add(tid)
-            crop = frame[int(y1):int(y2), int(x1):int(x2)]
+            px1, py1, px2, py2 = pixel_box(frame, x1, y1, x2, y2)
+            crop = frame[py1:py2, px1:px2]
             if crop.size == 0:
                 continue
             hsv = cv2.cvtColor(crop, cv2.COLOR_BGR2HSV)

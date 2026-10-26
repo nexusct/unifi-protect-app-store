@@ -1,21 +1,20 @@
-"""Driver Cab Time — person in the cab zone while trailer is at dock.
+"""Cab/Dock Concurrent Presence — person detections in two configured zones.
 
-Driver-in-cab during loading is a dock-safety interlock (premature
-departure risk). Person detected in the cab region while the dock zone
-shows active work = safety alert to the dock supervisor.
+Reports when person-class detections appear in both the cab and dock zones.
+It does not determine role, work state, vehicle state, or operational risk.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "driver-cab-time",
-    "name": "Driver-in-Cab Dock Interlock",
-    "tagline": "Driver in the cab while the forklift's in the trailer. Alert the dock.",
+    "name": "Cab/Dock Concurrent Presence",
+    "tagline": "Flags simultaneous person-class detections in configured cab and dock zones for supervisor review.",
     "category": "Manufacturing & Warehouse",
     "tier": "enterprise",
     "requires_gpu": True,
     "config_schema": {
         "cab_zone": "polygon — truck cab area",
-        "dock_zone": "polygon — active dock",
+        "dock_zone": "polygon — monitored dock area",
     },
 }
 
@@ -38,6 +37,6 @@ class Function(MarketplaceFunction):
             self._alerted[key] = ts
             ctx.alerts.fire(
                 site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                title="Driver in cab during active loading",
-                detail=f"Person in cab zone while dock work active on {camera['name']} — premature-departure risk.",
+                title="Concurrent cab-zone and dock-zone presence",
+                detail=f"Person-class detections appeared in both configured zones on {camera['name']}; review the image and operational context.",
                 frame=frame, meta={})

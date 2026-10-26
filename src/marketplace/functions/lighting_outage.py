@@ -1,23 +1,22 @@
 """Lighting Outage — dark-zone detection on a schedule.
 
-Mean luma in a zone drops below threshold during scheduled-lit hours =
-parking-lot light out / corridor dark. Liability loves dark stairwells;
-this finds them before the incident report does.
+Reports sustained low mean luminance in a configured zone during scheduled
+lit hours. Shadows, weather, exposure changes, and outages require review.
 """
 import numpy as np
-from marketplace.contract import MarketplaceFunction
+from marketplace.contract import site_time, MarketplaceFunction
 
 MANIFEST = {
     "id": "lighting-outage",
-    "name": "Lighting Outage Watch",
-    "tagline": "The parking lot light that's been out for a week? Found in a day.",
+    "name": "Low-Luminance Lighting Watch",
+    "tagline": "Flags sustained low luminance in a configured area during scheduled lit hours.",
     "category": "Property & Liability",
     "tier": "starter",
     "requires_gpu": True,
     "config_schema": {
         "zone": "polygon — lit area (optional: whole frame)",
         "min_luma": "float 0-255 (default 40)",
-        "lit_hours": "[start,end] hours 0-23 (default [18,6] = overnight)",
+        "lit_hours": "Scheduled hours when the area is expected to be lit, expressed as [start, end] in 24-hour time; default: [18, 6].",
     },
 }
 
@@ -32,7 +31,7 @@ class Function(MarketplaceFunction):
     def process(self, camera, frame, ts, ctx):
         import time as _t
         import cv2
-        hour = int(_t.strftime("%H", _t.gmtime(ts)))
+        hour = int(_t.strftime("%H", site_time(ts, ctx)))
         start, end = self.lit
         lit_now = (hour >= start or hour < end) if start > end else (start <= hour < end)
         if not lit_now:

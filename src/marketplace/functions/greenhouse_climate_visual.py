@@ -5,12 +5,12 @@ as a hue shift before it's obvious on a walkthrough. Early water/disease
 signal for greenhouse and nursery operators.
 """
 import numpy as np
-from marketplace.contract import MarketplaceFunction
+from marketplace.contract import site_time, MarketplaceFunction
 
 MANIFEST = {
     "id": "greenhouse-visual-health",
-    "name": "Canopy Visual Health",
-    "tagline": "The canopy yellowed 8% this week. The camera caught it before the walkthrough.",
+    "name": "Canopy Hue-Shift Watch",
+    "tagline": "Flags a change in mean canopy-zone hue from the learned baseline; inspect conditions before attributing a cause.",
     "category": "Intelligence",
     "tier": "pro",
     "requires_gpu": True,
@@ -36,7 +36,7 @@ class Function(MarketplaceFunction):
             return
         import time as _t
         import cv2
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         if tm.tm_hour != self.check_hour:
             return
         day = _t.strftime("%Y-%m-%d", tm)

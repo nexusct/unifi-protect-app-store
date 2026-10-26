@@ -1,15 +1,14 @@
-"""Forecourt Loitering — person lingering in the forecourt after close.
+"""Forecourt Dwell — tracked person presence during configured hours.
 
-After-hours person presence in the pump forecourt. C-stores deal with
-late-night forecourt hanging as a safety + shrink issue; this is the
-automated "move along" tripwire with clip evidence.
+Reports person-class dwell in the configured forecourt after operator-defined
+hours with an optional JPEG snapshot; it does not determine intent.
 """
-from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, ZoneTracker, boxes_of, in_zone
 
 MANIFEST = {
     "id": "forecourt-loiter",
-    "name": "Forecourt Loitering Watch",
-    "tagline": "Someone's been standing between the pumps for 15 minutes at 1am.",
+    "name": "Forecourt Dwell Watch",
+    "tagline": "Flags extended person dwell in configured forecourt zones during selected hours.",
     "category": "Security & Access",
     "tier": "starter",
     "requires_gpu": True,
@@ -34,7 +33,7 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("forecourt")
         if not zone:
             return
-        hour = int(_t.strftime("%H", _t.gmtime(ts)))
+        hour = int(_t.strftime("%H", site_time(ts, ctx)))
         s, e = int(self.hours[0]), int(self.hours[1])
         if not ((hour >= s or hour < e) if s > e else (s <= hour < e)):
             return
@@ -47,8 +46,8 @@ class Function(MarketplaceFunction):
                 self._alerted.add(key)
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Forecourt loitering",
-                    detail=f"Person in forecourt {(ts - st['since'])/60:.0f} min after hours on {camera['name']}.",
+                    title="Extended forecourt presence",
+                    detail=f"Person-class track remained in the forecourt for {(ts - st['since'])/60:.0f} min during configured hours on {camera['name']}; intent is not inferred.",
                     frame=frame, meta={"minutes": (ts - st["since"]) / 60})
             if not st["in"]:
                 self._alerted.discard(key)

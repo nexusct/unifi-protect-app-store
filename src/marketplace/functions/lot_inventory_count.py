@@ -5,12 +5,12 @@ sanity check against the DMS — finds moved, missing, or mis-parked stock
 before the lot manager does.
 """
 from collections import defaultdict
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "lot-inventory-count",
     "name": "Lot Inventory Count",
-    "tagline": "Row D is one car short vs the DMS. Found at 3am, not at month-end.",
+    "tagline": "Counts detected vehicles by configured lot row at the scheduled hour; DMS comparison requires a separate integration.",
     "category": "Automotive & Parking",
     "tier": "pro",
     "requires_gpu": True,
@@ -34,7 +34,7 @@ class Function(MarketplaceFunction):
         rows = (camera.get("zones") or {}).get("rows") or {}
         if not rows:
             return
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         if tm.tm_hour != self.count_hour:
             return
         day = _t.strftime("%Y-%m-%d", tm)

@@ -3,12 +3,12 @@
 Each tenant suite zone watches itself after its configured hours. Property
 managers deliver per-tenant security as an amenity — and document it.
 """
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "tenant-after-hours",
     "name": "Per-Tenant After-Hours Watch",
-    "tagline": "Suite 410's zone, suite 410's hours, suite 410's alerts.",
+    "tagline": "Applies per-tenant zones and schedules to after-hours person-detection alerts.",
     "category": "Security & Access",
     "tier": "pro",
     "requires_gpu": True,
@@ -28,7 +28,7 @@ class Function(MarketplaceFunction):
         suites = (camera.get("zones") or {}).get("suites") or {}
         if not suites:
             return
-        hour = int(_t.strftime("%H", _t.gmtime(ts)))
+        hour = int(_t.strftime("%H", site_time(ts, ctx)))
         for name, spec in suites.items():
             poly = spec.get("polygon") or spec.get("zone")
             hrs = spec.get("hours", [8, 18])

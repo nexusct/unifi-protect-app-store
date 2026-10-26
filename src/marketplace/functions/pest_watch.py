@@ -5,12 +5,12 @@ during closed hours — the rodent signature. Food-service operators get
 the alert days before the health inspector or a Yelp photo finds it.
 """
 import numpy as np
-from marketplace.contract import MarketplaceFunction
+from marketplace.contract import site_time, MarketplaceFunction
 
 MANIFEST = {
     "id": "pest-watch",
     "name": "Pest Watch (After-Hours)",
-    "tagline": "Small, fast, floor-level, 2am. You want to know.",
+    "tagline": "Flags small, fast floor-level motion in configured zones during selected hours for staff review.",
     "category": "Compliance",
     "tier": "pro",
     "requires_gpu": True,
@@ -33,7 +33,7 @@ class Function(MarketplaceFunction):
     def process(self, camera, frame, ts, ctx):
         import time as _t
         import cv2
-        hour = int(_t.strftime("%H", _t.gmtime(ts)))
+        hour = int(_t.strftime("%H", site_time(ts, ctx)))
         start, end = int(self.hours[0]), int(self.hours[1])
         active = (hour >= start or hour < end) if start > end else (start <= hour < end)
         if not active:

@@ -9,8 +9,8 @@ from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "pallet-count",
-    "name": "Pallet Count",
-    "tagline": "The floor count vs the system count — settled by camera.",
+    "name": "Staging Object Count",
+    "tagline": "Counts non-person detections within a configured size range in the staging zone; validate object classes and counts on site.",
     "category": "Manufacturing & Warehouse",
     "tier": "enterprise",
     "requires_gpu": True,
@@ -35,14 +35,14 @@ class Function(MarketplaceFunction):
             return
         count = 0
         for (cls, cx, cy, x1, y1, x2, y2, tid) in boxes_of(frame):
-            area = ((x2 - x1) * (y2 - y1)) / (frame.shape[0] * frame.shape[1])
-            if in_zone(cx, cy, zone) and self.min_a <= area <= self.max_a and cls not in ("person",):
+            area = (x2 - x1) * (y2 - y1)
+            if in_zone(cx, cy, zone) and self.min_a <= area <= self.max_a and cls != 0:
                 count += 1
         day_key = camera["id"]
         if count > self._peak[day_key]:
             self._peak[day_key] = count
             ctx.alerts.fire(
                 site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                title=f"Staging count: {count} pallets",
+                title=f"Staging object count: {count}",
                 detail=f"New peak count {count} in staging zone on {camera['name']}.",
                 frame=frame, meta={"count": count})

@@ -1,14 +1,14 @@
-"""Fuel Dock Dwell — boat camping at the fuel dock past the window.
+"""Fuel-dock large-object dwell estimate.
 
-Fuel docks are throughput businesses. A boat sitting past the fueling
-window blocks the line; the dockhand gets the alert with the dwell time.
+Flags a sufficiently large non-person detection that persists in the configured
+fuel-dock zone. Operators verify whether the detection represents a vessel.
 """
 from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
 
 MANIFEST = {
     "id": "fuel-dock-dwell",
     "name": "Fuel Dock Dwell",
-    "tagline": "That boat's been on the fuel dock 45 minutes. The line is three deep.",
+    "tagline": "Flags sustained large non-person detections in a configured fuel-dock zone; operators verify vessel presence.",
     "category": "Intelligence",
     "tier": "starter",
     "requires_gpu": True,
@@ -32,8 +32,8 @@ class Function(MarketplaceFunction):
         if not zone:
             return
         occupied = any(
-            in_zone(cx, cy, zone) and cls != "person"
-            and ((x2 - x1) * (y2 - y1)) / (frame.shape[0] * frame.shape[1]) >= self.min_area
+            in_zone(cx, cy, zone) and cls != 0
+            and (x2 - x1) * (y2 - y1) >= self.min_area
             for (cls, cx, cy, x1, y1, x2, y2, tid) in boxes_of(frame))
         key = camera["id"]
         if occupied:
@@ -41,8 +41,8 @@ class Function(MarketplaceFunction):
             if ts - self._since[key] >= self.limit:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title=f"Fuel dock occupied {(ts - self._since[key])/60:.0f} min",
-                    detail=f"Boat at fuel dock past window on {camera['name']}.",
+                    title=f"Fuel-dock object dwell {(ts - self._since[key])/60:.0f} min",
+                    detail=f"Large non-person detection persisted in the fuel-dock zone on {camera['name']}; verify vessel presence.",
                     frame=frame, meta={"minutes": (ts - self._since[key]) / 60})
                 self._since[key] = ts
         else:

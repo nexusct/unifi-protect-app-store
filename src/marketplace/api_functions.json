@@ -1,0 +1,2913 @@
+[
+  {
+    "id": "access-door-name-drift",
+    "name": "Access Door Name Drift Review",
+    "tagline": "Reports when event logs associate an already observed door ID with a different door name. The record supports configuration review without automatically renaming or modifying the door.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_inventory",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "access-all-event-burst",
+    "name": "Access Event Burst Review",
+    "tagline": "Reports when total Access event volume at one door exceeds a configurable threshold inside a rolling window, listing event-kind counts without classifying the activity as malicious or accidental.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_window",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "access-event-type-census",
+    "name": "Access Event Type Census",
+    "tagline": "Counts controller-reported Access event types by door and reporting period, preserving normalized and raw type values without inferring authorization, identity, or intent.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_aggregate",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "access-grant-denial-ratio",
+    "name": "Access Grant and Denial Ratio",
+    "tagline": "Reports aggregate granted and denied event counts and their ratio for each door and credential method. It describes controller results only and does not classify a person or attempt.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_aggregate",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": [
+        "granted",
+        "denied"
+      ]
+    }
+  },
+  {
+    "id": "access-log-delivery-lag",
+    "name": "Access Log Delivery Lag Monitor",
+    "tagline": "Measures the difference between each controller event timestamp and local receipt time, then reports sustained lag above a configured threshold without modifying the poller or controller.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "access-after-hours-unlock-report",
+    "name": "After-Hours Unlock Command Report",
+    "tagline": "Reports controller-logged unlock commands that fall outside a configured site-local schedule. It records the event for human review and never issues, cancels, or reverses an unlock.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "closed_hours": "Two site-local hours [start,end] defining the closed interval (default [20,6])."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_audit",
+      "mode": "after_hours",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": [
+        "unlock_command"
+      ]
+    }
+  },
+  {
+    "id": "access-audited-unlock-request",
+    "name": "Audited Door Unlock Request",
+    "tagline": "Accepts an explicit operator-selected door, reason, and request identifier; verifies the door allowlist and separate access-control capability; records the attempt and result; and only then submits one unlock request. It is never triggered automatically by analytics, alarms, or emergency...",
+    "category": "Security & Access",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "reason_required": "Require a non-empty operator reason for every unlock request (default true).",
+      "door_allowlist": "List of Access door IDs that this function may request to unlock; empty denies every request."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "door_unlock",
+      "runner": "access_unlock_request",
+      "control": true,
+      "profile": "audited_unlock",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "clip-export-camera-validation",
+    "name": "Clip Export Camera Validation",
+    "tagline": "Export requests whose camera ID is absent from the latest successful Protect camera discovery.",
+    "category": "Compliance",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_governance",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "clip-export-checksum-manifest",
+    "name": "Clip Export Checksum Manifest",
+    "tagline": "SHA-256, byte size, camera ID, requested interval, and local path for each completed export.",
+    "category": "Compliance",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_governance",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "clip-export-daily-manifest",
+    "name": "Clip Export Daily Manifest",
+    "tagline": "Daily manifest of requested and completed exports, including failures, intervals, paths, sizes, and checksums.",
+    "category": "Compliance",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_governance",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "clip-export-duration-cap",
+    "name": "Clip Export Duration Cap Audit",
+    "tagline": "Requested export intervals that exceed configured maximum duration and are rejected before download.",
+    "category": "Compliance",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_governance",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "clip-export-failure-digest",
+    "name": "Clip Export Failure Digest",
+    "tagline": "Daily counts of export failures grouped by camera and error class, with no invented cause.",
+    "category": "Security & Access",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_governance",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "clip-export-filename-normalizer",
+    "name": "Clip Export Filename Normalizer",
+    "tagline": "A safe local filename derived from camera ID and bounded UTC timestamps, with the original request retained separately.",
+    "category": "Compliance",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_governance",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "clip-export-integrity-probe",
+    "name": "Clip Export Integrity Probe",
+    "tagline": "Downloaded-file presence, nonzero size, and optional ffprobe container/duration results; it does not certify evidentiary authenticity.",
+    "category": "Compliance",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_governance",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "clip-export-latency-metrics",
+    "name": "Clip Export Latency Metrics",
+    "tagline": "Queue wait, HTTP download duration, byte count, and total completion time for each export.",
+    "category": "Intelligence",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_governance",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "clip-export-overlap-deduper",
+    "name": "Clip Export Overlap Deduplicator",
+    "tagline": "Requested intervals for the same camera that overlap an existing queued or completed export.",
+    "category": "Intelligence",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_governance",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "clip-export-queue",
+    "name": "Clip Export Queue",
+    "tagline": "Pending, running, completed, and failed states for bounded clip-export jobs.",
+    "category": "Intelligence",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_governance",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "clip-export-retention-pruner",
+    "name": "Clip Export Retention Pruner",
+    "tagline": "Local exported clips eligible for deletion under explicit age and count limits; each deletion is logged.",
+    "category": "Compliance",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_governance",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "clip-export-retry-ledger",
+    "name": "Clip Export Retry Ledger",
+    "tagline": "Timestamped export attempts, HTTP failures, and bounded retry decisions for each clip job.",
+    "category": "Compliance",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_governance",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "clip-export-review-thumbnail",
+    "name": "Clip Export Review Thumbnail",
+    "tagline": "One locally generated thumbnail from a completed exported clip, labeled with its actual sampled offset.",
+    "category": "Intelligence",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_postprocess",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "clip-export-index",
+    "name": "Clip Export Search Index",
+    "tagline": "Local index of exported-clip camera ID, start, end, path, byte size, and trigger type without content inference.",
+    "category": "Intelligence",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_governance",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "clip-export-storage-quota",
+    "name": "Clip Export Storage Quota Watch",
+    "tagline": "Local exported-clip bytes and file count versus configured per-camera and global quotas.",
+    "category": "Compliance",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_governance",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "closing-time-snapshot",
+    "name": "Closing-Time Snapshot",
+    "tagline": "One locally stored JPEG from the current frame at the configured closing time; no secure-state claim is made.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "snapshot_capture",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "access-credential-method-mix",
+    "name": "Credential Method Mix Summary",
+    "tagline": "Summarizes the credential methods reported with granted and denied events by door and time period. Unknown methods remain explicitly labeled rather than guessed.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_aggregate",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": [
+        "granted",
+        "denied"
+      ]
+    }
+  },
+  {
+    "id": "access-first-last-door-event",
+    "name": "Daily First and Last Door Event",
+    "tagline": "Records the first and last Access event observed for each door during a site-local day, including event kind and timestamp. It does not represent employee attendance or building occupancy.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_aggregate",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "access-door-activity-heatmap",
+    "name": "Door Activity Heatmap",
+    "tagline": "Produces hourly and day-of-week event-volume buckets for each observed Access door using controller timestamps, without treating activity volume as evidence of intent.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_aggregate",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "access-door-alarm-duration-ledger",
+    "name": "Door Alarm Duration Ledger",
+    "tagline": "Pairs a controller-reported forced-open or held-open event with the next door-closed event at the same door and records the elapsed time. Unmatched alarms remain open records rather than receiving an assumed duration.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_sequence",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": [
+        "forced_open",
+        "held_open",
+        "door_closed"
+      ]
+    }
+  },
+  {
+    "id": "access-door-alarm-recurrence",
+    "name": "Door Alarm Recurrence Summary",
+    "tagline": "Counts forced-open and held-open events per door in configurable rolling and daily windows, reporting recurrence for operator review without assigning cause or intent.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_window",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": [
+        "forced_open",
+        "held_open"
+      ]
+    }
+  },
+  {
+    "id": "access-close-confirmation-gap",
+    "name": "Door Close Event Gap Review",
+    "tagline": "Reports when no door-closed event is observed within a configured interval after a granted event or logged unlock command. It states only that confirmation was absent from the collected logs and does not assert physical door state.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_sequence",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": [
+        "forced_open",
+        "held_open",
+        "door_closed"
+      ]
+    }
+  },
+  {
+    "id": "access-doorbell-volume-summary",
+    "name": "Doorbell Event Volume Summary",
+    "tagline": "Counts controller-reported doorbell, intercom, and access-request events by door and time bucket. It does not identify the requester or determine whether a response was required.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_aggregate",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": [
+        "doorbell"
+      ]
+    }
+  },
+  {
+    "id": "access-doorbell-next-event-timing",
+    "name": "Doorbell-to-Next-Event Timing",
+    "tagline": "Measures the interval from a doorbell or access-request event to the next granted, denied, unlock-command, or closed event at the same door. The sequence is reported without claiming the later event was a response.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_sequence",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "event-pre-post-roll-clip-export",
+    "name": "Event Pre/Post-Roll Clip Export",
+    "tagline": "Clip bytes for a configurable interval before and after an event timestamp, subject to a hard duration cap.",
+    "category": "Security & Access",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "event_clip",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "snapshot-last-good-frame",
+    "name": "Last Good Frame Snapshot",
+    "tagline": "After a stream-health failure, the most recent successfully decoded frame is retained only when privacy and retention settings allow.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "snapshot_capture",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "manual-bounded-clip-export",
+    "name": "Manual Bounded Clip Export",
+    "tagline": "A user-requested camera/time range exported with mandatory start, end, and maximum-duration checks.",
+    "category": "Security & Access",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_export",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "manual-review-snapshot",
+    "name": "Manual Review Snapshot",
+    "tagline": "A user-requested JPEG of the current decoded frame with camera ID and capture time.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "snapshot_capture",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "motion-event-clip-export",
+    "name": "Motion Event Clip Export",
+    "tagline": "A bounded clip around a polled motion event, labeled as motion only and not as an incident.",
+    "category": "Security & Access",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "event_clip",
+      "mode": "event",
+      "event_types": [
+        "motion"
+      ],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "multi-camera-incident-clip-bundle",
+    "name": "Multi-Camera Clip Bundle",
+    "tagline": "Separate bounded exports from selected cameras for the same operator-supplied interval, packaged without claiming synchronization.",
+    "category": "Security & Access",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "clip_export",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "access-observed-door-roster",
+    "name": "Observed Access Door Roster",
+    "tagline": "Builds a passive roster of door IDs and names actually observed in Access event logs, including first-seen and last-seen timestamps. It is not an authoritative inventory and never changes door configuration.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_inventory",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "opening-time-snapshot",
+    "name": "Opening-Time Snapshot",
+    "tagline": "One locally stored JPEG from the current frame at the configured opening time; no condition is inferred.",
+    "category": "Retail & QSR",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "snapshot_capture",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "access-out-of-order-event-review",
+    "name": "Out-of-Order Access Event Review",
+    "tagline": "Records duplicate event IDs and event timestamps that regress relative to the per-door watermark, supporting ingestion-quality review without discarding the original controller records.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-camera-api-latency",
+    "name": "Protect Camera API Latency",
+    "tagline": "Elapsed time and success status for each camera-discovery request.",
+    "category": "Intelligence",
+    "tier": "starter",
+    "requires_gpu": false,
+    "config_schema": {
+      "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "camera_inventory",
+      "runner": "protect_inventory",
+      "control": false,
+      "profile": "camera_inventory",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-camera-count-trend",
+    "name": "Protect Camera Count Trend",
+    "tagline": "Total discovered camera records per successful poll, without inferring why the count changed.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
+      "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "camera_inventory",
+      "runner": "protect_inventory",
+      "control": false,
+      "profile": "camera_inventory",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-camera-discovery-delta",
+    "name": "Protect Camera Discovery Delta",
+    "tagline": "Camera IDs added to or absent from the latest discovery result compared with the prior successful poll.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "camera_inventory",
+      "runner": "protect_inventory",
+      "control": false,
+      "profile": "camera_inventory",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-camera-discovery-failure-log",
+    "name": "Protect Camera Discovery Failure Log",
+    "tagline": "Timestamped login, transport, HTTP, or parsing failures encountered during camera discovery.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "camera_inventory",
+      "runner": "protect_inventory",
+      "control": false,
+      "profile": "camera_inventory",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-camera-fleet-inventory",
+    "name": "Protect Camera Fleet Inventory",
+    "tagline": "Current camera ID, name, model, connection state, RTSP-enabled flag, and selected stream dimensions/FPS.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
+      "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "camera_inventory",
+      "runner": "protect_inventory",
+      "control": false,
+      "profile": "camera_inventory",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-camera-model-mix",
+    "name": "Protect Camera Model Mix",
+    "tagline": "Counts grouped by the model or type string returned for discovered cameras.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
+      "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "camera_inventory",
+      "runner": "protect_inventory",
+      "control": false,
+      "profile": "camera_inventory",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-camera-name-collision-audit",
+    "name": "Protect Camera Name Collision Audit",
+    "tagline": "Two or more discovered camera IDs sharing the same non-empty name.",
+    "category": "Compliance",
+    "tier": "starter",
+    "requires_gpu": false,
+    "config_schema": {
+      "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "camera_inventory",
+      "runner": "protect_inventory",
+      "control": false,
+      "profile": "camera_inventory",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-camera-offline-watch",
+    "name": "Protect Camera Offline Watch",
+    "tagline": "A camera state returned as anything other than CONNECTED, recorded for operator review.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "camera_inventory",
+      "runner": "protect_inventory",
+      "control": false,
+      "profile": "camera_inventory",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-camera-state-flap-log",
+    "name": "Protect Camera State Flap Log",
+    "tagline": "Repeated changes in a camera's reported state across discovery polls.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "camera_inventory",
+      "runner": "protect_inventory",
+      "control": false,
+      "profile": "camera_inventory",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-duplicate-id-audit",
+    "name": "Protect Duplicate Event ID Audit",
+    "tagline": "Repeated non-empty event IDs observed within the configured deduplication horizon.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-burst-review",
+    "name": "Protect Event Burst Review",
+    "tagline": "A configured number of events from one camera inside a short window; the record makes no claim about cause or intent.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-camera-coverage",
+    "name": "Protect Event Camera Coverage",
+    "tagline": "Which discovered camera IDs did and did not appear in the selected event window.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-camera-reference-audit",
+    "name": "Protect Event Camera Reference Audit",
+    "tagline": "Event camera references that are blank or do not match the latest discovered camera IDs.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-daily-digest",
+    "name": "Protect Event Daily Digest",
+    "tagline": "Daily per-camera totals by observed event type, plus poll-completeness metadata.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-duration-outlier",
+    "name": "Protect Event Duration Outlier Report",
+    "tagline": "Event durations outside operator-configured bounds, without assigning a cause.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-end-field-audit",
+    "name": "Protect Event End Field Audit",
+    "tagline": "Events with a malformed end timestamp or an end earlier than start; open events remain explicitly labeled.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-hourly-histogram",
+    "name": "Protect Event Hourly Histogram",
+    "tagline": "Event counts grouped by site-local hour and camera.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-ingest-lag",
+    "name": "Protect Event Ingest Lag",
+    "tagline": "Difference between local receipt time and the event start timestamp when present.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-jsonl-archive",
+    "name": "Protect Event JSONL Archive",
+    "tagline": "Append-only local JSONL copies of polled event payloads with receipt timestamps and bounded retention.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-order-anomaly",
+    "name": "Protect Event Order Anomaly",
+    "tagline": "Events returned with start timestamps older than a previously processed event beyond configured tolerance.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-page-saturation",
+    "name": "Protect Event Page Saturation Watch",
+    "tagline": "Polls returning the configured 100-row limit, indicating that paging or a shorter interval may be needed.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-poll-health",
+    "name": "Protect Event Poll Health",
+    "tagline": "Poll success, HTTP status, returned row count, and request duration.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-rate-baseline",
+    "name": "Protect Event Rate Baseline",
+    "tagline": "Rolling per-camera event counts compared with that camera's historical time-bucket baseline.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-schema-drift",
+    "name": "Protect Event Schema Drift Watch",
+    "tagline": "Added, removed, or type-changed top-level event fields compared with an accepted schema sample.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-score-distribution",
+    "name": "Protect Event Score Distribution",
+    "tagline": "Distribution of numeric event score or confidence values only for events that provide such a field.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-silence-watch",
+    "name": "Protect Event Silence Watch",
+    "tagline": "Elapsed time since the last polled event for each configured camera; silence is reported without claiming camera failure.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-start-field-audit",
+    "name": "Protect Event Start Field Audit",
+    "tagline": "Events with a missing, nonnumeric, or implausible start timestamp.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-type-inventory",
+    "name": "Protect Event Type Inventory",
+    "tagline": "Counts of raw event-type strings observed during polling.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-event-watermark-checkpoint",
+    "name": "Protect Event Watermark Checkpoint",
+    "tagline": "Last successfully processed event timestamp and the next poll watermark.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-motion-event-volume",
+    "name": "Protect Motion Event Volume",
+    "tagline": "Count of events whose type equals motion, grouped by camera and time bucket.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "threshold",
+      "event_types": [
+        "motion"
+      ],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-motion-smart-ratio",
+    "name": "Protect Motion-to-Smart Event Ratio",
+    "tagline": "Ratio of motion events to smartDetectZone events per camera and reporting window.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "digest",
+      "event_types": [
+        "motion"
+      ],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-rtsp-availability-delta",
+    "name": "Protect RTSP Availability Delta",
+    "tagline": "Changes in each camera's rtsp_enabled flag or selected RTSP/S availability across discovery polls.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "camera_inventory",
+      "runner": "protect_inventory",
+      "control": false,
+      "profile": "camera_inventory",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-rtsp-enable-audit",
+    "name": "Protect RTSP Enablement Audit",
+    "tagline": "Cameras whose canonical metadata has rtsp_enabled=false or no selected RTSP/S URL.",
+    "category": "Compliance",
+    "tier": "starter",
+    "requires_gpu": false,
+    "config_schema": {
+      "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "camera_inventory",
+      "runner": "protect_inventory",
+      "control": false,
+      "profile": "camera_inventory",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-smart-event-volume",
+    "name": "Protect Smart-Detect Event Volume",
+    "tagline": "Count of events whose type equals smartDetectZone, grouped by camera and time bucket.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "threshold",
+      "event_types": [
+        "smartDetectZone"
+      ],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-smart-detect-subtype-mix",
+    "name": "Protect Smart-Detect Subtype Mix",
+    "tagline": "Counts of smart-detect subtype labels only when those labels are present in raw event metadata.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "events",
+      "runner": "protect_event",
+      "control": false,
+      "profile": "event_metrics",
+      "mode": "digest",
+      "event_types": [
+        "smartDetectZone"
+      ],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-stream-fps-register",
+    "name": "Protect Stream FPS Register",
+    "tagline": "Selected enabled-channel FPS reported for each discovered camera.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
+      "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "camera_inventory",
+      "runner": "protect_inventory",
+      "control": false,
+      "profile": "camera_inventory",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-stream-profile-drift",
+    "name": "Protect Stream Profile Drift",
+    "tagline": "Changes in selected stream width, height, or FPS versus the last accepted camera-metadata baseline.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "camera_inventory",
+      "runner": "protect_inventory",
+      "control": false,
+      "profile": "camera_inventory",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-stream-resolution-register",
+    "name": "Protect Stream Resolution Register",
+    "tagline": "Selected enabled-channel width and height for each discovered camera.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
+      "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "camera_inventory",
+      "runner": "protect_inventory",
+      "control": false,
+      "profile": "camera_inventory",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "protect-camera-unnamed-records",
+    "name": "Protect Unnamed Camera Records",
+    "tagline": "Discovered camera records with a blank or missing name.",
+    "category": "Compliance",
+    "tier": "starter",
+    "requires_gpu": false,
+    "config_schema": {
+      "inventory_poll_seconds": "Seconds between shared Protect camera inventory refreshes (default 60)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "camera_inventory",
+      "runner": "protect_inventory",
+      "control": false,
+      "profile": "camera_inventory",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "access-remote-unlock-ledger",
+    "name": "Remote Unlock Event Ledger",
+    "tagline": "Writes a bounded audit ledger from controller-reported remote, API, or manual unlock-command events, retaining door, timestamp, event ID, and reported method while keeping actor data opt-in.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300).",
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_audit",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": [
+        "unlock_command"
+      ]
+    }
+  },
+  {
+    "id": "rtsp-aspect-ratio-drift",
+    "name": "RTSP Aspect Ratio Drift",
+    "tagline": "Decoded-frame aspect ratio changing beyond a configured tolerance.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "stream_quality",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-black-frame-rate",
+    "name": "RTSP Black Frame Rate",
+    "tagline": "Share of decoded frames whose mean luminance falls below a configured black-frame threshold.",
+    "category": "Property & Liability",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "scene_quality",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-blur-score",
+    "name": "RTSP Blur Score Monitor",
+    "tagline": "Variance-of-Laplacian sharpness score from decoded frames, reported as an image metric rather than a focus diagnosis.",
+    "category": "Property & Liability",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "scene_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-color-cast-watch",
+    "name": "RTSP Color Cast Watch",
+    "tagline": "Sustained imbalance among decoded-frame color-channel means versus a commissioned baseline.",
+    "category": "Property & Liability",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "scene_quality",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-color-flicker",
+    "name": "RTSP Color Flicker Watch",
+    "tagline": "Rapid oscillation in decoded-frame channel means above configured tolerances.",
+    "category": "Property & Liability",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "scene_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-blockiness-estimate",
+    "name": "RTSP Compression Blockiness Estimate",
+    "tagline": "Pixel-discontinuity energy along 8-pixel block boundaries relative to neighboring boundaries.",
+    "category": "Property & Liability",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "scene_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-connectivity-probe",
+    "name": "RTSP Connectivity Probe",
+    "tagline": "Whether the discovered RTSP/S stream can be opened and one frame decoded inside the timeout.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "stream_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-dark-corner-vignetting",
+    "name": "RTSP Dark-Corner Vignetting Watch",
+    "tagline": "Corner luminance falling below the central region by a configured ratio over time.",
+    "category": "Property & Liability",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "scene_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-decode-error-rate",
+    "name": "RTSP Decode Error Rate",
+    "tagline": "Failed frame reads divided by attempted reads, with transport errors kept separate.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "stream_quality",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-frame-hash-duplication",
+    "name": "RTSP Duplicate Frame Hash Report",
+    "tagline": "Percentage and longest run of repeated perceptual frame hashes in each stream window.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "stream_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-effective-fps",
+    "name": "RTSP Effective FPS Monitor",
+    "tagline": "Successfully decoded frames per elapsed second, compared with but not substituted for metadata FPS.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "stream_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-focus-zone-sharpness",
+    "name": "RTSP Focus-Zone Sharpness",
+    "tagline": "Sharpness metric calculated only inside an operator-defined region of decoded frames.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "scene_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-frame-gap-watch",
+    "name": "RTSP Frame Gap Watch",
+    "tagline": "Observed local time gaps between successfully decoded frames above a configured threshold.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "stream_quality",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-frame-size-consistency",
+    "name": "RTSP Frame Size Consistency",
+    "tagline": "Decoded-array dimensions and channel count remaining consistent across a stream session.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "stream_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-freeze-watch",
+    "name": "RTSP Freeze Watch",
+    "tagline": "A run of nearly identical decoded frames based on frame hashes; static scenes can also trigger review.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "stream_quality",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-grayscale-channel-audit",
+    "name": "RTSP Grayscale Channel Audit",
+    "tagline": "Decoded frames unexpectedly arriving with one channel or near-zero inter-channel difference.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "scene_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-noise-estimate",
+    "name": "RTSP Image Noise Estimate",
+    "tagline": "High-frequency residual energy in decoded frames, reported as an estimate without identifying sensor cause.",
+    "category": "Property & Liability",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "scene_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-letterbox-detection",
+    "name": "RTSP Letterbox Detection",
+    "tagline": "Persistent near-uniform bands along decoded-frame edges, reported as a framing metric.",
+    "category": "Property & Liability",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "scene_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-low-contrast-watch",
+    "name": "RTSP Low Contrast Watch",
+    "tagline": "Decoded-frame luminance spread below a configured threshold; fog, blank views, or lighting may contribute.",
+    "category": "Property & Liability",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "scene_quality",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-luminance-flicker",
+    "name": "RTSP Luminance Flicker Watch",
+    "tagline": "Rapid oscillation in decoded-frame mean luminance above a configured amplitude and cadence.",
+    "category": "Property & Liability",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "scene_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-overexposed-frame-rate",
+    "name": "RTSP Overexposed Frame Rate",
+    "tagline": "Share of decoded frames with a configured fraction of pixels near maximum luminance.",
+    "category": "Property & Liability",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "scene_quality",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-dead-pixel-cluster-watch",
+    "name": "RTSP Persistent Pixel Cluster Watch",
+    "tagline": "Small pixel clusters remaining extreme and unchanged across many decoded frames; scene texture can cause false positives.",
+    "category": "Property & Liability",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "scene_quality",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-reconnect-rate",
+    "name": "RTSP Reconnect Rate",
+    "tagline": "Reconnect attempts and successful recoveries per camera and time window.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "stream_quality",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-resolution-drift",
+    "name": "RTSP Resolution Drift",
+    "tagline": "Decoded-frame width or height changing from the accepted runtime baseline.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "stream_quality",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-rolling-quality-digest",
+    "name": "RTSP Rolling Quality Digest",
+    "tagline": "Time-bucket summary of decode health, frame gaps, effective FPS, luminance, contrast, and sharpness metrics.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "stream_quality",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-startup-latency",
+    "name": "RTSP Startup Latency",
+    "tagline": "Elapsed time from stream-open attempt to the first successfully decoded frame.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "stream_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "rtsp-stuck-row-column-watch",
+    "name": "RTSP Stuck Row or Column Watch",
+    "tagline": "Persistent low-variance or extreme-intensity image rows or columns in decoded frames.",
+    "category": "Property & Liability",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "scene_quality",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "scheduled-reference-snapshot",
+    "name": "Scheduled Reference Snapshot",
+    "tagline": "A JPEG captured at configured times for an operator-selected camera and retained under explicit limits.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "snapshot_capture",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "smart-event-clip-export",
+    "name": "Smart-Detect Event Clip Export",
+    "tagline": "A bounded clip around a polled smartDetectZone event, preserving any supplied subtype as unverified metadata.",
+    "category": "Security & Access",
+    "tier": "enterprise",
+    "requires_gpu": false,
+    "config_schema": {
+      "pre_seconds": "Seconds requested before an accepted event, bounded to the local export policy (default 5).",
+      "post_seconds": "Seconds requested after an accepted event, bounded to the local export policy (default 10).",
+      "max_clip_bytes": "Maximum accepted clip bytes before the export is rejected (default 104857600).",
+      "retention_days": "Maximum local evidence retention days (default 30)."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "clip_export",
+      "runner": "protect_evidence",
+      "control": false,
+      "profile": "event_clip",
+      "mode": "event",
+      "event_types": [
+        "smartDetectZone"
+      ],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "snapshot-age-index",
+    "name": "Snapshot Age Index",
+    "tagline": "Newest and oldest local snapshot timestamps per camera and function ID.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "snapshot_governance",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "snapshot-checksum-manifest",
+    "name": "Snapshot Checksum Manifest",
+    "tagline": "SHA-256, byte size, relative path, and capture metadata for retained local JPEG snapshots.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "digest_seconds": "Minimum interval between bounded aggregate records (default 900).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "snapshot_governance",
+      "mode": "digest",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "snapshot-contact-sheet",
+    "name": "Snapshot Contact Sheet",
+    "tagline": "A labeled local contact sheet assembled from recent per-camera snapshots without image interpretation.",
+    "category": "Intelligence",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "snapshot_governance",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "snapshot-filename-integrity",
+    "name": "Snapshot Filename Integrity Audit",
+    "tagline": "Local snapshot filenames and paths that do not match the safe camera-ID, function-ID, and timestamp convention.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "snapshot_governance",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "snapshot-payload-size-audit",
+    "name": "Snapshot Payload Size Audit",
+    "tagline": "Local JPEG sizes compared with the configured webhook payload cap; oversized images are reported, not sent.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "snapshot_governance",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "snapshot-privacy-suppression-audit",
+    "name": "Snapshot Privacy Suppression Audit",
+    "tagline": "Counts of snapshot requests suppressed because the camera is configured with privacy_mode=skeleton.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "snapshot_governance",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "snapshot-retention-audit",
+    "name": "Snapshot Retention Audit",
+    "tagline": "Local snapshot files older than configured retention or exceeding the configured file-count limit.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "snapshot_governance",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "snapshot-storage-budget-watch",
+    "name": "Snapshot Storage Budget Watch",
+    "tagline": "Total bytes and file count consumed by the local snapshot directory versus configured budgets.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "event_threshold": "Number of matching observations required in the bounded window (default 3).",
+      "threshold_window_seconds": "Bounded threshold window in seconds (default 300).",
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "snapshot_governance",
+      "mode": "threshold",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "snapshot-write-health",
+    "name": "Snapshot Write Health",
+    "tagline": "JPEG encode/write success, resulting path, and error class for attempted local snapshots.",
+    "category": "Security & Access",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "snapshot_governance",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "snapshot-zone-crop",
+    "name": "Snapshot Zone Crop",
+    "tagline": "A local JPEG cropped to an operator-defined polygon bounding box, with the crop coordinates recorded.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": true,
+    "config_schema": {
+      "sample_interval_seconds": "Minimum seconds between sampled decoded frames (default 30).",
+      "alert_threshold": "Profile-specific numeric threshold; commission against the installed camera and scene."
+    },
+    "api": {
+      "surface": "protect",
+      "primitive": "rtsp_stream",
+      "runner": "protect_stream",
+      "control": false,
+      "profile": "snapshot_capture",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "access-unclassified-event-review",
+    "name": "Unclassified Access Event Review",
+    "tagline": "Collects raw event types that the shared Access classifier maps to other, with bounded samples and counts for compatibility review. It never upgrades an unknown event to a grant or denial.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  },
+  {
+    "id": "access-unreported-method-review",
+    "name": "Unreported Credential Method Review",
+    "tagline": "Reports granted or denied events whose credential method is absent or cannot be normalized, preserving the raw method fields without guessing a badge, mobile, PIN, QR, or other method.",
+    "category": "Compliance",
+    "tier": "pro",
+    "requires_gpu": false,
+    "config_schema": {
+      "door_id": "Optional Access door ID or exact door name; unset accepts events from every configured door.",
+      "event_window_seconds": "Maximum age in seconds for a normalized controller event to be considered (default 300)."
+    },
+    "api": {
+      "surface": "access",
+      "primitive": "developer_logs",
+      "runner": "access_event",
+      "control": false,
+      "profile": "log_quality",
+      "mode": "event",
+      "event_types": [],
+      "smart_types": [],
+      "event_kinds": []
+    }
+  }
+]

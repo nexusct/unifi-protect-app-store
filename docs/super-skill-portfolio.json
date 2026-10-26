@@ -1,0 +1,534 @@
+{
+  "schema": "nexus.marketplace-portfolio-audit/v1",
+  "audited_at": "2026-08-29",
+  "baseline": {
+    "active_functions": 100,
+    "source_archive_contracts": 271,
+    "active_ids_sha256": "a830061a1abd7c47017b63bd740111ded4eb86c9c1ef3a25a87b3debcd5c9bda"
+  },
+  "retired": [
+    {
+      "id": "mandated-camera-check",
+      "reason": "Duplicates camera-tamper and estate-level scene-health checks; its first-frame baseline is too narrow for a standalone product."
+    },
+    {
+      "id": "protect-camera-discovery-failure-log",
+      "reason": "Low-level discovery telemetry is consolidated into vision-estate-health."
+    },
+    {
+      "id": "protect-event-poll-health",
+      "reason": "Low-level poll telemetry is consolidated into vision-estate-health."
+    },
+    {
+      "id": "rtsp-decode-error-rate",
+      "reason": "A raw stream metric better presented as one fleet maintenance priority."
+    },
+    {
+      "id": "rtsp-frame-gap-watch",
+      "reason": "Overlaps connectivity, freeze, and quality analysis and is consolidated into vision-estate-health."
+    },
+    {
+      "id": "rtsp-rolling-quality-digest",
+      "reason": "A bundle of low-level stream metrics superseded by an explainable fleet-health workflow."
+    },
+    {
+      "id": "snapshot-last-good-frame",
+      "reason": "An incident-support implementation detail rather than a distinct buyer outcome."
+    },
+    {
+      "id": "protect-camera-unnamed-records",
+      "reason": "Configuration hygiene with little standalone commercial value."
+    },
+    {
+      "id": "protect-event-camera-reference-audit",
+      "reason": "Reference hygiene belongs in estate readiness, not a separate SKU."
+    },
+    {
+      "id": "clip-export-daily-manifest",
+      "reason": "A reporting derivative of existing checksum, integrity, and index capabilities."
+    },
+    {
+      "id": "clip-export-queue",
+      "reason": "Internal export job state rather than a customer outcome."
+    },
+    {
+      "id": "motion-event-clip-export",
+      "reason": "Duplicates retained generic and smart-event pre/post-roll export functions."
+    },
+    {
+      "id": "floor-water-change-review",
+      "reason": "Blue-excess and reflection heuristics are too lighting- and material-sensitive to support a water-oriented SKU."
+    },
+    {
+      "id": "unusual-motion-baseline",
+      "reason": "Global frame-difference energy is noise-prone and is superseded by zone- and schedule-conditioned baselining."
+    },
+    {
+      "id": "hallway-overnight",
+      "reason": "A vertical preset of retained after-hours person detection."
+    },
+    {
+      "id": "forecourt-loiter",
+      "reason": "A vertical preset of retained loitering analytics."
+    },
+    {
+      "id": "laundromat-overnight",
+      "reason": "A narrow preset of retained after-hours and loitering functions."
+    },
+    {
+      "id": "magnet-crane-exclusion",
+      "reason": "Near-duplicate of crane-exclusion without observing crane or magnet state."
+    },
+    {
+      "id": "splash-pad-capacity",
+      "reason": "A narrow duplicate of retained crowd and occupancy counting."
+    },
+    {
+      "id": "machine-monopoly",
+      "reason": "Generic zone dwell without evidence of machine use or availability."
+    },
+    {
+      "id": "child-safety-zone",
+      "reason": "Bounding-box height is an unreliable age proxy and creates avoidable claim risk."
+    },
+    {
+      "id": "aggression-posture",
+      "reason": "Raised-arm motion cannot reliably establish aggression or intent."
+    },
+    {
+      "id": "vehicle-attribute-log",
+      "reason": "Arbitrary domain-label logging lacks a bounded operational workflow."
+    },
+    {
+      "id": "assembly-stage-order-review",
+      "reason": "A camera-global sequence is superseded by a per-track configurable cycle-step workflow."
+    },
+    {
+      "id": "curbside-arrival",
+      "reason": "Arrival-only detection is superseded by an end-to-end handoff timer."
+    }
+  ],
+  "super_skills": [
+    {
+      "id": "secured-exit-approach-review",
+      "name": "Secured Exit Approach Review",
+      "category": "Healthcare & Senior Living",
+      "tier": "pro",
+      "workflow": "secured_exit",
+      "source_refs": [
+        "axis-object",
+        "axis-entry"
+      ],
+      "rationale": "Combines sustained approach, direction and optional Access context without identity or intent claims."
+    },
+    {
+      "id": "room-exit-sequence-review",
+      "name": "Room Exit Sequence Review",
+      "category": "Healthcare & Senior Living",
+      "tier": "enterprise",
+      "workflow": "room_exit_sequence",
+      "source_refs": [
+        "axis-object",
+        "avigilon"
+      ],
+      "rationale": "Correlates anonymous room-zone progression and defaults to review-only, skeleton-compatible evidence."
+    },
+    {
+      "id": "mobility-aid-egress-obstruction",
+      "name": "Mobility-Aid Egress Obstruction Review",
+      "category": "Healthcare & Senior Living",
+      "tier": "pro",
+      "workflow": "mobility_obstruction",
+      "source_refs": [
+        "axis-object",
+        "iqsight-buildings"
+      ],
+      "rationale": "Uses required customer-supplied mobility-aid weights and fails silently when unavailable."
+    },
+    {
+      "id": "controlled-room-two-person-review",
+      "name": "Controlled-Room Person-Count Review",
+      "category": "Healthcare & Senior Living",
+      "tier": "enterprise",
+      "workflow": "controlled_room_count",
+      "source_refs": [
+        "axis-entry",
+        "genetec"
+      ],
+      "rationale": "Correlates Access grants with observed anonymous doorway crossings and presence counts."
+    },
+    {
+      "id": "care-area-occupancy-imbalance",
+      "name": "Care-Area Occupancy Imbalance",
+      "category": "Healthcare & Senior Living",
+      "tier": "pro",
+      "workflow": "occupancy_imbalance",
+      "source_refs": [
+        "axis-object",
+        "genetec-crowd"
+      ],
+      "rationale": "Compares sustained anonymous occupancy between configured care zones without asserting staffing adequacy."
+    },
+    {
+      "id": "waiting-room-flow-ledger",
+      "name": "Waiting-Room Flow Ledger",
+      "category": "Healthcare & Senior Living",
+      "tier": "pro",
+      "workflow": "waiting_flow",
+      "source_refs": [
+        "axis-object",
+        "genetec-crowd"
+      ],
+      "rationale": "Measures anonymous arrival, waiting, service and exit transitions with bounded wait and abandonment summaries."
+    },
+    {
+      "id": "vision-estate-health",
+      "name": "Vision Estate Health",
+      "category": "Security & Access",
+      "tier": "enterprise",
+      "workflow": "estate_health",
+      "source_refs": [
+        "avigilon",
+        "genetec"
+      ],
+      "rationale": "Consolidates camera, stream, image, event-reference and detector-readiness signals into maintenance priorities."
+    },
+    {
+      "id": "perimeter-event-verifier",
+      "name": "Perimeter Event Verifier",
+      "category": "Security & Access",
+      "tier": "pro",
+      "workflow": "perimeter_verify",
+      "source_refs": [
+        "axis-object",
+        "avigilon"
+      ],
+      "rationale": "Correlates controller events with object class, boundary direction, dwell and schedule before review escalation."
+    },
+    {
+      "id": "multi-zone-intrusion-progression",
+      "name": "Multi-Zone Intrusion Progression Review",
+      "category": "Security & Access",
+      "tier": "enterprise",
+      "workflow": "intrusion_progression",
+      "source_refs": [
+        "axis-object",
+        "genetec"
+      ],
+      "rationale": "Records anonymous perimeter-to-yard-to-doorway progression without biometric re-identification or intent claims."
+    },
+    {
+      "id": "package-room-chain-review",
+      "name": "Package-Room Chain Review",
+      "category": "Security & Access",
+      "tier": "enterprise",
+      "workflow": "package_chain",
+      "source_refs": [
+        "avigilon",
+        "genetec"
+      ],
+      "rationale": "Links Access context and package-count changes using mandatory domain weights and bounded chain state."
+    },
+    {
+      "id": "after-hours-multi-camera-corroboration",
+      "name": "After-Hours Multi-Camera Corroboration",
+      "category": "Security & Access",
+      "tier": "enterprise",
+      "workflow": "multi_camera_corroboration",
+      "source_refs": [
+        "axis-object",
+        "avigilon"
+      ],
+      "rationale": "Escalates only when distinct cameras observe compatible anonymous classes within a bounded window."
+    },
+    {
+      "id": "door-alarm-observed-response-timer",
+      "name": "Door Alarm Observed Response Timer",
+      "category": "Security & Access",
+      "tier": "enterprise",
+      "workflow": "door_response",
+      "source_refs": [
+        "axis-entry",
+        "genetec"
+      ],
+      "rationale": "Measures controller alarm-to-observed-arrival and close timing without identifying responders or asserting resolution."
+    },
+    {
+      "id": "anonymous-zone-funnel",
+      "name": "Anonymous Zone Funnel",
+      "category": "Retail & QSR",
+      "tier": "pro",
+      "workflow": "zone_funnel",
+      "source_refs": [
+        "axis-retail",
+        "hanwha-retail"
+      ],
+      "rationale": "Aggregates ephemeral entrance-to-checkout progression, dwell and drop-off without identity or cross-visit recognition."
+    },
+    {
+      "id": "queue-service-rate-digest",
+      "name": "Queue Service Rate Digest",
+      "category": "Retail & QSR",
+      "tier": "pro",
+      "workflow": "queue_service",
+      "source_refs": [
+        "axis-retail",
+        "hanwha-retail"
+      ],
+      "rationale": "Combines arrival rate, wait percentiles, service throughput, abandonment and backlog trend."
+    },
+    {
+      "id": "curbside-handoff-timer",
+      "name": "Curbside Handoff Timer",
+      "category": "Retail & QSR",
+      "tier": "pro",
+      "workflow": "curbside_handoff",
+      "source_refs": [
+        "axis-retail",
+        "axis-object"
+      ],
+      "rationale": "Measures arrival, first approach, handoff-zone overlap and departure rather than stopping at arrival."
+    },
+    {
+      "id": "drive-thru-lane-balance",
+      "name": "Drive-Thru Lane Balance",
+      "category": "Retail & QSR",
+      "tier": "enterprise",
+      "workflow": "lane_balance",
+      "source_refs": [
+        "axis-object",
+        "hanwha-retail"
+      ],
+      "rationale": "Compares queue depth, dwell and throughput across two configured lanes."
+    },
+    {
+      "id": "table-reset-delay-review",
+      "name": "Table Reset Delay Review",
+      "category": "Retail & QSR",
+      "tier": "pro",
+      "workflow": "table_reset",
+      "source_refs": [
+        "axis-retail",
+        "axis-object"
+      ],
+      "rationale": "Uses vacancy, service approach and bounded scene change to report reset-cycle delays without employee scoring."
+    },
+    {
+      "id": "high-traffic-service-trigger",
+      "name": "High-Traffic Service Trigger",
+      "category": "Retail & QSR",
+      "tier": "pro",
+      "workflow": "traffic_trigger",
+      "source_refs": [
+        "axis-object",
+        "hanwha-retail"
+      ],
+      "rationale": "Creates inspection or replenishment triggers from anonymous traffic counts without claiming cleanliness or completion."
+    },
+    {
+      "id": "dock-stage-turnaround",
+      "name": "Dock Stage Turnaround",
+      "category": "Manufacturing & Warehouse",
+      "tier": "pro",
+      "workflow": "dock_turnaround",
+      "source_refs": [
+        "axis-object",
+        "hanwha-factory"
+      ],
+      "rationale": "Measures vehicle progression through arrival, staging, dock and departure with per-stage dwell."
+    },
+    {
+      "id": "dock-apron-conflict-review",
+      "name": "Dock Apron Conflict Review",
+      "category": "Manufacturing & Warehouse",
+      "tier": "enterprise",
+      "workflow": "trajectory_conflict",
+      "source_refs": [
+        "iqsight-traffic",
+        "hanwha-factory"
+      ],
+      "rationale": "Uses calibrated person/vehicle trajectory convergence and separation as review evidence, not a near-miss determination."
+    },
+    {
+      "id": "forklift-route-deviation-review",
+      "name": "Forklift Route Deviation Review",
+      "category": "Manufacturing & Warehouse",
+      "tier": "enterprise",
+      "workflow": "domain_route",
+      "source_refs": [
+        "hanwha-factory",
+        "axis-object"
+      ],
+      "rationale": "Requires forklift weights and compares tracks with configured corridors and direction rules."
+    },
+    {
+      "id": "aisle-blockage-duration-review",
+      "name": "Aisle Blockage Duration Review",
+      "category": "Manufacturing & Warehouse",
+      "tier": "pro",
+      "workflow": "persistent_obstruction",
+      "source_refs": [
+        "axis-object",
+        "iqsight-buildings"
+      ],
+      "rationale": "Reports persistent object overlap and duration in aisle and emergency-access zones."
+    },
+    {
+      "id": "cycle-step-timer",
+      "name": "Cycle Step Timer",
+      "category": "Manufacturing & Warehouse",
+      "tier": "enterprise",
+      "workflow": "domain_sequence",
+      "source_refs": [
+        "axis-object",
+        "hanwha-factory"
+      ],
+      "rationale": "Measures per-track configured workcell stage timing and skipped or overlong observed steps."
+    },
+    {
+      "id": "yard-queue-bottleneck-digest",
+      "name": "Yard Queue Bottleneck Digest",
+      "category": "Manufacturing & Warehouse",
+      "tier": "pro",
+      "workflow": "yard_queue",
+      "source_refs": [
+        "axis-object",
+        "hanwha-factory"
+      ],
+      "rationale": "Combines arrival, queue growth, staging dwell, dock release and spillback into one digest."
+    },
+    {
+      "id": "multi-class-flow-ledger",
+      "name": "Multi-Class Flow Ledger",
+      "category": "Intelligence",
+      "tier": "pro",
+      "workflow": "multi_class_flow",
+      "source_refs": [
+        "axis-object",
+        "iqsight-traffic",
+        "verkada-occupancy"
+      ],
+      "rationale": "Produces scheduled directional counts by supported object class with bounded summaries."
+    },
+    {
+      "id": "anonymous-space-utilization-percentiles",
+      "name": "Anonymous Space Utilization Percentiles",
+      "category": "Intelligence",
+      "tier": "pro",
+      "workflow": "space_utilization",
+      "source_refs": [
+        "axis-object",
+        "genetec-crowd",
+        "verkada-occupancy"
+      ],
+      "rationale": "Reports bounded occupancy, dwell, turnover and utilization percentiles without visitor identity."
+    },
+    {
+      "id": "route-completion-ledger",
+      "name": "Route Completion Ledger",
+      "category": "Intelligence",
+      "tier": "pro",
+      "workflow": "route_completion",
+      "source_refs": [
+        "axis-object",
+        "genetec"
+      ],
+      "rationale": "Measures anonymous same-session checkpoint progression and completion without identifying the person."
+    },
+    {
+      "id": "zone-activity-schedule-baseline",
+      "name": "Zone Activity Schedule Baseline",
+      "category": "Intelligence",
+      "tier": "pro",
+      "workflow": "schedule_baseline",
+      "source_refs": [
+        "avigilon",
+        "axis-object"
+      ],
+      "rationale": "Learns time-of-week count and motion ranges and reports sustained observed deviations after training."
+    },
+    {
+      "id": "shift-change-flow-review",
+      "name": "Shift Change Flow Review",
+      "category": "Intelligence",
+      "tier": "pro",
+      "workflow": "shift_flow",
+      "source_refs": [
+        "axis-object",
+        "iqsight-traffic"
+      ],
+      "rationale": "Summarizes congestion, direction, queueing and person/vehicle overlap during configured shift windows."
+    },
+    {
+      "id": "exception-evidence-casebook",
+      "name": "Exception Evidence Casebook",
+      "category": "Intelligence",
+      "tier": "enterprise",
+      "workflow": "evidence_casebook",
+      "source_refs": [
+        "avigilon",
+        "genetec"
+      ],
+      "rationale": "Creates bounded local incident records linking controller events, observed counts, checksums and review context."
+    }
+  ],
+  "outcome": {
+    "retained_functions": 75,
+    "super_skills": 30,
+    "active_functions": 105,
+    "source_archive_contracts": 301
+  },
+  "sources": {
+    "axis-object": {
+      "title": "AXIS Object Analytics scenarios",
+      "url": "https://www.axis.com/products/axis-object-analytics/scenarios"
+    },
+    "axis-retail": {
+      "title": "Axis retail optimization",
+      "url": "https://www.axis.com/insights/topics/retail-optimization"
+    },
+    "axis-entry": {
+      "title": "AXIS Camera Station Secure Entry",
+      "url": "https://www.axis.com/en-us/products/axis-camera-station-secure-entry"
+    },
+    "hanwha-retail": {
+      "title": "Hanwha Vision Retail & Business AI Pack",
+      "url": "https://www.hanwhavision.com/global/news-events/article/1588310"
+    },
+    "hanwha-factory": {
+      "title": "Hanwha Vision factory and safety analytics",
+      "url": "https://www.hanwhavision.com/global/news-events/article/1574355"
+    },
+    "avigilon": {
+      "title": "Avigilon video analytics",
+      "url": "https://www.avigilon.com/analytics"
+    },
+    "genetec": {
+      "title": "Genetec Security Center",
+      "url": "https://www.genetec.com/products/unified-security/security-center"
+    },
+    "genetec-crowd": {
+      "title": "Genetec crowd estimation",
+      "url": "https://www.genetec.com/blog/products/crowd-estimation-keeping-count-with-video-analytics"
+    },
+    "verkada-occupancy": {
+      "title": "Verkada Occupancy Trends dashboard",
+      "url": "https://www.verkada.com/blog/new-occupancy-trends-dashboard/"
+    },
+    "iqsight-traffic": {
+      "title": "IQSIGHT IVA Pro Traffic",
+      "url": "https://www.iqsight.com/en/products/video-analytics/iva-pro-traffic/mvc-iva-tra"
+    },
+    "iqsight-buildings": {
+      "title": "IQSIGHT IVA Pro Buildings",
+      "url": "https://www.iqsight.com/en/products/video-analytics/iva-pro-buildings/mvc-iva-bld"
+    }
+  },
+  "guardrails": [
+    "No face recognition, biometric identity, emotion inference, or cross-visit identity.",
+    "Outputs describe observed evidence for human review; they are not legal, clinical, life-safety, or intent determinations.",
+    "Domain-model workflows fail silently when required weights are missing or unreadable.",
+    "Resident-room workflows remain compatible with skeleton privacy mode and snapshot suppression.",
+    "No super skill controls a door, vehicle, production machine, or life-safety system."
+  ]
+}

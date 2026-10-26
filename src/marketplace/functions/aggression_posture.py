@@ -1,16 +1,14 @@
-"""Aggression Posture — raised-arms / erratic-motion escalation cue.
+"""Raised-arm and high-motion pose signal.
 
-Pose keypoints: both wrists above shoulders + high keypoint velocity =
-the pre-assault posture signature. Early-warning for ER waiting rooms,
-classrooms, and front counters — seconds of notice before an incident.
+Flags both wrists above the shoulders with high keypoint displacement. The
+signal does not establish aggression, intent, or whether an incident will occur.
 """
-from collections import defaultdict
-from marketplace.contract import MarketplaceFunction, model
+from marketplace.contract import MarketplaceFunction, poses_of
 
 MANIFEST = {
     "id": "aggression-posture",
-    "name": "Aggression Early-Warning",
-    "tagline": "Arms up, movements erratic — staff get seconds of warning.",
+    "name": "Raised-Arm Motion Review",
+    "tagline": "Flags a sustained raised-arm, high-motion pose signature for calibrated staff review; it does not predict violence.",
     "category": "People & Safety",
     "tier": "enterprise",
     "requires_gpu": True,
@@ -26,44 +24,64 @@ class Function(MarketplaceFunction):
         super().__init__(settings)
         self.conf = float(self.settings.get("confidence", 0.5))
         self.hold = float(self.settings.get("sustain_seconds", 2.5))
-        self._model = None
         self._prev_kps = {}
-        self._since = defaultdict(float)
+        self._since = {}
+
+    def _process_signals(self, camera, frame, ts, ctx, signals):
+        camera_id = camera["id"]
+        seen = set()
+        for track_id, flagged in signals:
+            key = (camera_id, track_id)
+            seen.add(key)
+            if not flagged:
+                self._since.pop(key, None)
+                continue
+            self._since.setdefault(key, ts)
+            held = ts - self._since[key]
+            if held < self.hold:
+                continue
+            delivered = ctx.alerts.fire(
+                site=ctx.site,
+                camera=camera,
+                detector=MANIFEST["id"],
+                title="Raised-arm high-motion signature observed",
+                detail=(
+                    f"One tracked raised-arm pose showed high keypoint displacement "
+                    f"for {held:.1f}s on {camera['name']}; review the frame."
+                ),
+                frame=frame,
+                meta={"track": track_id, "sustain_s": held},
+            )
+            if delivered:
+                self._since[key] = ts
+        for key in list(self._since):
+            if key[0] == camera_id and key not in seen:
+                self._since.pop(key, None)
 
     def process(self, camera, frame, ts, ctx):
-        import os
-        if self._model is None:
-            self._model = model("yolov8n-pose.pt", os.environ.get("VISION_DEVICE", "cuda"))
-        res = self._model(frame, verbose=False, conf=self.conf)[0]
-        if res.keypoints is None or not len(res.keypoints.xy):
-            return
-        flagged = False
-        for i, kps in enumerate(res.keypoints.data.cpu().numpy()):
+        import numpy as np
+
+        camera_id = camera["id"]
+        signals = []
+        seen = set()
+        for track_id, _cx, _cy, _x1, _y1, _x2, _y2, kps in poses_of(
+            frame,
+            conf=self.conf,
+            tracking_scope=(camera_id, MANIFEST["id"]),
+        ):
+            key = (camera_id, track_id)
+            seen.add(key)
             lw, rw, ls, rs = kps[9], kps[10], kps[5], kps[6]
-            if min(lw[2], rw[2], ls[2], rs[2]) < 0.3:
-                continue
-            arms_up = lw[1] < ls[1] and rw[1] < rs[1]  # wrists above shoulders
-            if not arms_up:
-                continue
-            prev = self._prev_kps.get(i)
-            vel = 0.0
-            if prev is not None:
-                import numpy as np
-                vel = float(np.mean(np.abs(kps[:, :2] - prev[:, :2])))
-            self._prev_kps[i] = kps
-            if vel > 12:  # px/frame erratic-motion proxy
-                flagged = True
-                break
-        key = camera["id"]
-        if flagged:
-            if not self._since.get(key):
-                self._since[key] = ts
-            if ts - self._since[key] >= self.hold:
-                ctx.alerts.fire(
-                    site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Escalation posture detected",
-                    detail=f"Raised-arms erratic-motion signature on {camera['name']} for {ts - self._since[key]:.1f}s.",
-                    frame=frame, meta={"sustain_s": ts - self._since[key]})
-                self._since[key] = 0
-        else:
-            self._since[key] = 0
+            valid = min(lw[2], rw[2], ls[2], rs[2]) >= 0.3
+            arms_up = valid and lw[1] < ls[1] and rw[1] < rs[1]
+            previous = self._prev_kps.get(key)
+            velocity = 0.0
+            if previous is not None:
+                velocity = float(np.mean(np.abs(kps[:, :2] - previous[:, :2])))
+            self._prev_kps[key] = kps
+            signals.append((track_id, bool(arms_up and velocity > 12)))
+
+        for key in list(self._prev_kps):
+            if key[0] == camera_id and key not in seen:
+                self._prev_kps.pop(key, None)
+        self._process_signals(camera, frame, ts, ctx, signals)

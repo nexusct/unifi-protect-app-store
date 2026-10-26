@@ -1,20 +1,16 @@
-"""Gate Tailgate (storage) — two vehicles through the gate on one code.
-
-Vehicle crossing the gate line twice within the open window = tailgating
-entry. Self-storage delinquency and auction-theft both start at the gate.
-"""
+"""Rapid successive vehicle crossings at a configured gate line."""
 from marketplace.contract import MarketplaceFunction, boxes_of, crossed_line
 
 MANIFEST = {
     "id": "gate-tailgate-storage",
-    "name": "Storage Gate Tailgate",
-    "tagline": "One code, two cars. The gate camera saw it.",
+    "name": "Rapid Gate-Crossing Review",
+    "tagline": "Flags a second tracked vehicle crossing the configured gate line within the review window; it does not associate crossings with an access code.",
     "category": "Security & Access",
     "tier": "starter",
     "requires_gpu": True,
     "config_schema": {
-        "line": "2-point gate crossing line",
-        "window_seconds": "int — second-crossing window (default 8)",
+        "line": "Two-point gate crossing line.",
+        "window_seconds": "Seconds in which a second vehicle crossing triggers review (default 8).",
     },
 }
 
@@ -44,7 +40,7 @@ class Function(MarketplaceFunction):
                 if self._crossings:
                     ctx.alerts.fire(
                         site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                        title="Gate tailgate entry",
+                        title="Rapid successive gate crossings",
                         detail=f"Second vehicle through the gate within {self.window:.0f}s on {camera['name']}.",
                         frame=frame, meta={"track": tid})
                 self._crossings.append(ts)

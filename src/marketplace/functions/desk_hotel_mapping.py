@@ -5,12 +5,12 @@ workplace team. Lease-renewal and floor-plan decisions with real numbers
 instead of badge-swipe guesses.
 """
 from collections import defaultdict
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "desk-hotel-mapping",
     "name": "Desk Utilization Map",
-    "tagline": "Row 4 sits empty every day. Row 1 is full by 9. Now you can prove it.",
+    "tagline": "Summarizes observed desk-zone occupancy patterns by location and time window.",
     "category": "Intelligence",
     "tier": "pro",
     "requires_gpu": True,
@@ -41,7 +41,7 @@ class Function(MarketplaceFunction):
                 if in_zone(cx, cy, poly):
                     self._occ[name] += max(dt, 0)
                     break
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         day = _t.strftime("%Y-%m-%d", tm)
         if tm.tm_hour == self.digest_hour and self._last_day != day and self._occ:
             total = sum(self._occ.values())

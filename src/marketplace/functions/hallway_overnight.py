@@ -1,15 +1,14 @@
-"""Hallway Overnight — person in a storage hallway after office hours.
+"""After-hours hallway person-presence signal.
 
-Interior corridor presence after close. Finds both the break-in and the
-tenant quietly living in their unit (a real, documented self-storage
-problem with legal exposure).
+Flags person detections in the configured corridor during selected hours. It
+does not determine identity, authorization, tenancy, or intent.
 """
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "hallway-overnight",
     "name": "Hallway Overnight Presence",
-    "tagline": "Someone is in building C at 2am. Tenant, thief, or resident — you need to know which.",
+    "tagline": "Flags person detections in configured building areas during selected after-hours for staff review.",
     "category": "Security & Access",
     "tier": "starter",
     "requires_gpu": True,
@@ -31,7 +30,7 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("hallway")
         if not zone:
             return
-        hour = int(_t.strftime("%H", _t.gmtime(ts)))
+        hour = int(_t.strftime("%H", site_time(ts, ctx)))
         s, e = int(self.hours[0]), int(self.hours[1])
         if not ((hour >= s or hour < e) if s > e else (s <= hour < e)):
             return

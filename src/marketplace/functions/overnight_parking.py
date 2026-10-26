@@ -4,12 +4,12 @@ Municipal lots, retail lots, trailhead lots: vehicle present during
 posted no-overnight hours = log + alert. Parking enforcement and property
 management both bill this as a service.
 """
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "overnight-parking",
     "name": "Overnight Parking Watch",
-    "tagline": "Posted no overnight parking. There's a van. It's 2am. Documented.",
+    "tagline": "Flags vehicles that remain in configured parking zones during selected restricted hours.",
     "category": "Automotive & Parking",
     "tier": "starter",
     "requires_gpu": True,
@@ -33,7 +33,7 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("lot")
         if not zone:
             return
-        hour = int(_t.strftime("%H", _t.gmtime(ts)))
+        hour = int(_t.strftime("%H", site_time(ts, ctx)))
         s, e = int(self.hours[0]), int(self.hours[1])
         closed = (hour >= s or hour < e) if s > e else (s <= hour < e)
         if not closed:

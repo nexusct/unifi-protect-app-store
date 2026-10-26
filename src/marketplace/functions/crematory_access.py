@@ -1,19 +1,15 @@
-"""Crematory Access Log — every entry to the restricted crematory zone.
-
-Restricted-area access with timestamps and clips. Crematory compliance
-requires strict access control; this produces the access log as evidence.
-"""
+"""Restricted-zone entry log for a configured approach."""
 from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
 
 MANIFEST = {
     "id": "crematory-access",
-    "name": "Crematory Access Log",
-    "tagline": "Every entry to the crematory, timestamped, with a clip. The log writes itself.",
+    "name": "Restricted-Zone Entry Log",
+    "tagline": "Logs detected person entries to a configured restricted approach with timestamps and local alert snapshots for review.",
     "category": "Compliance",
     "tier": "enterprise",
     "requires_gpu": True,
     "config_schema": {
-        "zone": "polygon — crematory door approach",
+        "zone": "Polygon for the restricted door approach to monitor.",
     },
 }
 
@@ -34,6 +30,6 @@ class Function(MarketplaceFunction):
             if entered:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Crematory zone entry",
-                    detail=f"Person entered crematory approach on {camera['name']}.",
+                    title="Restricted-zone entry",
+                    detail=f"Detected person entered the configured restricted approach on {camera['name']}.",
                     frame=frame, meta={"track": tid})

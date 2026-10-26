@@ -1,23 +1,22 @@
-"""Service Response Time — alert-to-staff-arrival measurement.
+"""Service Response Time — elapsed time between configured zone signals.
 
-Pair a trigger zone (service call button area, help point, queue spike)
-with a staff-arrival zone: measures how long until a staff member reaches
-the trigger after a customer event. The response-time KPI hospitals,
-retailers, and hotels all claim but few measure.
+Starts timing while a person-class detection is present in a trigger zone and
+reports elapsed time when a person-class detection also appears in the arrival
+zone. The signal does not determine identity, role, or service completion.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "service-response-time",
     "name": "Service Response Time",
-    "tagline": "Customer needed help at 2:04:12. Staff arrived 2:07:48. Measured, every time.",
+    "tagline": "Measures elapsed time between person-class detections in configured trigger and arrival zones for operational review.",
     "category": "Intelligence",
     "tier": "enterprise",
     "requires_gpu": True,
     "config_schema": {
-        "trigger_zone": "polygon — customer trigger point",
-        "staff_zone": "polygon — where staff arrive",
-        "target_seconds": "int — SLA target (default 180)",
+        "trigger_zone": "polygon — timing trigger area",
+        "staff_zone": "polygon — timing arrival area",
+        "target_seconds": "Response-time review threshold in seconds (default: 180).",
     },
 }
 
@@ -38,12 +37,14 @@ class Function(MarketplaceFunction):
         staff_arrived = any(in_zone(cx, cy, staff) for (_, cx, cy, *_r) in boxes)
         if customer_waiting and self._triggered is None:
             self._triggered = ts
-        if self._triggered and staff_arrived:
+        elif not customer_waiting:
+            self._triggered = None
+        if self._triggered is not None and staff_arrived:
             response = ts - self._triggered
             self._triggered = None
             over = response > self.target
             ctx.alerts.fire(
                 site=ctx.site, camera=camera, detector=MANIFEST["id"],
                 title=f"Response {response:.0f}s {'(OVER TARGET)' if over else '(on target)'}",
-                detail=f"Customer-to-staff response {response:.0f}s vs {self.target:.0f}s target on {camera['name']}.",
+                detail=f"Trigger-zone to arrival-zone detection interval {response:.0f}s vs {self.target:.0f}s review threshold on {camera['name']}.",
                 frame=None, meta={"response_s": response, "target_s": self.target, "over": over})

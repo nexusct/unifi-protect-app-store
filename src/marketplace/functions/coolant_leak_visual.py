@@ -9,8 +9,8 @@ from marketplace.contract import MarketplaceFunction
 
 MANIFEST = {
     "id": "coolant-leak-visual",
-    "name": "Leak Pooling Watch",
-    "tagline": "The puddle under the CRAC unit, caught when it was a mop job.",
+    "name": "Dark Floor-Region Change",
+    "tagline": "Flags growth in dark pixels relative to a learned floor-zone baseline; inspect for leaks, shadows, or scene changes.",
     "category": "Property & Liability",
     "tier": "pro",
     "requires_gpu": True,

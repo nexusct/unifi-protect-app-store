@@ -1,22 +1,17 @@
-"""Machine Idle Watch — visual OEE from activity energy.
-
-Measures motion energy inside each machine's region. Active machine =
-constant motion; idle = flat. Emits per-shift utilization percentages —
-the OEE input plants normally buy sensors for.
-"""
+"""Machine-zone motion-energy summary from frame differences."""
 import numpy as np
 from marketplace.contract import MarketplaceFunction
 
 MANIFEST = {
     "id": "machine-idle",
-    "name": "Machine Idle Watch",
-    "tagline": "Which machines actually ran this shift — from video, not sensors.",
+    "name": "Machine-Zone Motion-Energy Summary",
+    "tagline": "Estimates the share of analyzed frames with motion above a calibrated threshold in each configured machine zone; it does not verify machine operation.",
     "category": "Manufacturing & Warehouse",
     "tier": "enterprise",
     "requires_gpu": True,
     "config_schema": {
-        "machines": "map of machine-name → polygon",
-        "motion_threshold": "float — active energy level (default 0.02)",
+        "machines": "Map of machine-zone names to normalized polygons.",
+        "motion_threshold": "Frame-difference energy threshold for high-motion classification (default 0.02).",
     },
 }
 
@@ -57,6 +52,6 @@ class Function(MarketplaceFunction):
                 pct = 100 * self._active.get(key, 0) / total
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title=f"{name}: {pct:.0f}% active this period",
-                    detail=f"Machine {name} on {camera['name']} utilization {pct:.0f}%.",
-                    frame=None, meta={"machine": name, "utilization_pct": round(pct, 1)})
+                    title=f"{name}: {pct:.0f}% high-motion frames",
+                    detail=f"Configured zone {name} on {camera['name']} exceeded the motion-energy threshold in {pct:.0f}% of analyzed frames.",
+                    frame=None, meta={"machine": name, "high_motion_pct": round(pct, 1)})

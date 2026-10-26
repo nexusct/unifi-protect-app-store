@@ -9,7 +9,7 @@ from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 MANIFEST = {
     "id": "service-lane-cycle",
     "name": "Service Lane Cycle Time",
-    "tagline": "Average write-up-to-exit: 3h 12m today. The OEM scorecard knows — now you do too.",
+    "tagline": "Measures tracked vehicle time between configured service-lane entry and exit zones.",
     "category": "Automotive & Parking",
     "tier": "pro",
     "requires_gpu": True,

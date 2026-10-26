@@ -9,7 +9,7 @@ from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_
 MANIFEST = {
     "id": "gate-cycle-time",
     "name": "Gate Cycle Time",
-    "tagline": "2:40 average at the inbound gate. Peak hours hit 7 minutes. Now it's measured.",
+    "tagline": "Measures configured vehicle dwell in the gate lane and flags cycles above the set threshold.",
     "category": "Manufacturing & Warehouse",
     "tier": "pro",
     "requires_gpu": True,

@@ -1,14 +1,14 @@
-"""Conveyor Jam — object stationary on a conveyor zone.
+"""Conveyor stalled-object review.
 
-A moving conveyor means boxes never sit still. Any object stationary in
-the belt zone beyond the threshold = jam or blockage alert.
+Flags a tracked non-person detection that remains nearly stationary in the
+configured belt zone. Operators verify whether a jam or blockage exists.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "conveyor-jam",
-    "name": "Conveyor Jam Detector",
-    "tagline": "A box that stops moving on the belt is a jam. Now you know in seconds.",
+    "name": "Conveyor Stalled-Object Review",
+    "tagline": "Flags a tracked non-person object that remains nearly stationary in the belt zone beyond the configured threshold; operators verify a jam.",
     "category": "Manufacturing & Warehouse",
     "tier": "pro",
     "requires_gpu": True,
@@ -31,7 +31,7 @@ class Function(MarketplaceFunction):
         if not zone:
             return
         for (cls, cx, cy, *rest, tid) in boxes_of(frame):
-            if tid is None or not in_zone(cx, cy, zone) or cls == "person":
+            if tid is None or not in_zone(cx, cy, zone) or cls == 0:
                 continue
             prev = self._prev.get(tid)
             self._prev[tid] = (cx, cy, ts)

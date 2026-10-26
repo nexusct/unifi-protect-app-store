@@ -1,16 +1,15 @@
-"""Visitor Badge Check — floor presence without the badge color patch.
+"""Configured badge-color signature check.
 
-Dispensary/back-office visitor compliance: person in the controlled zone
-whose chest region lacks the badge/lanyard color signature. Regulated
-facilities get cited for unbadged visitors — this produces the patrol.
+Flags when the configured color signature is not observed in an upper-body
+crop. The heuristic does not determine badge, visitor, or authorization status.
 """
 import numpy as np
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import MarketplaceFunction, boxes_of, in_zone, pixel_box
 
 MANIFEST = {
     "id": "visitor-badge-check",
-    "name": "Visitor Badge Check",
-    "tagline": "No badge patch on the sales floor. Flagged in real time.",
+    "name": "Badge Color-Signature Check",
+    "tagline": "Flags people whose upper-body region lacks a calibrated badge-color signature; verify detections and delivery latency during commissioning.",
     "category": "Compliance",
     "tier": "pro",
     "requires_gpu": True,
@@ -40,8 +39,11 @@ class Function(MarketplaceFunction):
             if tid is None or not in_zone(cx, cy, zone) or ts - self._flagged.get(tid, 0) < 300:
                 continue
             # chest patch: upper third of bbox, center half width
-            py1, py2 = int(y1 + (y2 - y1) * 0.15), int(y1 + (y2 - y1) * 0.45)
-            px1, px2 = int(x1 + (x2 - x1) * 0.3), int(x1 + (x2 - x1) * 0.7)
+            bx1, by1, bx2, by2 = pixel_box(frame, x1, y1, x2, y2)
+            py1 = int(by1 + (by2 - by1) * 0.15)
+            py2 = int(by1 + (by2 - by1) * 0.45)
+            px1 = int(bx1 + (bx2 - bx1) * 0.3)
+            px2 = int(bx1 + (bx2 - bx1) * 0.7)
             patch = hsv[py1:py2, px1:px2]
             if patch.size == 0:
                 continue
@@ -51,6 +53,6 @@ class Function(MarketplaceFunction):
                 self._flagged[tid] = ts
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Unbadged person in controlled zone",
-                    detail=f"Person lacks badge color signature on {camera['name']} (ratio {ratio:.3f}).",
+                    title="Badge-color signature not observed",
+                    detail=f"Configured color coverage measured {ratio:.3f} in the upper-body crop on {camera['name']}; verify badge status manually.",
                     frame=frame, meta={"ratio": round(ratio, 4)})

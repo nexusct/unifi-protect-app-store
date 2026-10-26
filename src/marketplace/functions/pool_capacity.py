@@ -1,15 +1,14 @@
-"""Pool Capacity — bather load vs posted limit.
+"""Pool-area person count vs configured review threshold.
 
-Counts persons in the pool zone against the posted bather load. Over-limit
-fires a front-desk alert. Hotel/apartment pools carry real liability —
-occupancy proof matters at claim time.
+Counts person detections in a configured pool/deck zone. The estimate does
+not establish actual occupancy or compliance with a posted limit.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "pool-capacity",
-    "name": "Pool Bather Load",
-    "tagline": "Over posted capacity at the pool, documented and alerted.",
+    "name": "Pool-Area Person Count",
+    "tagline": "Counts detected people in a calibrated pool and deck zone and flags sustained counts above a configured review threshold.",
     "category": "People & Safety",
     "tier": "starter",
     "requires_gpu": True,
@@ -39,8 +38,8 @@ class Function(MarketplaceFunction):
             if ts - self._since[key] >= self.hold:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title=f"Pool at {count} (limit {self.max_n})",
-                    detail=f"Bather load {count} over posted limit on {camera['name']}.",
+                    title=f"Pool-area count estimate {count} (review threshold {self.max_n})",
+                    detail=f"Detected-person count {count} exceeded the configured review threshold on {camera['name']}; verify manually.",
                     frame=frame, meta={"count": count})
                 self._since[key] = ts
         else:

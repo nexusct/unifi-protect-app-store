@@ -10,7 +10,7 @@ from marketplace.contract import MarketplaceFunction, boxes_of, crossed_line
 MANIFEST = {
     "id": "footfall-counter",
     "name": "Footfall & Occupancy Counter",
-    "tagline": "Real door counts and live occupancy, from the camera you already own.",
+    "tagline": "Estimated entry counts and live occupancy from a calibrated camera view.",
     "category": "Retail & QSR",
     "tier": "starter",
     "requires_gpu": True,

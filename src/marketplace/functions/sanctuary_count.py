@@ -4,12 +4,12 @@ Person-count peak in the sanctuary zone during each configured service
 window. Churches track attendance for planning and reporting; this
 automates the clicker.
 """
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "sanctuary-count",
     "name": "Service Attendance Count",
-    "tagline": "9am: 212. 11am: 347. The attendance report writes itself.",
+    "tagline": "Counts detected people in the configured sanctuary zone during service windows.",
     "category": "Intelligence",
     "tier": "starter",
     "requires_gpu": True,
@@ -32,7 +32,7 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("sanctuary")
         if not zone:
             return
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         count = sum(1 for (_, cx, cy, *_r) in boxes_of(frame, classes=[0]) if in_zone(cx, cy, zone))
         for i, w in enumerate(self.windows):
             s, e = int(w[0]), int(w[1])

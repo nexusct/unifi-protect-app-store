@@ -1,14 +1,12 @@
-"""Detector 1: fall detection via pose keypoints (senior living common areas).
+"""Detector 1: possible-fall posture signal via pose keypoints.
 
 Approach: YOLO pose keypoints → torso angle (shoulder-to-hip vector vs
-vertical). Torso near-horizontal sustained for floor_angle_seconds while
-the person's bbox is in the lower frame region = fall event. Skeleton-only;
-no identity, no face, frames not retained beyond the alert snapshot when
-the camera is privacy_mode: skeleton.
+vertical). A near-horizontal torso sustained for the configured duration is a
+human-review signal, not a fall determination. No identity or face analysis is
+performed. Skeleton-mode cameras do not retain alert snapshots.
 """
-import time
-
-from detectors.base import Detector, get_model, register
+from detectors.base import Detector, register
+from marketplace.contract import poses_of
 
 
 @register
@@ -19,19 +17,14 @@ class FallDetector(Detector):
         super().__init__(settings)
         self.conf = float(self.settings.get("confidence", 0.55))
         self.hold_seconds = float(self.settings.get("floor_angle_seconds", 2.0))
-        self._horizontal_since = {}  # camera_id -> ts
-        self._model = None
-
-    def _pose(self, frame):
-        if self._model is None:
-            self._model = get_model("yolov8n-pose.pt")
-        return self._model(frame, verbose=False, conf=self.conf)[0]
+        self._horizontal_since = {}  # (camera_id, track_id) -> ts
 
     @staticmethod
     def _torso_angle(kps) -> float | None:
         """Degrees from vertical for the shoulder-hip vector. 0=upright, 90=flat."""
         try:
             import math
+
             ls, rs, lh, rh = kps[5], kps[6], kps[11], kps[12]
             if min(ls[2], rs[2], lh[2], rh[2]) < 0.3:
                 return None
@@ -44,29 +37,46 @@ class FallDetector(Detector):
         except Exception:
             return None
 
-    def process(self, camera, frame, ts, ctx):
-        res = self._pose(frame)
-        angle = None
-        if res.keypoints is not None and len(res.keypoints.xy):
-            for kps in res.keypoints.data.cpu().numpy():
-                a = self._torso_angle(kps)
-                if a is not None:
-                    angle = a
-                    break
-
-        horizontal = angle is not None and angle > 60
-        key = camera["id"]
-        if horizontal:
+    def _process_angles(self, camera, frame, ts, ctx, angles):
+        camera_id = camera["id"]
+        seen = set()
+        for track_id, angle in angles:
+            key = (camera_id, track_id)
+            seen.add(key)
+            if angle is None or angle <= 60:
+                self._horizontal_since.pop(key, None)
+                continue
             self._horizontal_since.setdefault(key, ts)
             held = ts - self._horizontal_since[key]
-            if held >= self.hold_seconds:
-                ctx.alerts.fire(
-                    site=ctx.site, camera=camera, detector=self.name,
-                    title="Possible fall detected",
-                    detail=f"Person horizontal for {held:.0f}s on {camera['name']}. Torso angle {angle:.0f}°.",
-                    frame=None if camera.get("privacy_mode") == "skeleton" else frame,
-                    meta={"torso_angle": angle, "held_seconds": held},
-                )
-                self._horizontal_since[key] = ts  # re-arm via alert dedup window
-        else:
-            self._horizontal_since.pop(key, None)
+            if held < self.hold_seconds:
+                continue
+            delivered = ctx.alerts.fire(
+                site=ctx.site,
+                camera=camera,
+                detector=self.name,
+                title="Possible fall posture signal",
+                detail=(
+                    f"Tracked person posture remained near-horizontal for {held:.0f}s "
+                    f"on {camera['name']} (torso angle {angle:.0f}°); review promptly."
+                ),
+                frame=None if camera.get("privacy_mode") == "skeleton" else frame,
+                meta={"track": track_id, "torso_angle": angle, "held_seconds": held},
+            )
+            if delivered:
+                self._horizontal_since[key] = ts
+
+        for key in list(self._horizontal_since):
+            if key[0] == camera_id and key not in seen:
+                self._horizontal_since.pop(key, None)
+
+    def process(self, camera, frame, ts, ctx):
+        angles = []
+        for track_id, _cx, _cy, _x1, _y1, _x2, _y2, keypoints in poses_of(
+            frame,
+            conf=self.conf,
+            tracking_scope=(camera["id"], self.name),
+        ):
+            angle = self._torso_angle(keypoints)
+            if angle is not None:
+                angles.append((track_id, angle))
+        self._process_angles(camera, frame, ts, ctx, angles)

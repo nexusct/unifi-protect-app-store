@@ -1,23 +1,21 @@
-"""Hand Hygiene Compliance — sink-stop before zone entry.
+"""Sink-zone visit sequence check.
 
-Person enters a protected zone (kitchen line, patient room) — did their
-track visit the sink/sanitizer zone within the prior window? No stop =
-compliance gap. Healthcare surveyors and food-safety auditors both ask
-for exactly this evidence.
+Checks whether the same visual track was recently observed in the configured
+sink zone before protected-zone entry. It does not verify handwashing.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "hand-hygiene",
-    "name": "Hand Hygiene Compliance",
-    "tagline": "Entered the kitchen without the sink stop. Logged.",
+    "name": "Sink-Stop Sequence Check",
+    "tagline": "Flags protected-zone entry when the same track was not recently observed in the configured sink zone; it does not verify handwashing.",
     "category": "Compliance",
     "tier": "enterprise",
     "requires_gpu": True,
     "config_schema": {
         "sink_zone": "polygon — handwash/sanitizer station",
         "protected_zone": "polygon — kitchen line / patient room",
-        "window_seconds": "int — sink-within window (default 120)",
+        "window_seconds": "Maximum time between an observed station-zone visit and protected-zone entry (default: 120 seconds).",
     },
 }
 
@@ -43,7 +41,7 @@ class Function(MarketplaceFunction):
                 if last_sink is None or ts - last_sink > self.window:
                     ctx.alerts.fire(
                         site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                        title="Hygiene gap: no sink stop",
-                        detail=f"Person entered protected zone on {camera['name']} without a sink visit in {self.window:.0f}s.",
+                        title="Sink-zone visit not observed",
+                        detail=f"A person track entered the protected zone on {camera['name']}; the same track was not observed in the sink zone during the prior {self.window:.0f}s. Review required.",
                         frame=frame, meta={"track": tid})
                     self._sink_visits[tid] = ts  # don't spam per frame

@@ -1,16 +1,15 @@
 """Vehicle Damage Scan — per-stall daily diff for dealerships/rental.
 
-Each stall's vehicle is compared day-over-day; a significant structural
-change flags possible new damage. Lot-liability disputes ("it was already
-scratched") end with dated frame pairs.
+Compares the current stall crop with the in-memory prior scan and reports a
+significant visual difference for review. It does not determine damage or fault.
 """
 import numpy as np
-from marketplace.contract import MarketplaceFunction
+from marketplace.contract import site_time, MarketplaceFunction
 
 MANIFEST = {
     "id": "vehicle-damage-scan",
-    "name": "Vehicle Damage Scan",
-    "tagline": "New scratch on a lot vehicle? Dated before/after frames settle it.",
+    "name": "Vehicle-Stall Change Review",
+    "tagline": "Flags day-over-day grayscale changes in a configured stall for human review; it does not identify scratches or determine responsibility.",
     "category": "Automotive & Parking",
     "tier": "pro",
     "requires_gpu": True,
@@ -36,8 +35,8 @@ class Function(MarketplaceFunction):
         stalls = (camera.get("zones") or {}).get("stalls") or {}
         if not stalls:
             return
-        hour = int(_t.strftime("%H", _t.gmtime(ts)))
-        day = _t.strftime("%Y-%m-%d", _t.gmtime(ts))
+        hour = int(_t.strftime("%H", site_time(ts, ctx)))
+        day = _t.strftime("%Y-%m-%d", site_time(ts, ctx))
         if hour != self.scan_hour:
             return
         h, w = frame.shape[:2]

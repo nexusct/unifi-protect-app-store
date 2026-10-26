@@ -1,21 +1,21 @@
-"""Pool Drowning Watch — person motionless in the water zone.
+"""Pool Low-Movement Review — limited tracked movement in a water zone.
 
-Person enters the water zone then stops moving beyond the threshold.
-Distinct from pool capacity: this is the distress signature. Hotels, gyms,
-multi-family, schools — the worst-case scenario function.
+Reports when a person-class track shows limited frame-to-frame image-space
+movement for the configured duration. This proxy cannot diagnose distress and
+does not replace lifeguards, supervision, or emergency procedures.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "pool-drowning-watch",
-    "name": "Pool Distress Watch",
-    "tagline": "Motionless in the water for 20 seconds. This is the call that matters.",
+    "name": "Pool Stillness Review",
+    "tagline": "Flags a tracked person with limited image-space movement in the water zone; requires calibration, lifeguard review, and established emergency procedures.",
     "category": "People & Safety",
     "tier": "enterprise",
     "requires_gpu": True,
     "config_schema": {
         "zone": "polygon — water only (not deck)",
-        "still_seconds": "int (default 20)",
+        "still_seconds": "Low-movement review threshold in seconds (default: 20); calibrate and test for each view.",
     },
 }
 
@@ -44,8 +44,8 @@ class Function(MarketplaceFunction):
                 if ts - self._still_since[tid] >= self.limit:
                     ctx.alerts.fire(
                         site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                        title="POSSIBLE POOL DISTRESS",
-                        detail=f"Person motionless in water zone {ts - self._still_since[tid]:.0f}s on {camera['name']}.",
+                        title="Low tracked movement in pool zone",
+                        detail=f"Person-class track showed limited image-space movement in the water zone for {ts - self._still_since[tid]:.0f}s on {camera['name']}; review immediately under site procedures.",
                         frame=frame, meta={"still_s": ts - self._still_since[tid]})
                     self._still_since[tid] = ts
             else:

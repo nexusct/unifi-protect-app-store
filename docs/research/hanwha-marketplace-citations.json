@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://www.hanwhavision.com/wp-content/uploads/2024/07/HanwhaVision_OpenPlatform_Programming_Guide_5.00.pdf",
+      "title": "Hanwha Vision Open Platform Programming Guide v5.00",
+      "accessed": "2026-08-17"
+    },
+    {
+      "id": 2,
+      "url": "https://www.hanwhavision.com/us/products/software",
+      "title": "Hanwha Vision Software Catalog",
+      "accessed": "2026-08-17"
+    },
+    {
+      "id": 3,
+      "url": "https://api.www.hanwhavision.com/user-portal/product/category-sub/gate?categoryId=software&regionCode=us",
+      "title": "Hanwha Vision Software Category Gate API",
+      "accessed": "2026-08-17"
+    },
+    {
+      "id": 4,
+      "url": "https://api.www.hanwhavision.com/user-portal/product?categoryId=software&regionCode=us&limit=100&page=1&sort=newest",
+      "title": "Hanwha Vision US Software Product Catalog API",
+      "accessed": "2026-08-17"
+    },
+    {
+      "id": 5,
+      "url": "https://www.hanwhavision.com/us/products/product-details/AIA-C01BLK",
+      "title": "AIA-C01BLK Blocked Exit Detection",
+      "accessed": "2026-08-17"
+    },
+    {
+      "id": 6,
+      "url": "https://www.hanwhavision.com/us/products/product-details/AIA-C01TRF",
+      "title": "AIA-C01TRF AI Traffic Pack",
+      "accessed": "2026-08-17"
+    },
+    {
+      "id": 7,
+      "url": "https://www.hanwhavision.com/us/products/product-details/AIA-C01RET",
+      "title": "AIA-C01RET Retail and Business AI Pack",
+      "accessed": "2026-08-17"
+    },
+    {
+      "id": 8,
+      "url": "https://www.hanwhavision.com/us/products/product-details/AIA-C01FAC",
+      "title": "AIA-C01FAC Factory and Safety Pack",
+      "accessed": "2026-08-17"
+    },
+    {
+      "id": 9,
+      "url": "https://www.hanwhavision.com/us/products/product-details/Wisenet-WAVE-AI-Plugin",
+      "title": "Wisenet WAVE AI Analytics Plugin",
+      "accessed": "2026-08-17"
+    },
+    {
+      "id": 10,
+      "url": "https://www.hanwhavision.com/us/products/product-details/Low-Speed-LPR-Application",
+      "title": "Low-Speed LPR Application",
+      "accessed": "2026-08-17"
+    },
+    {
+      "id": 11,
+      "url": "https://www.hanwhavision.com/us/products/product-details/Wisenet-Road-AI-Application",
+      "title": "Wisenet Road AI Application",
+      "accessed": "2026-08-17"
+    },
+    {
+      "id": 12,
+      "url": "https://www.hanwhavision.com/us/products/product-details/Face-Mask-Detection-Application-OP-A2FMD-01",
+      "title": "Face Mask Detection Application OP-A2FMD-01",
+      "accessed": "2026-08-17"
+    },
+    {
+      "id": 13,
+      "url": "https://web.archive.org/web/20250526130955/https://hanwhavisionamerica.com/software/wisenet-open-platform-applications/?product-page=1",
+      "title": "Archived Hanwha Wisenet Open Platform Applications, page 1",
+      "accessed": "2026-08-17"
+    },
+    {
+      "id": 14,
+      "url": "https://web.archive.org/web/20250526022013/https://hanwhavisionamerica.com/software/wisenet-open-platform-applications/?product-page=2",
+      "title": "Archived Hanwha Wisenet Open Platform Applications, page 2",
+      "accessed": "2026-08-17"
+    }
+  ]
+}

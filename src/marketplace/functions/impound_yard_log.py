@@ -1,15 +1,14 @@
-"""Impound Yard Log — vehicle in/out with timestamps (tow yards).
+"""Impound-yard vehicle line-crossing log.
 
-Every vehicle crossing the yard line gets logged with direction + time.
-Impound billing disputes ("my car was only there 6 hours") settle with
-the camera log, not the argument.
+Records observed vehicle-track crossings with direction and time for review.
+The visual log does not establish billing facts or replace authoritative records.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, crossed_line
 
 MANIFEST = {
     "id": "impound-yard-log",
     "name": "Impound Yard In/Out Log",
-    "tagline": "In at 2:14pm Tuesday, out at 9:03am Thursday. Billing stops arguing.",
+    "tagline": "Records observed vehicle entry and exit times at configured impound-yard zones for billing review.",
     "category": "Automotive & Parking",
     "tier": "starter",
     "requires_gpu": True,

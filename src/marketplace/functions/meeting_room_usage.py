@@ -1,16 +1,15 @@
-"""Meeting Room Usage — actual occupancy vs the booking lie.
+"""Meeting Room Presence Estimate.
 
-Counts persons per meeting-room zone and logs occupied minutes per room
-per day. Ends "every room is booked but they're all empty" — CRE and
-workplace teams make space decisions on this.
+Accumulates sampled time when person-class detections appear in configured
+room zones. Reservation comparison requires a separate data integration.
 """
 from collections import defaultdict
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "meeting-room-usage",
-    "name": "Meeting Room Reality",
-    "tagline": "Booked solid on the calendar. Empty since Tuesday. Measured.",
+    "name": "Meeting Room Presence Estimate",
+    "tagline": "Estimates sampled person-presence time in configured meeting-room zones; no reservation data is used.",
     "category": "Intelligence",
     "tier": "starter",
     "requires_gpu": True,
@@ -40,14 +39,14 @@ class Function(MarketplaceFunction):
         for name, poly in rooms.items():
             if any(in_zone(cx, cy, poly) for (_, cx, cy, *_r) in boxes):
                 self._occ[name] += max(dt, 0)
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         day = _t.strftime("%Y-%m-%d", tm)
         if tm.tm_hour == self.digest_hour and self._last_day != day and self._occ:
             lines = sorted(self._occ.items(), key=lambda x: x[1], reverse=True)
             ctx.alerts.fire(
                 site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                title="Meeting room usage today",
-                detail=" | ".join(f"{n}: {v/60:.0f} min occupied" for n, v in lines),
+                title="Meeting-room presence estimate",
+                detail=" | ".join(f"{n}: {v/60:.0f} sampled min with person detections" for n, v in lines),
                 frame=None, meta={"occupied_min": {n: round(v / 60, 1) for n, v in lines}})
             self._occ.clear()
             self._last_day = day

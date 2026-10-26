@@ -9,8 +9,8 @@ from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 MANIFEST = {
     "id": "cart-path-violation",
     "name": "Cart Path Violation",
-    "tagline": "Cart-path-only day. Cart on the fairway at 14. Photo attached.",
-    "category": "Compliance",
+    "tagline": "Flags a tracked cart-class detection in the configured protected-turf zone when the function is enabled; saves a local alert snapshot.",
+    "category": "Property & Liability",
     "tier": "starter",
     "requires_gpu": True,
     "config_schema": {

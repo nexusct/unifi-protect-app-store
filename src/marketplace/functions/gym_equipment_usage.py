@@ -5,13 +5,13 @@ day. The data behind "do we buy another leg press or another rower" and
 capex justification for gym operators.
 """
 from collections import defaultdict
-from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, ZoneTracker, boxes_of, in_zone
 
 MANIFEST = {
     "id": "gym-equipment-usage",
     "name": "Equipment Usage Analytics",
-    "tagline": "The leg press gets 4.2 hours a day. The ab machine gets 11 minutes.",
-    "category": "People & Safety",
+    "tagline": "Estimates occupied time for configured equipment zones and emits a daily summary.",
+    "category": "Intelligence",
     "tier": "starter",
     "requires_gpu": True,
     "config_schema": {
@@ -44,7 +44,7 @@ class Function(MarketplaceFunction):
                 _, _, st = self._tracker.update((camera["id"], name, tid), in_zone(cx, cy, poly), ts)
                 if st["in"]:
                     self._usage[name] += dt
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         day = _t.strftime("%Y-%m-%d", tm)
         if tm.tm_hour == self.digest_hour and self._last_day != day and self._usage:
             top = sorted(self._usage.items(), key=lambda x: x[1], reverse=True)

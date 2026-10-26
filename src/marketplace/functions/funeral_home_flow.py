@@ -1,15 +1,15 @@
-"""Visitation Flow — visitation-room occupancy during scheduled visitations.
+"""Visitation Flow — tracked zone entries during configured windows.
 
-Occupancy minutes per visitation window, logged per room. Funeral homes
-document service delivery for families and plan staff for large services.
+Counts distinct tracker IDs observed in a configured room zone. Tracker IDs
+are camera-session artifacts and must not be interpreted as unique people.
 """
 from collections import defaultdict
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "funeral-home-flow",
     "name": "Visitation Room Flow",
-    "tagline": "The Johnson visitation ran 3 hours with 140 visitors. Documented for the family.",
+    "tagline": "Counts tracked entries into a configured visitation-room zone during scheduled windows.",
     "category": "Intelligence",
     "tier": "starter",
     "requires_gpu": True,
@@ -32,7 +32,7 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("visitation")
         if not zone:
             return
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         for i, w in enumerate(self.windows):
             s, e = int(w[0]), int(w[1])
             key = f"{tm.tm_year}-{tm.tm_yday}-{i}"
@@ -44,6 +44,6 @@ class Function(MarketplaceFunction):
                 self._reported.add(key)
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title=f"Visitation: {len(self._visitors[key])} visitors",
-                    detail=f"{len(self._visitors[key])} unique visitors during the {s}:00 window on {camera['name']}.",
-                    frame=None, meta={"visitors": len(self._visitors[key]), "window": [s, e]})
+                    title=f"Visitation window: {len(self._visitors[key])} distinct track IDs",
+                    detail=f"Observed {len(self._visitors[key])} distinct tracker IDs in the room zone during the {s}:00 window on {camera['name']}; this is not a unique-person count.",
+                    frame=None, meta={"track_ids": len(self._visitors[key]), "window": [s, e]})

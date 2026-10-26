@@ -4,12 +4,12 @@ Person in the ATM zone past a dwell limit during closed hours, or a
 second person hovering during a transaction (shoulder-surf pattern).
 Banks and credit unions buy this for cardholder safety + liability.
 """
-from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, ZoneTracker, boxes_of, in_zone
 
 MANIFEST = {
     "id": "atm-vestibule-watch",
     "name": "ATM Vestibule Watch",
-    "tagline": "Two people, one transaction, 1am. The branch sees it live.",
+    "tagline": "Flags overlapping person detections in a configured ATM vestibule for branch-security review.",
     "category": "Security & Access",
     "tier": "pro",
     "requires_gpu": True,
@@ -34,7 +34,7 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("atm")
         if not zone:
             return
-        hour = int(_t.strftime("%H", _t.gmtime(ts)))
+        hour = int(_t.strftime("%H", site_time(ts, ctx)))
         s, e = int(self.hours[0]), int(self.hours[1])
         closed = (hour >= s or hour < e) if s > e else (s <= hour < e)
         boxes = [b for b in boxes_of(frame, classes=[0]) if in_zone(b[1], b[2], zone)]

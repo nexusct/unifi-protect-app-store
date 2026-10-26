@@ -1,15 +1,14 @@
-"""Change Machine Watch — long dwell + repeated motion at the machine.
+"""Change-machine zone dwell watch.
 
-Break-in attempts on change machines have a signature: one person, long
-dwell, repeated jerky motion at the machine face. Not proof — a heads-up
-with a clip before the machine is emptied or opened.
+Flags extended person-track dwell in the configured approach zone. It does
+not determine tampering or intent and can attach an optional JPEG snapshot.
 """
 from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
 
 MANIFEST = {
     "id": "change-machine-watch",
     "name": "Change Machine Watch",
-    "tagline": "Twenty minutes at the change machine at 4am. That's not laundry.",
+    "tagline": "Flags extended person dwell at a configured change-machine zone during selected hours.",
     "category": "Security & Access",
     "tier": "starter",
     "requires_gpu": True,

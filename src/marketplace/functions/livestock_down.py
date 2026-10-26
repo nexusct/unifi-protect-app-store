@@ -1,23 +1,17 @@
-"""Livestock Down — animal motionless/down posture in the pen zone.
-
-Person-class won't catch cattle, but the motion-signature will: a
-large-blob region in the pen that goes still past the threshold = downer
-check alert. Dairy and feedlot operators lose animals to late discovery.
-"""
+"""Pen motion watch using a calibrated low-motion threshold."""
 import numpy as np
 from marketplace.contract import MarketplaceFunction
 
 MANIFEST = {
     "id": "livestock-down",
-    "name": "Livestock Down Alert",
-    "tagline": "The downer in pen 6, found at 2am instead of the morning round.",
+    "name": "Pen Motion Watch",
+    "tagline": "Flags prolonged low motion in a configured pen for human inspection; it does not identify a down animal.",
     "category": "People & Safety",
     "tier": "pro",
     "requires_gpu": True,
     "config_schema": {
         "zone": "polygon — pen area",
         "still_minutes": "int (default 45)",
-        "min_blob_ratio": "float — animal-sized blob (default 0.02)",
     },
 }
 
@@ -26,7 +20,6 @@ class Function(MarketplaceFunction):
     def __init__(self, settings):
         super().__init__(settings)
         self.limit = float(self.settings.get("still_minutes", 45)) * 60
-        self.min_blob = float(self.settings.get("min_blob_ratio", 0.02))
         self._prev = None
         self._still_since = {}
 
@@ -48,13 +41,13 @@ class Function(MarketplaceFunction):
         motion_ratio = float(np.count_nonzero(diff)) / diff.size
         self._prev = gray
         key = camera["id"]
-        if motion_ratio < 0.002:  # pen essentially still — but is there a large body present?
+        if motion_ratio < 0.002:
             self._still_since.setdefault(key, ts)
             if ts - self._still_since[key] >= self.limit:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Pen motionless — possible downer",
-                    detail=f"No movement in pen zone for {(ts - self._still_since[key])/60:.0f} min on {camera['name']}.",
+                    title="Low pen motion",
+                    detail=f"Low movement in the configured pen zone for {(ts - self._still_since[key])/60:.0f} min on {camera['name']}.",
                     frame=frame, meta={"still_min": (ts - self._still_since[key]) / 60})
                 self._still_since[key] = ts
         else:

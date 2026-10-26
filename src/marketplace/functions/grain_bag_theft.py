@@ -1,15 +1,15 @@
 """Supply Theft Watch — supply-zone presence outside work windows.
 
 Feed, seed, chemical, and parts storage zones watched outside chore
-windows. Rural supply theft is routine and rarely documented — this logs
-every approach with a clip.
+windows. The function reports observed approaches for review and can attach a
+JPEG snapshot; it does not determine theft or intent.
 """
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "supply-theft-watch",
-    "name": "Supply Zone Theft Watch",
-    "tagline": "Someone at the chemical shed at 11pm. Clip saved, phone pinged.",
+    "name": "After-Hours Supply-Zone Activity",
+    "tagline": "Flags person presence in the configured supply zone outside work hours and saves a local alert snapshot.",
     "category": "Security & Access",
     "tier": "starter",
     "requires_gpu": True,
@@ -31,7 +31,7 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("supply")
         if not zone:
             return
-        hour = int(_t.strftime("%H", _t.gmtime(ts)))
+        hour = int(_t.strftime("%H", site_time(ts, ctx)))
         s, e = int(self.hours[0]), int(self.hours[1])
         if (s <= hour < e) if s < e else (hour >= s or hour < e):
             return

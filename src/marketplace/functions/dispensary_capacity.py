@@ -1,21 +1,20 @@
-"""Dispensary Capacity — sales-floor occupancy vs licensed cap.
+"""Dispensary Capacity — estimated sales-floor occupancy threshold review.
 
-Live person count on the sales floor against the license/fire capacity.
-Over-cap = door staff alert. License caps are enforced in regulated retail;
-this makes the count continuous and documented.
+Compares a visual person-count estimate with an operator-configured threshold.
+The result is a review prompt, not a legal or licensed-capacity determination.
 """
 from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "dispensary-capacity",
     "name": "Sales Floor Capacity",
-    "tagline": "Licensed cap is 30. You're at 34. The door got the alert, not the inspector.",
+    "tagline": "Flags estimated occupancy above the configured licensed-capacity threshold for staff review.",
     "category": "Compliance",
     "tier": "pro",
     "requires_gpu": True,
     "config_schema": {
         "zone": "polygon — sales floor",
-        "max_persons": "int — licensed cap",
+        "max_persons": "int — operator-configured occupancy review threshold",
         "hold_seconds": "int (default 30)",
     },
 }
@@ -39,8 +38,8 @@ class Function(MarketplaceFunction):
             if ts - self._since[key] >= self.hold:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title=f"Floor at {count} (cap {self.max_n})",
-                    detail=f"Sales floor over licensed cap on {camera['name']} for {ts - self._since[key]:.0f}s.",
+                    title=f"Estimated floor count {count} (review threshold {self.max_n})",
+                    detail=f"Estimated person count remained above the configured review threshold on {camera['name']} for {ts - self._since[key]:.0f}s; verify the count and applicable capacity rules.",
                     frame=frame, meta={"count": count, "cap": self.max_n})
                 self._since[key] = ts
         else:

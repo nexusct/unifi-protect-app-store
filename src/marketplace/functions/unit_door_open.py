@@ -10,7 +10,7 @@ from marketplace.contract import MarketplaceFunction
 MANIFEST = {
     "id": "unit-door-open",
     "name": "Storage Unit Door Watch",
-    "tagline": "Unit 214's door has been up for 40 minutes. Someone should walk the row.",
+    "tagline": "Flags a persistent visual open-state at a configured storage-unit door zone.",
     "category": "Security & Access",
     "tier": "starter",
     "requires_gpu": True,

@@ -10,7 +10,7 @@ from marketplace.contract import MarketplaceFunction
 MANIFEST = {
     "id": "ice-cooler-stock",
     "name": "Ice Cooler Stock Watch",
-    "tagline": "Empty ice cooler on a 90-degree Saturday. Now it texts you.",
+    "tagline": "Flags a drop in cooler-face texture relative to a stocked baseline; alert delivery depends on routing settings.",
     "category": "Retail & QSR",
     "tier": "starter",
     "requires_gpu": True,

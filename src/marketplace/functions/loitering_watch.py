@@ -1,16 +1,15 @@
-"""Loitering Watch — person stationary in a watch zone past threshold.
+"""Person dwell in a configured watch zone.
 
-Perimeter fences, ATM vestibules, after-hours storefronts: a person who
-stays in the zone beyond the limit fires a check-it-out alert with the
-dwell time. The classic loss-prevention and premise-safety trigger.
+Flags a tracked person who remains in the zone beyond the selected duration.
+The signal does not determine purpose, authorization, or intent.
 """
-from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, ZoneTracker, boxes_of, in_zone
 
 MANIFEST = {
     "id": "loitering-watch",
     "name": "Loitering Watch",
-    "tagline": "Still there after 10 minutes. Someone should take a look.",
-    "category": "People & Safety",
+    "tagline": "Flags person dwell in a configured zone beyond the selected review threshold.",
+    "category": "Security & Access",
     "tier": "starter",
     "requires_gpu": True,
     "config_schema": {
@@ -32,7 +31,7 @@ class Function(MarketplaceFunction):
     def process(self, camera, frame, ts, ctx):
         import time as _t
         if self.hours:
-            hour = int(_t.strftime("%H", _t.gmtime(ts)))
+            hour = int(_t.strftime("%H", site_time(ts, ctx)))
             s, e = int(self.hours[0]), int(self.hours[1])
             if not ((hour >= s or hour < e) if s > e else (s <= hour < e)):
                 return
@@ -48,7 +47,7 @@ class Function(MarketplaceFunction):
                 self._alerted.add(key)
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title=f"Loitering {(ts - st['since'])/60:.0f} min",
+                    title=f"Watch-zone dwell {(ts - st['since'])/60:.0f} min",
                     detail=f"Person stationary in watch zone on {camera['name']} for {(ts - st['since'])/60:.0f} minutes.",
                     frame=frame, meta={"dwell_min": (ts - st['since']) / 60})
             if not st["in"]:

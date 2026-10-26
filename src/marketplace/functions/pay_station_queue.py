@@ -9,7 +9,7 @@ from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_
 MANIFEST = {
     "id": "pay-station-queue",
     "name": "Pay Station Queue",
-    "tagline": "Four people deep at the pay machine at 5:55pm. One of them is about to bail on the ticket.",
+    "tagline": "Flags queue estimates above the configured threshold at a pay-station zone.",
     "category": "Automotive & Parking",
     "tier": "starter",
     "requires_gpu": True,

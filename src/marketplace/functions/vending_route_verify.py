@@ -10,13 +10,13 @@ from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_
 MANIFEST = {
     "id": "vending-route-verify",
     "name": "Vending Route Verification",
-    "tagline": "Bank 4 got a 40-second drive-by, not a service visit. The log says so.",
+    "tagline": "Logs possible service visits when person dwell at a configured vending-bank zone exceeds the selected threshold.",
     "category": "Intelligence",
     "tier": "pro",
     "requires_gpu": True,
     "config_schema": {
         "banks": "map of bank-name → polygon",
-        "min_service_seconds": "int — real visit threshold (default 180)",
+        "min_service_seconds": "Minimum observed dwell used to classify a possible service visit (default: 180 seconds).",
     },
 }
 

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>Nexus-Vision-AI-GPU</Name>
+  <Repository>ghcr.io/nexusct/unifi-protect-app-store:latest</Repository>
+  <Registry>https://github.com/nexusct/unifi-protect-app-store/pkgs/container/unifi-protect-app-store</Registry>
+  <TemplateURL>https://raw.githubusercontent.com/nexusct/unifi-protect-app-store/main/unraid/nexus-vision-ai-gpu.xml</TemplateURL>
+  <Network>bridge</Network>
+  <Privileged>false</Privileged>
+  <Shell>bash</Shell>
+  <Support>https://github.com/nexusct/unifi-protect-app-store/issues</Support>
+  <Project>https://github.com/nexusct/unifi-protect-app-store</Project>
+  <Overview>Nexus Vision AI GPU server for UniFi Protect. Open the WebUI after first start to authenticate locally, discover Protect cameras and RTSP feeds, select analytics, save protected configuration, and verify readiness.</Overview>
+  <Category>Tools: Network:Management MediaApp:Video</Category>
+  <WebUI>http://[IP]:[PORT:8090]/setup/</WebUI>
+  <Icon>https://raw.githubusercontent.com/nexusct/unifi-protect-app-store/main/assets/icons/camera-tamper.svg</Icon>
+  <ExtraParams>--runtime=nvidia --restart unless-stopped</ExtraParams>
+  <Requires>x86-64/AMD64 Unraid server, NVIDIA GPU, the Unraid NVIDIA Driver plugin/runtime, a driver compatible with CUDA 12.1, 16 GB host RAM minimum, and network access to the local UniFi console/NVR. 16 GB GPU VRAM is recommended for mixed analytics; ARM64 and Jetson are not supported.</Requires>
+  <Config Name="Configuration" Target="/config" Default="/mnt/user/appdata/nexus-vision-ai/config" Mode="rw" Description="Protected site configuration, runtime credentials, and trusted controller certificates." Type="Path" Display="always" Required="true" Mask="false"/>
+  <Config Name="Application data" Target="/data" Default="/mnt/user/appdata/nexus-vision-ai/data" Mode="rw" Description="SQLite state, alert outbox, and analytics indexes." Type="Path" Display="always" Required="true" Mask="false"/>
+  <Config Name="Model cache" Target="/models" Default="/mnt/user/appdata/nexus-vision-ai/models" Mode="rw" Description="Persistent Torch, Ultralytics, OpenCLIP, and OCR model cache." Type="Path" Display="always" Required="true" Mask="false"/>
+  <Config Name="Evidence" Target="/evidence" Default="/mnt/user/appdata/nexus-vision-ai/evidence" Mode="rw" Description="Snapshots, clips, and permitted evidence exports." Type="Path" Display="always" Required="true" Mask="false"/>
+  <Config Name="WebUI" Target="8090" Default="8090" Mode="tcp" Description="Local setup and operational API port. Do not expose directly to the Internet." Type="Port" Display="always" Required="true" Mask="false"/>
+  <Config Name="Administrator token" Target="VISION_ADMIN_TOKEN" Default="" Mode="" Description="Create a long random token used to authorize setup and read-only operational routes." Type="Variable" Display="always" Required="true" Mask="true"/>
+  <Config Name="Door-control token" Target="VISION_CONTROL_TOKEN" Default="" Mode="" Description="Optional separate bearer token for UniFi Access control. Keep different from the administrator token." Type="Variable" Display="advanced" Required="false" Mask="true"/>
+  <Config Name="Site timezone" Target="TZ" Default="UTC" Mode="" Description="IANA timezone used by the container; the wizard stores the analytics site timezone separately." Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="Compute device" Target="VISION_DEVICE" Default="cuda" Mode="" Description="NVIDIA CUDA template; keep this value as cuda." Type="Variable" Display="advanced-hide" Required="true" Mask="false"/>
+  <Config Name="NVIDIA devices" Target="NVIDIA_VISIBLE_DEVICES" Default="all" Mode="" Description="Use all GPUs or replace with a selected GPU UUID from the NVIDIA Driver plugin." Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="NVIDIA capabilities" Target="NVIDIA_DRIVER_CAPABILITIES" Default="compute,utility,video" Mode="" Description="Capabilities required for inference and video decode." Type="Variable" Display="advanced-hide" Required="true" Mask="false"/>
+  <Config Name="Site config file" Target="VISION_CONFIG" Default="/config/sites.yaml" Mode="" Description="Wizard-managed site configuration path." Type="Variable" Display="advanced-hide" Required="true" Mask="false"/>
+  <Config Name="Runtime settings file" Target="VISION_RUNTIME_SETTINGS" Default="/config/runtime-settings.json" Mode="" Description="Owner-only wizard credential store." Type="Variable" Display="advanced-hide" Required="true" Mask="false"/>
+  <Config Name="Data path" Target="VISION_DATA" Default="/data" Mode="" Description="Application data container path." Type="Variable" Display="advanced-hide" Required="true" Mask="false"/>
+  <Config Name="Model path" Target="VISION_MODELS" Default="/models" Mode="" Description="Persistent model cache container path." Type="Variable" Display="advanced-hide" Required="true" Mask="false"/>
+  <Config Name="Evidence path" Target="VISION_EVIDENCE" Default="/evidence" Mode="" Description="Evidence container path." Type="Variable" Display="advanced-hide" Required="true" Mask="false"/>
+  <Config Name="License state" Target="VISION_LICENSE_DIR" Default="/config/licensing" Mode="" Description="Persistent appliance identity, signed entitlement, and rollback-state directory." Type="Variable" Display="advanced-hide" Required="true" Mask="false"/>
+  <Config Name="Entitlement trust store" Target="VISION_ENTITLEMENT_TRUST_STORE" Default="/config/trusted-entitlement-keys.json" Mode="" Description="Persistent public-only Ed25519 entitlement verification key set. Never place a private signing key here." Type="Variable" Display="advanced-hide" Required="true" Mask="false"/>
+  <Config Name="Setup restart" Target="VISION_SETUP_RESTART_ENABLED" Default="true" Mode="" Description="Allow the authenticated local wizard to restart this restart-policy container after saving." Type="Variable" Display="advanced-hide" Required="true" Mask="false"/>
+  <Config Name="PUID" Target="PUID" Default="99" Mode="" Description="Unraid nobody user ID." Type="Variable" Display="advanced" Required="true" Mask="false"/>
+  <Config Name="PGID" Target="PGID" Default="100" Mode="" Description="Unraid users group ID." Type="Variable" Display="advanced" Required="true" Mask="false"/>
+</Container>

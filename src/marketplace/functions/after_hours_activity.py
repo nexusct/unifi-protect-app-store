@@ -1,15 +1,14 @@
 """After-Hours Activity — any person in the building outside open hours.
 
-Simplest high-value function in the catalog: person detected during
-closed hours = clip + immediate alert. The baseline every small business
-wants from an alarm system without the alarm-system contract.
+Person-class presence during configured closed hours produces an alert and,
+unless privacy mode suppresses it, a JPEG review snapshot.
 """
-from marketplace.contract import MarketplaceFunction, boxes_of
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of
 
 MANIFEST = {
     "id": "after-hours-activity",
     "name": "After-Hours Activity",
-    "tagline": "Person in the building at 2am. Clip attached. Your phone, not your answering service.",
+    "tagline": "Flags a detected person during configured closed hours and saves a local alert snapshot; routing depends on site configuration.",
     "category": "Security & Access",
     "tier": "starter",
     "requires_gpu": True,
@@ -26,7 +25,7 @@ class Function(MarketplaceFunction):
 
     def process(self, camera, frame, ts, ctx):
         import time as _t
-        hour = int(_t.strftime("%H", _t.gmtime(ts)))
+        hour = int(_t.strftime("%H", site_time(ts, ctx)))
         s, e = int(self.hours[0]), int(self.hours[1])
         closed = (hour >= s or hour < e) if s > e else (s <= hour < e)
         if not closed:

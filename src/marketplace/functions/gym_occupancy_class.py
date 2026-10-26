@@ -5,13 +5,13 @@ actual attendance vs booked. Studios optimize schedules on real numbers,
 not sign-up lies.
 """
 from collections import defaultdict
-from marketplace.contract import MarketplaceFunction, boxes_of, in_zone
+from marketplace.contract import site_time, MarketplaceFunction, boxes_of, in_zone
 
 MANIFEST = {
     "id": "gym-occupancy-class",
-    "name": "Class Attendance Counter",
-    "tagline": "12 booked, 5 showed. Now your schedule knows.",
-    "category": "People & Safety",
+    "name": "Studio Attendance Estimate",
+    "tagline": "Counts detected people in the studio during configured class windows; booking comparison requires a separate integration.",
+    "category": "Intelligence",
     "tier": "starter",
     "requires_gpu": True,
     "config_schema": {
@@ -33,7 +33,7 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("studio")
         if not zone:
             return
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         count = sum(1 for (_, cx, cy, *_r) in boxes_of(frame, classes=[0]) if in_zone(cx, cy, zone))
         for i, w in enumerate(self.windows):
             s, e = int(w[0]), int(w[1])

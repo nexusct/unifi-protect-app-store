@@ -1,22 +1,17 @@
-"""Door Propped Open — door zone stuck in motion/open state too long.
-
-Watches a door zone's motion energy: normal cycles spike and settle;
-propped doors keep a persistent change vs the closed reference. Pairs
-with Access door-held events but works on doors with no sensors at all.
-"""
+"""Persistent visual change from a learned door-zone reference."""
 import numpy as np
 from marketplace.contract import MarketplaceFunction
 
 MANIFEST = {
     "id": "door-propped",
-    "name": "Door Propped Open",
-    "tagline": "The back door propped for a smoke break is your inventory walking out.",
+    "name": "Door-Zone Baseline Change",
+    "tagline": "Flags a configured door region that remains visually different from its learned reference beyond the threshold; verify the door state during commissioning.",
     "category": "Property & Liability",
     "tier": "starter",
     "requires_gpu": True,
     "config_schema": {
-        "zone": "polygon — door area",
-        "propped_seconds": "int (default 90)",
+        "zone": "Polygon for the door region to compare with its learned reference.",
+        "propped_seconds": "Seconds of sustained visual difference before review (default 90).",
     },
 }
 
@@ -48,7 +43,7 @@ class Function(MarketplaceFunction):
             if ts - self._open_since[key] >= self.limit:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Door propped open",
+                    title="Door-zone baseline changed",
                     detail=f"Door zone changed state {ts - self._open_since[key]:.0f}s ago on {camera['name']}.",
                     frame=frame, meta={"open_s": ts - self._open_since[key]})
                 self._open_since[key] = ts

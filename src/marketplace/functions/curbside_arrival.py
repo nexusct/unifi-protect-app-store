@@ -9,7 +9,7 @@ from marketplace.contract import MarketplaceFunction, ZoneTracker, boxes_of, in_
 MANIFEST = {
     "id": "curbside-arrival",
     "name": "Curbside Pickup Arrival",
-    "tagline": "Customer in the pickup lane — staff know before the app notification.",
+    "tagline": "Flags a vehicle entering the configured curbside zone; notification timing depends on processing and routing.",
     "category": "Automotive & Parking",
     "tier": "starter",
     "requires_gpu": True,

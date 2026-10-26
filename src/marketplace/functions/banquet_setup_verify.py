@@ -1,16 +1,16 @@
-"""Banquet Setup Verification — room configured on schedule.
+"""Event-Room Visual Baseline Check.
 
-Compares the event-room zone to a set-up reference: table/chair edge
-density reaches the configured signature before the event start, or
-catering gets a "room not set" alert. Hotel banquet ops run on this.
+Compares edge density in a configured event-room crop with a learned visual
+baseline at a selected verification hour. It does not identify furniture or
+determine event readiness.
 """
 import numpy as np
-from marketplace.contract import MarketplaceFunction
+from marketplace.contract import site_time, MarketplaceFunction
 
 MANIFEST = {
     "id": "banquet-setup-verify",
-    "name": "Banquet Setup Verification",
-    "tagline": "6pm wedding, 4:30pm room not set. The alert went out at 4:31.",
+    "name": "Event-Room Visual Baseline Check",
+    "tagline": "Compares event-room edge density with a learned visual baseline at the configured verification hour.",
     "category": "Intelligence",
     "tier": "pro",
     "requires_gpu": True,
@@ -37,7 +37,7 @@ class Function(MarketplaceFunction):
             return
         import time as _t
         import cv2
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         day = _t.strftime("%Y-%m-%d", tm)
         h, w = frame.shape[:2]
         xs = [p[0] for p in zone]; ys = [p[1] for p in zone]
@@ -56,6 +56,6 @@ class Function(MarketplaceFunction):
             if density < self.baseline * self.min_ratio:
                 ctx.alerts.fire(
                     site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                    title="Event room not set on schedule",
-                    detail=f"Setup density {density:.3f} vs expected {self._baseline * self.min_ratio:.3f} on {camera['name']}.",
+                    title="Event-room visual density below baseline",
+                    detail=f"Observed edge density {density:.3f} vs review threshold {self._baseline * self.min_ratio:.3f} on {camera['name']}; review the room image.",
                     frame=frame, meta={"density": round(density, 4)})

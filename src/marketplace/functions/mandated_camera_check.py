@@ -1,23 +1,18 @@
-"""Mandated Camera Check — required-angle view obstruction (regulated retail).
-
-Cannabis/gaming licenses mandate specific camera angles with zero
-obstruction. Daily structural check on each mandated zone: obstruction or
-redirect = compliance gap alert before the inspection finds it.
-"""
+"""Camera view baseline check for a configured region."""
 import numpy as np
-from marketplace.contract import MarketplaceFunction
+from marketplace.contract import site_time, MarketplaceFunction
 
 MANIFEST = {
     "id": "mandated-camera-check",
-    "name": "Mandated Camera Coverage Check",
-    "tagline": "The vault camera got nudged Tuesday. The inspector comes Friday.",
+    "name": "Camera View Baseline Check",
+    "tagline": "Flags a configured view region when edge structure drops below its learned baseline; camera movement, obstruction, and lighting changes can produce alerts.",
     "category": "Compliance",
     "tier": "pro",
     "requires_gpu": True,
     "config_schema": {
-        "zone": "polygon — mandated view region",
-        "edge_drop_ratio": "float vs baseline (default 0.5)",
-        "check_hour": "int (default 6)",
+        "zone": "Polygon for the view region to compare with its learned baseline.",
+        "edge_drop_ratio": "Fractional edge-structure drop that triggers review (default 0.5).",
+        "check_hour": "UTC hour for the daily baseline comparison (default 6).",
     },
 }
 
@@ -37,7 +32,7 @@ class Function(MarketplaceFunction):
         zone = (camera.get("zones") or {}).get("mandated")
         if not zone:
             return
-        tm = _t.gmtime(ts)
+        tm = site_time(ts, ctx)
         if tm.tm_hour != self.check_hour:
             return
         day = _t.strftime("%Y-%m-%d", tm)
@@ -60,6 +55,6 @@ class Function(MarketplaceFunction):
         if base > 0 and (base - edges) / base >= self.drop:
             ctx.alerts.fire(
                 site=ctx.site, camera=camera, detector=MANIFEST["id"],
-                title="Mandated camera view degraded",
-                detail=f"View structure dropped {(base - edges)/base:.0%} vs baseline on {camera['name']}.",
+                title="Camera view baseline changed",
+                detail=f"Edge structure dropped {(base - edges)/base:.0%} from the learned baseline on {camera['name']}.",
                 frame=frame, meta={"drop": round((base - edges) / base, 3)})
